@@ -21,14 +21,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={client}>
       {children}
       <Toaster
-        position="top-center"
+        position="top-right"
         richColors
-        closeButton
         duration={3500}
+        toastOptions={{
+          classNames: {
+            toast: "!w-[380px] !p-5 !rounded-xl",
+            title: "!text-base",
+            description: "!text-sm !leading-relaxed",
+            icon: "!w-6 !h-6",
+          },
+        }}
       />
-      {process.env.NODE_ENV === "development" && (
-        <ReactQueryDevtools initialIsOpen={false} />
-      )}
+      {process.env.NODE_ENV === "development" && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 }
