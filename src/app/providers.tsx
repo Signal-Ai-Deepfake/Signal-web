@@ -26,10 +26,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         duration={3500}
         toastOptions={{
           classNames: {
-            toast: "!w-[380px] !p-5 !rounded-xl",
-            title: "!text-base",
-            description: "!text-sm !leading-relaxed",
-            icon: "!w-6 !h-6",
+            toast: "!w-[300px] !p-3 !rounded-lg",
+            title: "!text-sm",
+            description: "!text-xs !leading-relaxed",
+            icon: "!w-4 !h-4",
           },
         }}
       />
