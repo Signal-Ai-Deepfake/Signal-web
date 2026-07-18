@@ -1,26 +1,97 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* ---------------------------------- */
+  /* Colors                             */
+  /* TODO: 각 색상 값 채워넣기 (아래는 임시값) */
+  /* ---------------------------------- */
+  --color-main-900: #212529;
+  --color-main-800: #14222E;
+  --color-main-700: #1C3042;
+  --color-main-600: #253E54;
+  --color-main-500: #2D4B66;
+  --color-main-450: #466C8C;
+  --color-main-400: #608DB1;
+  --color-main-300: #9BBBD5;
+  --color-main-200: #BCD1E3;
+  --color-main-100: #DCE7F0;
+  --color-main-50: #EDF3F8;
+
+  --color-secondary-900: #5F4870;
+  --color-secondary-800: #86689C;
+  --color-secondary-700: #A383B7;
+  --color-secondary-600: #BC9DCF;
+  --color-secondary-500: #D4B7E6;
+  --color-secondary-400: #D9CCE0;
+  --color-secondary-300: #E2BFEA;
+  --color-secondary-200: #ECD5F2;
+  --color-secondary-100: #F5EAF9;
+  --color-secondary-50: #FAF4FC;
+
+  --color-gray-900: #343A40;
+  --color-gray-800: #343A40;
+  --color-gray-700: #495057;
+  --color-gray-650: #6C757D;
+  --color-gray-600: #ACB5BD;
+  --color-gray-500: #CED4DA;
+  --color-gray-400: #DEE2E6;
+  --color-gray-300: #E9ECEF;
+  --color-gray-200: #F1F3F5;
+  --color-gray-100: #F8F9FA;
+
+  /* ---------------------------------- */
+  /* Typography - Pretendard            */
+  /* ---------------------------------- */
+  --font-pretendard: "Pretendard", sans-serif;
+
+  --text-h1: 48px;
+  --text-h1--line-height: 140%;
+
+  --text-h2: 36px;
+  --text-h2--line-height: 140%;
+
+  --text-h3: 24px;
+  --text-h3--line-height: 140%;
+
+  --text-body-1: 18px;
+  --text-body-1--line-height: 160%;
+
+  --text-body-2: 16px;
+  --text-body-2--line-height: 160%;
+
+  --text-large: 16px;
+  --text-large--line-height: 140%;
+
+  --text-small: 14px;
+  --text-small--line-height: 150%;
+
+  --text-caption: 12px;
+  --text-caption--line-height: 140%;
+
+  /* ---------------------------------- */
+  /* Shadows                            */
+  /* ---------------------------------- */
+  --shadow-sm: 0px 1px 3px 0px rgba(39, 39, 39, 0.05);
+  --shadow-md: 0px 2px 4px 0px rgba(45, 75, 102, 0.1);
+  --shadow-lg: 0px 5px 10px 0px rgba(45, 75, 102, 0.1);
+  --shadow-xl: 0px 12px 20px -2px rgba(45, 75, 102, 0.15);
+  --shadow-2xl: 0px 32px 48px -12px rgba(39, 39, 39, 0.2);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --background: var(--color-gray-50);
+  --foreground: var(--color-gray-900);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: var(--color-gray-900);
+    --foreground: var(--color-gray-50);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-pretendard);
 }
