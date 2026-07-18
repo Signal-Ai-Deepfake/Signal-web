@@ -5,6 +5,8 @@
   /* Colors                             */
   /* TODO: 각 색상 값 채워넣기 (아래는 임시값) */
   /* ---------------------------------- */
+  
+  /* blue */
   --color-primary-900: #212529;
   --color-primary-800: #14222E;
   --color-primary-700: #1C3042;
@@ -17,6 +19,7 @@
   --color-primary-100: #DCE7F0;
   --color-primary-50: #EDF3F8;
 
+  /* purple */
   --color-secondary-900: #5F4870;
   --color-secondary-800: #86689C;
   --color-secondary-700: #A383B7;
