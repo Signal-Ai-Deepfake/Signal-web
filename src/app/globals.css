@@ -5,17 +5,17 @@
   /* Colors                             */
   /* TODO: 각 색상 값 채워넣기 (아래는 임시값) */
   /* ---------------------------------- */
-  --color-main-900: #212529;
-  --color-main-800: #14222E;
-  --color-main-700: #1C3042;
-  --color-main-600: #253E54;
-  --color-main-500: #2D4B66;
-  --color-main-450: #466C8C;
-  --color-main-400: #608DB1;
-  --color-main-300: #9BBBD5;
-  --color-main-200: #BCD1E3;
-  --color-main-100: #DCE7F0;
-  --color-main-50: #EDF3F8;
+  --color-primary-900: #212529;
+  --color-primary-800: #14222E;
+  --color-primary-700: #1C3042;
+  --color-primary-600: #253E54;
+  --color-primary-500: #2D4B66;
+  --color-primary-450: #466C8C;
+  --color-primary-400: #608DB1;
+  --color-primary-300: #9BBBD5;
+  --color-primary-200: #BCD1E3;
+  --color-primary-100: #DCE7F0;
+  --color-primary-50: #EDF3F8;
 
   --color-secondary-900: #5F4870;
   --color-secondary-800: #86689C;
