@@ -4,6 +4,7 @@ export default function Chart() {
       <path
         d="M3 3V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H21M18 17V9M13 17V5M8 17V14"
         stroke="currentColor"
+        vectorEffect="non-scaling-stroke"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
