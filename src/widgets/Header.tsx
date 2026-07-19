@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
 import FileText from "@/shared/asset/svg/FileText";
 import Image from "@/shared/asset/svg/Image";
@@ -37,12 +37,33 @@ const navItems = [
 
 export default function Header() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (openIndex === null) return;
+
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setOpenIndex(null);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpenIndex(null);
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [openIndex]);
 
   return (
     <header className="relative w-full border-b border-gray-300 bg-white">
       <div className="mx-auto grid h-20 max-w-[1280px] grid-cols-[1fr_auto_1fr] items-center px-5">
         <Logo />
-        <nav className="flex items-center gap-8">
+        <nav ref={navRef} className="flex items-center gap-8">
           {navItems.map((nav, index) => (
             <div key={nav.label} className="relative">
               <button
