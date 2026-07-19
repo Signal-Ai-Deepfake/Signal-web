@@ -2,7 +2,7 @@ import type { ComponentType, InputHTMLAttributes, ReactNode } from "react";
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
   label: string;
-  icon: ComponentType;
+  icon?: ComponentType;
   error?: string;
   rightSlot?: ReactNode;
 }
@@ -13,6 +13,7 @@ export default function Input({
   error,
   rightSlot,
   className = "",
+  disabled,
   ...props
 }: InputProps) {
   return (
@@ -21,14 +22,21 @@ export default function Input({
       <div className="flex w-full flex-col items-start">
         <div
           className={`flex h-[60px] w-full items-center gap-3 rounded-lg border p-4 ${
-            error ? "border-red-500" : "border-gray-400"
+            disabled
+              ? "border-transparent bg-gray-200"
+              : error
+                ? "border-red-500"
+                : "border-gray-400"
           }`}
         >
-          <span className="text-gray-600 shrink-0 [&>svg]:h-6 [&>svg]:w-6">
-            <Icon />
-          </span>
+          {Icon && (
+            <span className="text-gray-600 shrink-0 [&>svg]:h-6 [&>svg]:w-6">
+              <Icon />
+            </span>
+          )}
           <input
-            className={`text-body-1 placeholder:text-gray-600 min-w-0 flex-1 text-black outline-none ${className}`}
+            disabled={disabled}
+            className={`text-body-1 placeholder:text-gray-600 min-w-0 flex-1 text-black outline-none disabled:text-black disabled:cursor-default ${className}`}
             {...props}
           />
           {rightSlot}
