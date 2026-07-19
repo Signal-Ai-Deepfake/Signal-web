@@ -27,19 +27,19 @@ export default function HeroSection() {
           <ScrollReveal className="flex w-fit flex-col items-start gap-6">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
-                <h1 className="text-h1 font-bold whitespace-nowrap text-black">
+                <h1 className="text-h1 font-bold text-black lg:whitespace-nowrap">
                   당신이 보낸 구조 신호,
                 </h1>
-                <h1 className="text-h1 font-bold whitespace-nowrap">
+                <h1 className="text-h1 font-bold lg:whitespace-nowrap">
                   <span className="text-secondary-400">Signal</span>
                   <span className="text-black">이 안전한 일상으로 답합니다.</span>
                 </h1>
               </div>
               <div className="text-body-1 flex flex-col gap-1 text-gray-800">
-                <p className="whitespace-nowrap">
+                <p className="lg:whitespace-nowrap">
                   디지털 괴롭힘부터 딥페이크까지, 홀로 감당하기 힘든 순간에 Signal을 켜세요.
                 </p>
-                <p className="whitespace-nowrap">
+                <p className="lg:whitespace-nowrap">
                   AI 기술을 통해 가장 빠르고 정확하게 증거를 분석하고 맞춤형 대응 가이드를
                   제공합니다.
                 </p>
