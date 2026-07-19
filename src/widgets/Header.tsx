@@ -7,7 +7,6 @@ import Image from "@/shared/asset/svg/Image";
 import Logo from "@/shared/asset/svg/Logo";
 import Message from "@/shared/asset/svg/Message";
 import ScanFace from "@/shared/asset/svg/ScanFace";
-import Button from "@/shared/ui/Button";
 import FeatureCard from "@/shared/ui/FeatureCard";
 import LinkButton from "@/shared/ui/LinkButton";
 
@@ -93,9 +92,9 @@ export default function Header() {
           <LinkButton href="/login" variant="outline" className="h-[46px] w-[103px]">
             로그인
           </LinkButton>
-          <Button variant="primary" className="h-12">
+          <LinkButton href="/signup" variant="primary" className="h-12">
             회원가입
-          </Button>
+          </LinkButton>
         </div>
       </div>
     </header>
