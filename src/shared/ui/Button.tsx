@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes } from "react";
 
-type ButtonVariant = "primary" | "outline";
+export type ButtonVariant = "primary" | "outline";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -24,6 +24,10 @@ const variantStyle: Record<ButtonVariant, string> = {
   ].join(" "),
 };
 
+export function buttonStyle(variant: ButtonVariant = "primary", className = "") {
+  return `${baseStyle} ${variantStyle[variant]} ${className}`;
+}
+
 export default function Button({ variant = "primary", className = "", ...props }: ButtonProps) {
-  return <button className={`${baseStyle} ${variantStyle[variant]} ${className}`} {...props} />;
+  return <button className={buttonStyle(variant, className)} {...props} />;
 }

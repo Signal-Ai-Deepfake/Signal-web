@@ -9,6 +9,7 @@ import Message from "@/shared/asset/svg/Message";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 import Button from "@/shared/ui/Button";
 import FeatureCard from "@/shared/ui/FeatureCard";
+import LinkButton from "@/shared/ui/LinkButton";
 
 const navItems = [
   {
@@ -89,9 +90,9 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex items-center justify-end gap-4">
-          <Button variant="outline" className="h-[46px] w-[103px]">
+          <LinkButton href="/login" variant="outline" className="h-[46px] w-[103px]">
             로그인
-          </Button>
+          </LinkButton>
           <Button variant="primary" className="h-12">
             회원가입
           </Button>
