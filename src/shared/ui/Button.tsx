@@ -11,14 +11,14 @@ const baseStyle =
 
 const variantStyle: Record<ButtonVariant, string> = {
   primary: [
-    "bg-main-600 text-white",
-    "hover:bg-main-400",
-    "active:bg-main-900",
+    "bg-primary-600 text-white",
+    "hover:bg-primary-400",
+    "active:bg-primary-900",
     "disabled:bg-gray-100 disabled:text-gray-400",
   ].join(" "),
   outline: [
     "border border-gray-700 bg-white text-gray-900",
-    "hover:border-main-400 hover:bg-secondary-100 hover:text-secondary-700",
+    "hover:border-primary-400 hover:bg-secondary-100 hover:text-secondary-700",
     "active:border-gray-900",
     "disabled:border-gray-200 disabled:text-gray-300",
   ].join(" "),

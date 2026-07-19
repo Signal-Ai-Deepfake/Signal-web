@@ -4,6 +4,7 @@ export default function ArrowUp() {
       <path
         d="M4 12H20M14 6L20 12L14 18"
         stroke="currentColor"
+        vectorEffect="non-scaling-stroke"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
