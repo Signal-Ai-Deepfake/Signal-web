@@ -24,10 +24,6 @@ const variantStyle: Record<ButtonVariant, string> = {
   ].join(" "),
 };
 
-export default function Button({
-  variant = "primary",
-  className = "",
-  ...props
-}: ButtonProps) {
+export default function Button({ variant = "primary", className = "", ...props }: ButtonProps) {
   return <button className={`${baseStyle} ${variantStyle[variant]} ${className}`} {...props} />;
 }

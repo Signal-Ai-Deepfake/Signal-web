@@ -1,46 +1,78 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-Regular.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-Medium.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-SemiBold.woff2")
+    format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/woff2/Pretendard-Bold.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
 @theme {
   /* ---------------------------------- */
   /* Colors                             */
   /* TODO: 각 색상 값 채워넣기 (아래는 임시값) */
   /* ---------------------------------- */
-  
+
   /* blue */
   --color-primary-900: #212529;
-  --color-primary-800: #14222E;
-  --color-primary-700: #1C3042;
-  --color-primary-600: #253E54;
-  --color-primary-500: #2D4B66;
-  --color-primary-450: #466C8C;
-  --color-primary-400: #608DB1;
-  --color-primary-300: #9BBBD5;
-  --color-primary-200: #BCD1E3;
-  --color-primary-100: #DCE7F0;
-  --color-primary-50: #EDF3F8;
+  --color-primary-800: #14222e;
+  --color-primary-700: #1c3042;
+  --color-primary-600: #253e54;
+  --color-primary-500: #2d4b66;
+  --color-primary-450: #466c8c;
+  --color-primary-400: #608db1;
+  --color-primary-300: #9bbbd5;
+  --color-primary-200: #bcd1e3;
+  --color-primary-100: #dce7f0;
+  --color-primary-50: #edf3f8;
 
   /* purple */
-  --color-secondary-900: #5F4870;
-  --color-secondary-800: #86689C;
-  --color-secondary-700: #A383B7;
-  --color-secondary-600: #BC9DCF;
-  --color-secondary-500: #D4B7E6;
-  --color-secondary-400: #D9CCE0;
-  --color-secondary-300: #E2BFEA;
-  --color-secondary-200: #ECD5F2;
-  --color-secondary-100: #F5EAF9;
-  --color-secondary-50: #FAF4FC;
+  --color-secondary-900: #5f4870;
+  --color-secondary-800: #86689c;
+  --color-secondary-700: #a383b7;
+  --color-secondary-600: #bc9dcf;
+  --color-secondary-500: #d4b7e6;
+  --color-secondary-400: #d9cce0;
+  --color-secondary-300: #e2bfea;
+  --color-secondary-200: #ecd5f2;
+  --color-secondary-100: #f5eaf9;
+  --color-secondary-50: #faf4fc;
 
-  --color-gray-900: #343A40;
-  --color-gray-800: #343A40;
+  --color-gray-900: #343a40;
+  --color-gray-800: #343a40;
   --color-gray-700: #495057;
-  --color-gray-650: #6C757D;
-  --color-gray-600: #ACB5BD;
-  --color-gray-500: #CED4DA;
-  --color-gray-400: #DEE2E6;
-  --color-gray-300: #E9ECEF;
-  --color-gray-200: #F1F3F5;
-  --color-gray-100: #F8F9FA;
+  --color-gray-650: #6c757d;
+  --color-gray-600: #acb5bd;
+  --color-gray-500: #ced4da;
+  --color-gray-400: #dee2e6;
+  --color-gray-300: #e9ecef;
+  --color-gray-200: #f1f3f5;
+  --color-gray-100: #f8f9fa;
 
   /* ---------------------------------- */
   /* Typography - Pretendard            */
@@ -97,4 +129,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-pretendard);
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
