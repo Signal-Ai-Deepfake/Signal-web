@@ -7,7 +7,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const baseStyle =
-  "inline-flex cursor-pointer items-center justify-center rounded px-4 py-2.5 text-large font-semibold transition-colors disabled:cursor-not-allowed";
+  "inline-flex cursor-pointer items-center justify-center rounded px-4 py-2.5 text-large font-semibold transition-all disabled:cursor-not-allowed active:shadow-inner disabled:active:shadow-none";
 
 const variantStyle: Record<ButtonVariant, string> = {
   primary: [
