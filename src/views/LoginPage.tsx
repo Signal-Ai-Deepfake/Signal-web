@@ -26,12 +26,12 @@ export default function LoginPage() {
 
   return (
     <AuthPageShell>
-      <div className="flex w-full max-w-[512px] flex-col gap-6 rounded-2xl bg-white px-16 py-10 shadow-md">
-        <form onSubmit={handleSubmit} className="flex w-full flex-col gap-10">
-          <div className="flex flex-col gap-4">
+      <div className="flex w-full max-w-[440px] flex-col gap-5 rounded-2xl bg-white px-12 py-8 shadow-md">
+        <form onSubmit={handleSubmit} className="flex w-full flex-col">
+          <div className="flex flex-col gap-3">
             <div className="flex flex-col items-center gap-2 text-center">
-              <h1 className="text-h2 font-bold text-black">로그인</h1>
-              <p className="text-body-1 text-gray-800">Signal 계정으로 로그인 하세요.</p>
+              <h1 className="text-h3 font-bold text-black mt-8">로그인</h1>
+              <p className="text-body-2 text-gray-800">Signal 계정으로 로그인 하세요.</p>
             </div>
             <div className="flex flex-col gap-1">
               <Input
@@ -53,7 +53,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="text-gray-600 shrink-0 [&>svg]:h-6 [&>svg]:w-6"
+                    className="cursor-pointer text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5"
                     aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
                   >
                     {showPassword ? <Eye /> : <EyeOff />}
@@ -62,10 +62,10 @@ export default function LoginPage() {
               />
             </div>
           </div>
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between">
               <Checkbox checked={keepLoggedIn} onChange={setKeepLoggedIn} label="로그인 상태 유지" />
-              <button type="button" className="text-body-2 text-gray-600">
+              <button type="button" className="text-body-2 cursor-pointer text-gray-600">
                 비밀번호를 잊으셨나요?
               </button>
             </div>
@@ -74,11 +74,11 @@ export default function LoginPage() {
             </Button>
           </div>
         </form>
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-5 mb-8">
           <div className="h-px w-full bg-gray-300" />
-          <p className="text-body-1">
+          <p className="text-body-2">
             <span className="text-gray-650">계정이 없으신가요? </span>
-            <Link href="/signup" className="text-secondary-500 underline">
+            <Link href="/signup" className="text-secondary-500 cursor-pointer underline">
               회원가입
             </Link>
           </p>
