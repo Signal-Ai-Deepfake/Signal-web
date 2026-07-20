@@ -7,14 +7,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const baseStyle =
-  "inline-flex items-center justify-center rounded-lg px-6 py-3 text-large font-semibold transition-colors disabled:cursor-not-allowed";
+  "inline-flex cursor-pointer items-center justify-center rounded px-4 py-2.5 text-large font-semibold transition-colors disabled:cursor-not-allowed";
 
 const variantStyle: Record<ButtonVariant, string> = {
   primary: [
     "bg-primary-600 text-white",
     "hover:bg-primary-400",
     "active:bg-primary-900",
-    "disabled:bg-gray-100 disabled:text-gray-400",
+    "disabled:bg-gray-200 disabled:text-gray-400",
   ].join(" "),
   outline: [
     "border border-gray-700 bg-white text-gray-900",

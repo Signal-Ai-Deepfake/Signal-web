@@ -18,25 +18,25 @@ export default function Input({
 }: InputProps) {
   return (
     <div className="flex w-full flex-col items-start gap-2">
-      <label className="text-body-1 px-1 text-black">{label}</label>
+      <label className="text-body-2 px-1 text-black">{label}</label>
       <div className="flex w-full flex-col items-start">
         <div
-          className={`flex h-[60px] w-full items-center gap-3 rounded-lg border p-4 ${
+          className={`flex h-[52px] w-full items-center gap-2 rounded-lg border p-3 transition-colors ${
             disabled
               ? "border-transparent bg-gray-200"
               : error
                 ? "border-red-500"
-                : "border-gray-400"
+                : "focus-within:border-secondary-500 border-gray-400"
           }`}
         >
           {Icon && (
-            <span className="text-gray-600 shrink-0 [&>svg]:h-6 [&>svg]:w-6">
+            <span className="text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5">
               <Icon />
             </span>
           )}
           <input
             disabled={disabled}
-            className={`text-body-1 placeholder:text-gray-600 min-w-0 flex-1 text-black outline-none disabled:text-black disabled:cursor-default ${className}`}
+            className={`text-body-2 placeholder:text-gray-600 min-w-0 flex-1 text-black outline-none disabled:text-black disabled:cursor-default ${className}`}
             {...props}
           />
           {rightSlot}

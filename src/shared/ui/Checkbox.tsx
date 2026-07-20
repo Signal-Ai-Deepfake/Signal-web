@@ -13,10 +13,14 @@ export default function Checkbox({ checked, onChange, label, ...props }: Checkbo
       type="button"
       aria-pressed={checked}
       onClick={() => onChange(!checked)}
-      className="flex items-center gap-2"
+      className="flex cursor-pointer items-center gap-2"
       {...props}
     >
-      <span className={checked ? "text-black" : "text-gray-500"}>
+      <span
+        className={`flex size-6 shrink-0 items-center justify-center rounded-md ${
+          checked ? "bg-secondary-500 text-white" : "border border-gray-400"
+        }`}
+      >
         <Check checked={checked} />
       </span>
       <span className="text-body-2 text-gray-600">{label}</span>
