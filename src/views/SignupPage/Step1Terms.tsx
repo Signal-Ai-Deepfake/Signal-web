@@ -1,6 +1,8 @@
 import Button from "@/shared/ui/Button";
 import StepHeader from "@/shared/ui/StepHeader";
 import TermsRow from "@/shared/ui/TermsRow";
+import PrivacyPolicyContent from "./PrivacyPolicyContent";
+import TermsOfServiceContent from "./TermsOfServiceContent";
 
 interface Step1TermsProps {
   agreeTerms: boolean;
@@ -33,12 +35,19 @@ export default function Step1Terms({
           />
         </div>
         <div className="flex flex-col divide-y divide-gray-300 overflow-hidden rounded-lg border border-gray-300">
-          <TermsRow label="이용약관 동의" required checked={agreeTerms} onChange={onAgreeTermsChange} />
+          <TermsRow
+            label="이용약관 동의"
+            required
+            checked={agreeTerms}
+            onChange={onAgreeTermsChange}
+            content={<TermsOfServiceContent />}
+          />
           <TermsRow
             label="개인정보 처리방침 동의"
             required
             checked={agreePrivacy}
             onChange={onAgreePrivacyChange}
+            content={<PrivacyPolicyContent />}
           />
         </div>
       </div>
