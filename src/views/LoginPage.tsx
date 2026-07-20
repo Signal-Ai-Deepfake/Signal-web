@@ -65,7 +65,12 @@ export default function LoginPage() {
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between">
               <Checkbox checked={keepLoggedIn} onChange={setKeepLoggedIn} label="로그인 상태 유지" />
-              <button type="button" className="text-body-2 cursor-pointer text-gray-600">
+              <button
+                type="button"
+                disabled
+                title="아직 지원하지 않는 기능입니다."
+                className="text-body-2 cursor-not-allowed text-gray-400"
+              >
                 비밀번호를 잊으셨나요?
               </button>
             </div>

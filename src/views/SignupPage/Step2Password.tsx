@@ -61,6 +61,9 @@ export default function Step2Password({
         placeholder="비밀번호를 입력해 주세요."
         value={password}
         onChange={(event) => onPasswordChange(event.target.value)}
+        error={
+          password.length > 0 && password.length < 8 ? "비밀번호는 8자 이상이어야 합니다." : undefined
+        }
         rightSlot={
           <button
             type="button"

@@ -46,6 +46,12 @@ export default function SignupPage() {
     return () => clearInterval(timer);
   }, [codeSent]);
 
+  useEffect(() => {
+    return () => {
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+    };
+  }, [photoPreview]);
+
   function handleAgreeAll(next: boolean) {
     setAgreeTerms(next);
     setAgreePrivacy(next);
@@ -73,10 +79,10 @@ export default function SignupPage() {
   }
 
   const canProceedStep1 = agreeTerms && agreePrivacy;
-  const canVerifyCode = code.length === 6;
+  const canVerifyCode = codeSent && secondsLeft > 0 && code.length === 6;
   const showResendHint = codeSent && secondsLeft <= CODE_DURATION_SECONDS - 10;
   const canProceedStep2 =
-    password.length > 0 && passwordConfirm.length > 0 && password === passwordConfirm;
+    password.length >= 8 && passwordConfirm.length > 0 && password === passwordConfirm;
   const canProceedStep3 = name.trim().length > 0 && birthDate.length > 0;
 
   if (step === 1) {

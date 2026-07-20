@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { ComponentType, InputHTMLAttributes, ReactNode } from "react";
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -14,11 +15,17 @@ export default function Input({
   rightSlot,
   className = "",
   disabled,
+  id,
   ...props
 }: InputProps) {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+
   return (
     <div className="flex w-full flex-col items-start gap-2">
-      <label className="text-body-2 px-1 text-black">{label}</label>
+      <label htmlFor={inputId} className="text-body-2 px-1 text-black">
+        {label}
+      </label>
       <div className="flex w-full flex-col items-start">
         <div
           className={`flex h-[52px] w-full items-center gap-2 rounded-lg border p-3 transition-colors ${
@@ -35,6 +42,7 @@ export default function Input({
             </span>
           )}
           <input
+            id={inputId}
             disabled={disabled}
             className={`text-body-2 placeholder:text-gray-600 min-w-0 flex-1 text-black outline-none disabled:text-black disabled:cursor-default ${className}`}
             {...props}
