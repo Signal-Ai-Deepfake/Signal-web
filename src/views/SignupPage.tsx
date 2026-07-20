@@ -13,6 +13,7 @@ import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import LockOutline from "@/shared/asset/svg/LockOutline";
 import Mail from "@/shared/asset/svg/Mail";
 import User from "@/shared/asset/svg/User";
+import Warning from "@/shared/asset/svg/Warning";
 import Button from "@/shared/ui/Button";
 import Input from "@/shared/ui/Input";
 import LinkButton from "@/shared/ui/LinkButton";
@@ -40,18 +41,26 @@ function TermsRow({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <div className="flex w-full items-center justify-between bg-white px-6 py-4">
-      <button type="button" onClick={() => onChange(!checked)} className="flex items-center gap-4">
-        <span className={checked ? "text-black" : "text-gray-500"}>
+    <div className="flex w-full items-center justify-between bg-white px-5 py-3">
+      <button
+        type="button"
+        onClick={() => onChange(!checked)}
+        className="flex cursor-pointer items-center gap-3"
+      >
+        <span
+          className={`flex size-6 shrink-0 items-center justify-center rounded-md ${
+            checked ? "bg-secondary-500 text-white" : "border border-gray-400"
+          }`}
+        >
           <Check checked={checked} />
         </span>
-        <span className="text-body-1 text-black">
+        <span className="text-body-2 text-black">
           {label}
           {required && <span className="text-secondary-500"> (필수)</span>}
         </span>
       </button>
       {required && (
-        <span className="rotate-90 text-gray-500 [&>svg]:h-3 [&>svg]:w-3">
+        <span className="rotate-90 text-gray-700 [&>svg]:h-6 [&>svg]:w-3">
           <Arrow />
         </span>
       )}
@@ -64,7 +73,7 @@ function PrevButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="text-body-2 flex h-[50px] flex-1 items-center justify-center rounded border border-gray-400 text-gray-600"
+      className="text-body-2 flex h-11 cursor-pointer items-center justify-center rounded border border-gray-400 text-gray-600"
     >
       이전
     </button>
@@ -73,11 +82,11 @@ function PrevButton({ onClick }: { onClick: () => void }) {
 
 function StepFooter() {
   return (
-    <div className="flex w-full flex-col items-center gap-6">
+    <div className="flex w-full flex-col items-center gap-5">
       <div className="h-px w-full bg-gray-300" />
-      <p className="text-body-1">
+      <p className="text-body-2">
         <span className="text-gray-650">이미 계정이 있으신가요? </span>
-        <Link href="/login" className="text-secondary-500 underline">
+        <Link href="/login" className="text-secondary-500 cursor-pointer underline">
           로그인
         </Link>
       </p>
@@ -95,15 +104,11 @@ function GenderOption({
   onSelect: () => void;
 }) {
   return (
-    <button type="button" onClick={onSelect} className="flex items-center gap-4">
-      <span
-        className={`flex size-6 shrink-0 items-center justify-center rounded-full border-2 ${
-          selected ? "border-primary-500" : "border-gray-400"
-        }`}
-      >
-        {selected && <span className="bg-primary-500 size-3 rounded-full" />}
+    <button type="button" onClick={onSelect} className="flex cursor-pointer items-center gap-3">
+      <span className="flex size-5 shrink-0 items-center justify-center rounded-full border-2 border-gray-400">
+        {selected && <span className="bg-secondary-500 size-2.5 rounded-full" />}
       </span>
-      <span className="text-body-1 text-black">{label}</span>
+      <span className="text-body-2 text-black">{label}</span>
     </button>
   );
 }
@@ -116,16 +121,16 @@ interface StepHeaderProps {
 function StepHeader({ title, description }: StepHeaderProps) {
   return (
     <div className="flex w-full flex-col items-center gap-2 text-center">
-      <h1 className="text-h2 font-bold text-black">{title}</h1>
-      {description && <p className="text-body-1 text-gray-800">{description}</p>}
+      <h1 className="text-h3 font-bold text-black">{title}</h1>
+      {description && <p className="text-body-2 text-gray-800">{description}</p>}
     </div>
   );
 }
 
 function StepShell({ step, children }: { step: number; children: ReactNode }) {
   return (
-    <div className="flex w-full max-w-[560px] flex-col gap-6 rounded-2xl bg-white px-16 py-10 shadow-md">
-      <div className="flex w-full flex-col items-center gap-12">
+    <div className="flex w-full max-w-[480px] flex-col gap-5 rounded-2xl bg-white px-12 py-8 shadow-md">
+      <div className="flex w-full flex-col items-center gap-8">
         <StepIndicator total={TOTAL_STEPS} current={step} />
         {children}
       </div>
@@ -189,6 +194,7 @@ export default function SignupPage() {
 
   const canProceedStep1 = agreeTerms && agreePrivacy;
   const canVerifyCode = code.length === 6;
+  const showResendHint = codeSent && secondsLeft <= CODE_DURATION_SECONDS - 10;
   const canProceedStep2 =
     password.length > 0 && passwordConfirm.length > 0 && password === passwordConfirm;
   const canProceedStep3 = name.trim().length > 0 && birthDate.length > 0;
@@ -198,15 +204,15 @@ export default function SignupPage() {
       <AuthPageShell>
         <StepShell step={1}>
           <StepHeader title="약관에 동의해 주세요" description="서비스 이용을 위해 약관에 동의해 주세요." />
-          <div className="flex w-full flex-col gap-4">
-            <div className="rounded-lg border border-gray-300">
+          <div className="flex w-full flex-col gap-3">
+            <div className="overflow-hidden rounded-lg border border-gray-300">
               <TermsRow
                 label="전체 동의"
                 checked={agreeTerms && agreePrivacy}
                 onChange={handleAgreeAll}
               />
             </div>
-            <div className="flex flex-col divide-y divide-gray-300 rounded-lg border border-gray-300">
+            <div className="flex flex-col divide-y divide-gray-300 overflow-hidden rounded-lg border border-gray-300">
               <TermsRow label="이용약관 동의" required checked={agreeTerms} onChange={setAgreeTerms} />
               <TermsRow
                 label="개인정보 처리방침 동의"
@@ -240,14 +246,14 @@ export default function SignupPage() {
               emailVerified ? "사용할 비밀번호를 설정해 주세요." : "이메일로 받은 인증번호를 입력해 주세요."
             }
           />
-          <div className="flex w-full flex-col gap-4">
+          <div className="flex w-full flex-col gap-3">
             {!emailVerified ? (
               <>
                 <div className="flex w-full flex-col gap-2">
-                  <label className="text-body-1 px-1 text-black">이메일</label>
-                  <div className="flex w-full items-center gap-4">
-                    <div className="flex h-[60px] flex-1 items-center gap-3 rounded-lg border border-gray-400 p-4">
-                      <span className="text-gray-600 shrink-0 [&>svg]:h-6 [&>svg]:w-6">
+                  <label className="text-body-2 px-1 text-black">이메일</label>
+                  <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                    <div className="focus-within:border-secondary-500 flex h-[52px] w-full items-center gap-2 rounded-lg border border-gray-400 p-3 transition-colors sm:w-[244px] sm:shrink-0">
+                      <span className="text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5">
                         <Mail />
                       </span>
                       <input
@@ -255,13 +261,13 @@ export default function SignupPage() {
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                         placeholder="이메일을 입력해 주세요."
-                        className="text-body-1 placeholder:text-gray-600 min-w-0 flex-1 text-black outline-none"
+                        className="text-body-2 placeholder:text-gray-600 min-w-0 flex-1 text-black outline-none"
                       />
                     </div>
                     <Button
                       type="button"
                       variant="primary"
-                      className="h-[60px] w-44 shrink-0 whitespace-nowrap"
+                      className="text-small h-[52px] w-full text-center leading-tight sm:w-[128px] sm:shrink-0"
                       disabled={!email}
                       onClick={handleSendCode}
                     >
@@ -287,12 +293,22 @@ export default function SignupPage() {
                     )
                   }
                 />
-                <div className="flex w-full gap-2">
+                {showResendHint && (
+                  <div className="bg-secondary-50 border-secondary-200 flex h-[60px] animate-[fade-in-up_0.25s_ease-out] items-center gap-2.5 rounded-lg border p-4">
+                    <span className="text-secondary-500 shrink-0 [&>svg]:h-5 [&>svg]:w-5">
+                      <Warning />
+                    </span>
+                    <p className="text-body-2 text-secondary-500">
+                      이메일이 오지 않나요? 스팸함을 확인해주세요.
+                    </p>
+                  </div>
+                )}
+                <div className="grid w-full grid-cols-2 gap-2">
                   <PrevButton onClick={() => setStep(1)} />
                   <Button
                     type="button"
                     variant="primary"
-                    className="h-[50px] flex-1"
+                    className="h-11"
                     disabled={!canVerifyCode}
                     onClick={handleVerifyCode}
                   >
@@ -315,7 +331,7 @@ export default function SignupPage() {
                         setCodeSent(false);
                         setCode("");
                       }}
-                      className="text-small text-gray-600 shrink-0"
+                      className="text-small cursor-pointer text-gray-600 shrink-0"
                     >
                       변경
                     </button>
@@ -332,7 +348,7 @@ export default function SignupPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword((prev) => !prev)}
-                      className="text-gray-600 shrink-0 [&>svg]:h-6 [&>svg]:w-6"
+                      className="cursor-pointer text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5"
                       aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
                     >
                       {showPassword ? <Eye /> : <EyeOff />}
@@ -355,19 +371,19 @@ export default function SignupPage() {
                     <button
                       type="button"
                       onClick={() => setShowPasswordConfirm((prev) => !prev)}
-                      className="text-gray-600 shrink-0 [&>svg]:h-6 [&>svg]:w-6"
+                      className="cursor-pointer text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5"
                       aria-label={showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 표시"}
                     >
                       {showPasswordConfirm ? <Eye /> : <EyeOff />}
                     </button>
                   }
                 />
-                <div className="flex w-full gap-2">
+                <div className="grid w-full grid-cols-2 gap-2">
                   <PrevButton onClick={() => setEmailVerified(false)} />
                   <Button
                     type="button"
                     variant="primary"
-                    className="h-[50px] flex-1"
+                    className="h-11"
                     disabled={!canProceedStep2}
                     onClick={() => setStep(3)}
                   >
@@ -387,7 +403,7 @@ export default function SignupPage() {
       <AuthPageShell>
         <StepShell step={3}>
           <StepHeader title="기본 정보 입력" description="서비스 이용을 위한 기본 정보를 입력해 주세요." />
-          <div className="flex w-full flex-col gap-4">
+          <div className="flex w-full flex-col gap-3">
             <Input
               label="이름"
               icon={User}
@@ -403,8 +419,8 @@ export default function SignupPage() {
               onChange={(event) => setBirthDate(event.target.value)}
             />
             <div className="flex w-full flex-col gap-2">
-              <label className="text-body-1 px-1 text-black">성별</label>
-              <div className="flex items-center gap-10">
+              <label className="text-body-2 px-1 text-black">성별</label>
+              <div className="flex items-center gap-8">
                 {(["남", "여", "선택 안함"] as const).map((option) => (
                   <GenderOption
                     key={option}
@@ -415,12 +431,12 @@ export default function SignupPage() {
                 ))}
               </div>
             </div>
-            <div className="flex w-full gap-2 pt-4">
+            <div className="grid w-full grid-cols-2 gap-2 pt-3">
               <PrevButton onClick={() => setStep(2)} />
               <Button
                 type="button"
                 variant="primary"
-                className="h-[50px] flex-1"
+                className="h-11"
                 disabled={!canProceedStep3}
                 onClick={() => setStep(4)}
               >
@@ -438,18 +454,18 @@ export default function SignupPage() {
       <AuthPageShell>
         <StepShell step={4}>
           <StepHeader title="프로필 설정" />
-          <div className="flex w-full flex-col items-center gap-10">
-            <div className="bg-gray-200 flex size-40 items-center justify-center overflow-hidden rounded-full">
+          <div className="flex w-full flex-col items-center gap-8">
+            <div className="bg-gray-200 flex size-32 items-center justify-center overflow-hidden rounded-full">
               {photoPreview ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={photoPreview} alt="" className="size-full object-cover" />
               ) : (
-                <span className="text-gray-400 [&>svg]:h-[109px] [&>svg]:w-[109px]">
+                <span className="text-gray-400 [&>svg]:h-[88px] [&>svg]:w-[88px]">
                   <User />
                 </span>
               )}
             </div>
-            <div className="flex w-full max-w-[274px] flex-col items-center gap-4">
+            <div className="flex w-full max-w-[240px] flex-col items-center gap-3">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -460,26 +476,26 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="border-secondary-500 text-secondary-500 flex w-full items-center justify-center gap-4 rounded border px-6 py-3"
+                className="border-secondary-500 text-secondary-500 flex w-full cursor-pointer items-center justify-center gap-3 rounded border px-5 py-2.5"
               >
-                <span className="[&>svg]:h-6 [&>svg]:w-6">
+                <span className="[&>svg]:h-5 [&>svg]:w-5">
                   <ImageArrowUp />
                 </span>
                 <span className="text-body-2 font-medium">사진 업로드</span>
               </button>
-              <p className="text-body-1 text-gray-650 text-center">
+              <p className="text-body-2 text-gray-650 text-center">
                 지금 등록하지 않아도
                 <br />
                 나중에 언제든 추가할 수 있습니다.
               </p>
             </div>
           </div>
-          <div className="flex w-full gap-2">
+          <div className="grid w-full grid-cols-2 gap-2">
             <PrevButton onClick={() => setStep(3)} />
             <Button
               type="button"
               variant="primary"
-              className="h-[50px] flex-1"
+              className="h-11"
               onClick={() => setStep(5)}
             >
               다음
@@ -492,13 +508,13 @@ export default function SignupPage() {
 
   return (
     <AuthPageShell>
-      <div className="flex w-full max-w-[560px] flex-col items-center gap-6 rounded-2xl bg-white px-16 py-10 shadow-md">
-        <div className="text-secondary-500 [&>svg]:h-16 [&>svg]:w-16">
+      <div className="flex w-full max-w-[480px] flex-col items-center gap-5 rounded-2xl bg-white px-12 py-8 shadow-md">
+        <div className="text-secondary-500 [&>svg]:h-14 [&>svg]:w-14">
           <CheckCircle />
         </div>
-        <div className="flex flex-col items-center gap-4 text-center">
-          <h1 className="text-h2 font-bold text-black">회원가입 완료</h1>
-          <p className="text-body-1 text-gray-800">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <h1 className="text-h3 font-bold text-black">회원가입 완료</h1>
+          <p className="text-body-2 text-gray-800">
             회원가입이 완료되었습니다.
             <br />
             로그인 후 서비스를 이용해주세요.
