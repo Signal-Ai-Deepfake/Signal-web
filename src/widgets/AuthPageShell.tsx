@@ -5,7 +5,7 @@ import Sparkle from "@/shared/asset/svg/Sparkle";
 export default function AuthPageShell({ children }: { children: ReactNode }) {
   return (
     <div
-      className="relative min-h-screen w-full overflow-hidden"
+      className="relative flex min-h-screen w-full flex-col overflow-hidden"
       style={{
         backgroundImage: "linear-gradient(110deg, #ffffff 49%, var(--color-secondary-50) 96%)",
       }}
@@ -51,7 +51,7 @@ export default function AuthPageShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="relative flex items-center justify-center px-5 py-16">{children}</main>
+      <main className="relative flex flex-1 items-center justify-center px-5 py-16">{children}</main>
     </div>
   );
 }
