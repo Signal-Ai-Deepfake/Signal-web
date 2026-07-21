@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import Footer from "@/widgets/Footer";
-import HeaderAuthenticated from "@/widgets/HeaderAuthenticated";
+import SiteHeader from "@/widgets/SiteHeader";
 import ReportHero from "./ReportHero";
 import Step1TypeSelect from "./Step1TypeSelect";
 import type { DamageType } from "./Step1TypeSelect";
@@ -39,7 +39,7 @@ export default function ReportPage() {
 
   return (
     <>
-      <HeaderAuthenticated />
+      <SiteHeader />
       <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
         <div className="flex w-full max-w-[960px] flex-col items-start gap-8">
           <div className="w-full animate-[fade-in-up_0.4s_ease-out]">

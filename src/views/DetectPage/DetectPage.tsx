@@ -6,7 +6,7 @@ import Arrow from "@/shared/asset/svg/Arrow";
 import AnalysisGuideCard from "@/shared/ui/AnalysisGuideCard";
 import Button from "@/shared/ui/Button";
 import Footer from "@/widgets/Footer";
-import HeaderAuthenticated from "@/widgets/HeaderAuthenticated";
+import SiteHeader from "@/widgets/SiteHeader";
 import DetectResultSection from "./DetectResultSection";
 import DetectUploadCard from "./DetectUploadCard";
 import { MOCK_RESULT } from "./mockResult";
@@ -41,7 +41,7 @@ export default function DetectPage() {
 
   return (
     <>
-      <HeaderAuthenticated />
+      <SiteHeader />
       <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col items-end gap-6">
           <div className="flex w-full flex-col items-start gap-12">
