@@ -114,15 +114,8 @@
 }
 
 :root {
-  --background: var(--color-gray-50);
+  --background: #ffffff;
   --foreground: var(--color-gray-900);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: var(--color-gray-900);
-    --foreground: var(--color-gray-50);
-  }
 }
 
 body {
