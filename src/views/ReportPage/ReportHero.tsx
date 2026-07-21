@@ -10,7 +10,7 @@ export default function ReportHero() {
           <Link href="/" className="text-body-1 text-gray-800">
             홈
           </Link>
-          <span className="text-gray-800 [&>svg]:h-3 [&>svg]:w-3">
+          <span className="text-gray-800 [&>svg]:h-[18px] [&>svg]:w-[18px]">
             <Arrow />
           </span>
           <span className="text-body-1 text-primary-500">신고 지원</span>
