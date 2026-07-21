@@ -35,7 +35,7 @@ export default function WhySignalSection() {
   return (
     <section className="w-full bg-white">
       <FrameScale>
-        <div className="mx-auto flex w-full max-w-[1360px] flex-col items-center justify-center gap-10 px-5">
+        <div className="mx-auto flex w-full max-w-[1360px] flex-col items-center justify-center gap-10 px-5 py-20 lg:py-24">
           <ScrollReveal className="flex flex-col items-center gap-4 text-center">
             <SectionBadge>WHY SIGNAL</SectionBadge>
             <h2 className="text-h2 font-bold">

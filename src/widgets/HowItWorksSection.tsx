@@ -61,7 +61,7 @@ export default function HowItWorksSection() {
           height={824}
           className="pointer-events-none absolute -top-60 -left-60 h-[824px] w-[824px]"
         />
-        <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-16 px-5">
+        <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-16 px-5 py-20 lg:py-24">
           <div className="flex flex-col items-center gap-8">
             <ScrollReveal className="flex flex-col items-center gap-4 text-center">
               <SectionBadge>HOW IT WORKS</SectionBadge>

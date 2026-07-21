@@ -23,7 +23,7 @@ export default function HeroSection() {
           height={824}
           className="pointer-events-none absolute -top-96 left-24 h-[824px] w-[824px]"
         />
-        <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-16 px-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-16 px-5 py-24 lg:flex-row lg:items-center lg:justify-between lg:py-32">
           <ScrollReveal className="flex w-fit flex-col items-start gap-6">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-1">
