@@ -29,7 +29,12 @@ const navItems = [
   {
     label: "신고 지원",
     items: [
-      { icon: Message, title: "익명 상담 챗봇", description: "AI 상담 챗봇이 24시간 상담해요." },
+      {
+        icon: Message,
+        title: "익명 상담 챗봇",
+        description: "AI 상담 챗봇이 24시간 상담해요.",
+        href: "/chat",
+      },
       {
         icon: FileText,
         title: "신고 지원",
@@ -55,12 +60,15 @@ export default function HeaderNav() {
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpenIndex(null);
     };
+    const closeOnScroll = () => setOpenIndex(null);
 
     document.addEventListener("pointerdown", closeOnOutsideClick);
     document.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("scroll", closeOnScroll, { passive: true });
     return () => {
       document.removeEventListener("pointerdown", closeOnOutsideClick);
       document.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("scroll", closeOnScroll);
     };
   }, [openIndex]);
 

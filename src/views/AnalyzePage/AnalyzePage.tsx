@@ -11,7 +11,7 @@ import ScanFace from "@/shared/asset/svg/ScanFace";
 import type { RiskFactor } from "@/shared/ui/RiskFactorCard";
 import UploadGuideCard from "@/shared/ui/UploadGuideCard";
 import Footer from "@/widgets/Footer";
-import HeaderAuthenticated from "@/widgets/HeaderAuthenticated";
+import SiteHeader from "@/widgets/SiteHeader";
 import AnalysisPanel from "./AnalysisPanel";
 import ResultDetails from "./ResultDetails";
 import UploadCard from "./UploadCard";
@@ -101,7 +101,7 @@ export default function AnalyzePage() {
 
   return (
     <>
-      <HeaderAuthenticated />
+      <SiteHeader />
       <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col items-start gap-6">
           <div className="flex items-center gap-4">

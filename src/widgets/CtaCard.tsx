@@ -2,7 +2,7 @@ import Image from "next/image";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import Lock from "@/shared/asset/svg/Lock";
 import Sparkle from "@/shared/asset/svg/Sparkle";
-import Button from "@/shared/ui/Button";
+import LinkButton from "@/shared/ui/LinkButton";
 
 export default function CtaCard() {
   return (
@@ -25,12 +25,12 @@ export default function CtaCard() {
             AI 분석부터 익명 상담, 신고 지원까지 한 곳에서 이용해 보세요.
           </p>
         </div>
-        <Button variant="primary" className="gap-1">
+        <LinkButton href="/chat" variant="primary" className="gap-1">
           익명 상담 시작하기
           <span className="[&>svg]:h-6 [&>svg]:w-6">
             <ArrowUp />
           </span>
-        </Button>
+        </LinkButton>
         <div className="flex items-center gap-1 text-gray-800">
           <span className="[&>svg]:h-6 [&>svg]:w-6">
             <Lock />

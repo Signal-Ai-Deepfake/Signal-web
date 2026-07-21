@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Logo from "@/shared/asset/svg/Logo";
 import User from "@/shared/asset/svg/User";
+import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 import HeaderNav from "@/widgets/HeaderNav";
 
 interface HeaderAuthenticatedProps {
@@ -19,6 +20,7 @@ export default function HeaderAuthenticated({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const hidden = useHideOnScroll();
 
   useEffect(() => {
     if (!open) return;
@@ -47,7 +49,11 @@ export default function HeaderAuthenticated({
   }
 
   return (
-    <header className="relative w-full border-b border-gray-300 bg-white">
+    <header
+      className={`sticky top-0 z-30 w-full border-b border-gray-300 bg-white transition-transform duration-300 ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <div className="mx-auto grid h-20 max-w-[1280px] grid-cols-[1fr_auto_1fr] items-center px-5">
         <Logo />
         <HeaderNav />
