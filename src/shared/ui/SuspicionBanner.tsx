@@ -22,7 +22,7 @@ export default function SuspicionBanner({ status }: SuspicionBannerProps) {
   const { label, icon: Icon, className } = statusStyle[status];
 
   return (
-    <div className={`flex h-[60px] w-[336px] items-center gap-3 rounded-lg px-5 ${className}`}>
+    <div className={`flex h-[60px] w-full items-center gap-3 rounded-lg px-5 ${className}`}>
       <div className="shrink-0 [&>svg]:h-8 [&>svg]:w-8">
         <Icon />
       </div>
