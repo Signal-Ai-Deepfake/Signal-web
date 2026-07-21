@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Logo from "@/shared/asset/svg/Logo";
 import User from "@/shared/asset/svg/User";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 import HeaderNav from "@/widgets/HeaderNav";
+
+const myMenuItems = [{ label: "내 프로필", href: "/mypage/profile" }];
 
 interface HeaderAuthenticatedProps {
   userName?: string;
@@ -81,7 +84,18 @@ export default function HeaderAuthenticated({
             </span>
           </button>
           {open && (
-            <div className="absolute top-full right-0 z-20 mt-2 w-[160px] animate-[fade-in-up_0.2s_ease-out] rounded-xl border border-gray-200 bg-white p-2 shadow-lg">
+            <div className="absolute top-full right-0 z-20 mt-2 w-[180px] animate-[fade-in-up_0.2s_ease-out] rounded-xl border border-gray-200 bg-white p-2 shadow-lg">
+              {myMenuItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className="text-body-2 block w-full rounded-lg px-3 py-2.5 text-left text-black transition-colors hover:bg-gray-100 active:bg-gray-200"
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <div className="my-1 h-px w-full bg-gray-300" />
               <button
                 type="button"
                 onClick={handleLogout}
