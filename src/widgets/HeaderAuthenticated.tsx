@@ -12,6 +12,7 @@ import HeaderNav from "@/widgets/HeaderNav";
 const myMenuItems = [
   { label: "내 프로필", href: "/mypage/profile" },
   { label: "대화 내역", href: "/mypage/chats" },
+  { label: "신고 문서 내역", href: "/mypage/reports" },
 ];
 
 interface HeaderAuthenticatedProps {
