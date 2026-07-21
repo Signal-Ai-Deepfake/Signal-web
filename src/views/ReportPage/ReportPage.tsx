@@ -10,6 +10,8 @@ import type { DamageType } from "./Step1TypeSelect";
 import Step2Details from "./Step2Details";
 import type { ReportDetails } from "./Step2Details";
 import Step3Draft from "./Step3Draft";
+import type { DraftSection } from "./Step3Draft";
+import Step4Generated from "./Step4Generated";
 
 const emptyDetails: ReportDetails = {
   incidentDate: "",
@@ -24,9 +26,15 @@ export default function ReportPage() {
   const [damageType, setDamageType] = useState<DamageType | null>(null);
   const [details, setDetails] = useState<ReportDetails>(emptyDetails);
   const [evidenceFileName, setEvidenceFileName] = useState<string | null>(null);
+  const [generatedSections, setGeneratedSections] = useState<DraftSection[]>([]);
 
-  function handleSubmit() {
-    toast.success("신고 문서가 생성되었습니다.");
+  function handleSubmit(sections: DraftSection[]) {
+    setGeneratedSections(sections);
+    setStep(4);
+  }
+
+  function handleFindAgency() {
+    toast.success("적합한 신고 기관을 확인하는 기능은 준비 중입니다.");
   }
 
   return (
@@ -62,6 +70,13 @@ export default function ReportPage() {
                 evidenceFileName={evidenceFileName}
                 onBack={() => setStep(2)}
                 onSubmit={handleSubmit}
+              />
+            )}
+            {step === 4 && (
+              <Step4Generated
+                sections={generatedSections}
+                onBack={() => setStep(3)}
+                onFindAgency={handleFindAgency}
               />
             )}
           </div>
