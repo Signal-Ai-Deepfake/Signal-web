@@ -17,7 +17,12 @@ const navItems = [
         title: "얼굴 도용·딥페이크 탐지",
         description: "얼굴 도용 및 딥페이크 여부를 확인해요.",
       },
-      { icon: Image, title: "AI 이미지 분석", description: "사진의 위험도를 분석해요." },
+      {
+        icon: Image,
+        title: "AI 이미지 분석",
+        description: "사진의 위험도를 분석해요.",
+        href: "/analyze",
+      },
     ],
   },
   {

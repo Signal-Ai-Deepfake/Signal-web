@@ -2,6 +2,8 @@ import Bot from "@/shared/asset/svg/Bot";
 import Chart from "@/shared/asset/svg/Chart";
 import Cpu from "@/shared/asset/svg/Cpu";
 import FileText from "@/shared/asset/svg/FileText";
+import Hd from "@/shared/asset/svg/Hd";
+import IdCard from "@/shared/asset/svg/IdCard";
 import Image from "@/shared/asset/svg/Image";
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import ImageSearch from "@/shared/asset/svg/ImageSearch";
@@ -17,6 +19,8 @@ import AnalysisStepStack from "@/shared/ui/AnalysisStepStack";
 import FeatureCard from "@/shared/ui/FeatureCard";
 import InfoCard from "@/shared/ui/InfoCard";
 import PhotoResetButton from "@/shared/ui/PhotoResetButton";
+import RecommendationCard from "@/shared/ui/RecommendationCard";
+import RiskFactorCard from "@/shared/ui/RiskFactorCard";
 import RiskTag from "@/shared/ui/RiskTag";
 import ServiceCard from "@/shared/ui/ServiceCard";
 import ServiceCategory from "@/shared/ui/ServiceCategory";
@@ -208,6 +212,25 @@ export default function PreviewPage() {
         level="안전"
         message="현재 이미지는 안전합니다."
       />
+      <div className="grid w-full max-w-[1216px] grid-cols-2 gap-6">
+        <RiskFactorCard
+          factors={[
+            { icon: ScanFace, title: "얼굴 노출 정도", subtitle: "얼굴 식별 가능성", score: 80 },
+            { icon: Image, title: "배경 정보 노출", subtitle: "위치 추정 가능성", score: 30 },
+            { icon: IdCard, title: "개인정보 노출", subtitle: "개인정보 포함 여부", score: 68 },
+            { icon: Hd, title: "이미지 해상도", subtitle: "세부 정보 식별 수준", score: 80 },
+          ]}
+        />
+        <RecommendationCard
+          items={[
+            "얼굴이 선명하게 노출되어 있어 AI 악용 가능성이 높습니다.",
+            "얼굴 각도를 조금 변경하거나 얼굴 크기를 줄여 촬영하면 위험도를 낮출 수 있습니다.",
+            "배경 정보와 이미지 해상도는 안전한 수준으로 분석되었습니다.",
+            "SNS 업로드 전 이미지 보호 처리를 적용하는 것을 권장합니다.",
+          ]}
+          aiNote="얼굴 노출 위험이 높습니다. 이미지 보호를 권장합니다."
+        />
+      </div>
     </main>
   );
 }

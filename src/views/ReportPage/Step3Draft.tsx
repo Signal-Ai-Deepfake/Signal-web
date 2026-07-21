@@ -11,7 +11,7 @@ interface Step3DraftProps {
   details: ReportDetails;
   evidenceFileName: string | null;
   onBack: () => void;
-  onSubmit: (draftText: string) => void;
+  onSubmit: (sections: DraftSection[]) => void;
 }
 
 function formatDate(value: string) {
@@ -21,7 +21,7 @@ function formatDate(value: string) {
   return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 }
 
-interface DraftSection {
+export interface DraftSection {
   title: string;
   body: string;
 }
@@ -136,13 +136,7 @@ export default function Step3Draft({
         >
           이전
         </button>
-        <Button
-          type="button"
-          variant="primary"
-          onClick={() =>
-            onSubmit(sections.map((section) => `${section.title}\n${section.body}`).join("\n\n"))
-          }
-        >
+        <Button type="button" variant="primary" onClick={() => onSubmit(sections)}>
           신고 문서 생성하기
         </Button>
       </div>

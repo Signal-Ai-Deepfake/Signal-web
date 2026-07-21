@@ -1,13 +1,22 @@
 "use client";
 
-import { useRef } from "react";
-import type { ChangeEvent } from "react";
+import { useRef, useState } from "react";
+import type { ChangeEvent, DragEvent } from "react";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import Calendar from "@/shared/asset/svg/Calendar";
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import Button from "@/shared/ui/Button";
 import Input from "@/shared/ui/Input";
 import ReportSectionCard from "./ReportSectionCard";
+
+function isValidUrl(value: string) {
+  const candidate = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  try {
+    return new URL(candidate).hostname.includes(".");
+  } catch {
+    return false;
+  }
+}
 
 export interface ReportDetails {
   incidentDate: string;
@@ -63,13 +72,36 @@ export default function Step2Details({
   onNext,
 }: Step2DetailsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     onEvidenceChange(file ? file.name : null);
   }
 
+  function handleDragOver(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setIsDragging(true);
+  }
+
+  function handleDragLeave(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setIsDragging(false);
+  }
+
+  function handleDrop(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setIsDragging(false);
+    const file = event.dataTransfer.files?.[0];
+    if (!file) return;
+    onEvidenceChange(file.name);
+  }
+
   const canProceed = details.description.trim().length > 0;
+  const urlError =
+    details.url.trim().length > 0 && !isValidUrl(details.url)
+      ? "올바른 URL 형식으로 입력해 주세요."
+      : undefined;
 
   return (
     <div className="flex w-full flex-col gap-8">
@@ -98,9 +130,11 @@ export default function Step2Details({
             </div>
             <Input
               label="발견한 원본 URL"
+              type="url"
               placeholder="피해 게시물이나 계정 주소를 붙여 넣어 주세요."
               value={details.url}
               onChange={(event) => onChange({ ...details, url: event.target.value })}
+              error={urlError}
             />
           </div>
 
@@ -126,7 +160,14 @@ export default function Step2Details({
             <p className="text-caption text-gray-800">
               캡처 이미지나 영상을 첨부하면 피해 확인에 도움이 됩니다.
             </p>
-            <div className="flex w-full flex-col items-center gap-6 rounded-2xl border border-gray-300 px-3 py-6">
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`flex w-full flex-col items-center gap-6 rounded-2xl border-2 border-dashed px-3 py-6 transition-colors ${
+                isDragging ? "border-primary-500 bg-primary-50" : "border-gray-300"
+              }`}
+            >
               <div className="flex flex-col items-center gap-2">
                 <span className="text-black [&>svg]:h-12 [&>svg]:w-12">
                   <ImageArrowUp />
@@ -146,7 +187,7 @@ export default function Step2Details({
               <Button
                 type="button"
                 variant="primary"
-                className="w-full"
+                className="w-[151px]"
                 onClick={() => fileInputRef.current?.click()}
               >
                 파일 찾기
