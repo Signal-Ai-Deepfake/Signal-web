@@ -9,7 +9,10 @@ import User from "@/shared/asset/svg/User";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 import HeaderNav from "@/widgets/HeaderNav";
 
-const myMenuItems = [{ label: "내 프로필", href: "/mypage/profile" }];
+const myMenuItems = [
+  { label: "내 프로필", href: "/mypage/profile" },
+  { label: "대화 내역", href: "/mypage/chats" },
+];
 
 interface HeaderAuthenticatedProps {
   userName?: string;
