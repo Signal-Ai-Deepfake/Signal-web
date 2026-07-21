@@ -1,8 +1,13 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Logo from "@/shared/asset/svg/Logo";
 import Sparkle from "@/shared/asset/svg/Sparkle";
+import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 
 export default function AuthPageShell({ children }: { children: ReactNode }) {
+  const hidden = useHideOnScroll();
+
   return (
     <div
       className="relative flex min-h-screen w-full flex-col overflow-hidden"
@@ -45,7 +50,11 @@ export default function AuthPageShell({ children }: { children: ReactNode }) {
         <Sparkle />
       </span>
 
-      <header className="relative w-full border-b border-gray-300 bg-white">
+      <header
+        className={`sticky top-0 z-30 w-full border-b border-gray-300 bg-white transition-transform duration-300 ${
+          hidden ? "-translate-y-full" : "translate-y-0"
+        }`}
+      >
         <div className="mx-auto flex h-20 max-w-[1280px] items-center px-5">
           <Logo />
         </div>
