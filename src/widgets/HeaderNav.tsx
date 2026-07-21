@@ -16,6 +16,7 @@ const navItems = [
         icon: ScanFace,
         title: "얼굴 도용·딥페이크 탐지",
         description: "얼굴 도용 및 딥페이크 여부를 확인해요.",
+        href: "/detect",
       },
       {
         icon: Image,
