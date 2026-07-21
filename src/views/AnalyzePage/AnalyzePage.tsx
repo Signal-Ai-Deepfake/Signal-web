@@ -9,12 +9,12 @@ import IdCard from "@/shared/asset/svg/IdCard";
 import Image from "@/shared/asset/svg/Image";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 import type { RiskFactor } from "@/shared/ui/RiskFactorCard";
+import UploadGuideCard from "@/shared/ui/UploadGuideCard";
 import Footer from "@/widgets/Footer";
 import HeaderAuthenticated from "@/widgets/HeaderAuthenticated";
 import AnalysisPanel from "./AnalysisPanel";
 import ResultDetails from "./ResultDetails";
 import UploadCard from "./UploadCard";
-import UploadGuideCard from "./UploadGuideCard";
 
 export type Status = "idle" | "selected" | "analyzing" | "error" | "result";
 
