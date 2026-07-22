@@ -1,8 +1,11 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { toast } from "sonner";
 import Eye from "@/shared/asset/svg/Eye";
 import EyeOff from "@/shared/asset/svg/EyeOff";
 import LockOutline from "@/shared/asset/svg/LockOutline";
@@ -11,17 +14,35 @@ import Button from "@/shared/ui/Button";
 import Checkbox from "@/shared/ui/Checkbox";
 import Input from "@/shared/ui/Input";
 import AuthPageShell from "@/widgets/AuthPageShell";
+import { login } from "@/entities/user/api";
+import { setAuthTokens } from "@/shared/lib/authToken";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
-  const canSubmit = email.length > 0 && password.length > 0;
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      setAuthTokens(data.accessToken, data.refreshToken);
+      toast.success("로그인되었습니다.");
+      router.push("/");
+    },
+    onError: (error) => {
+      toast.error("로그인에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const canSubmit = email.length > 0 && password.length > 0 && !loginMutation.isPending;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    loginMutation.mutate({ email, password });
   }
 
   return (
@@ -70,7 +91,7 @@ export default function LoginPage() {
               </Link>
             </div>
             <Button type="submit" variant="primary" className="w-full" disabled={!canSubmit}>
-              로그인 하기
+              {loginMutation.isPending ? "로그인 중..." : "로그인 하기"}
             </Button>
           </div>
         </form>

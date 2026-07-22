@@ -7,6 +7,7 @@ import Arrow from "@/shared/asset/svg/Arrow";
 import Logo from "@/shared/asset/svg/Logo";
 import User from "@/shared/asset/svg/User";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
+import { clearAuthTokens } from "@/shared/lib/authToken";
 import HeaderNav from "@/widgets/HeaderNav";
 
 const myMenuItems = [
@@ -50,7 +51,7 @@ export default function HeaderAuthenticated({
   }, [open]);
 
   function handleLogout() {
-    localStorage.removeItem("accessToken");
+    clearAuthTokens();
     setOpen(false);
     router.push("/login");
   }

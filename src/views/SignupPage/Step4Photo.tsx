@@ -11,6 +11,8 @@ interface Step4PhotoProps {
   onPhotoChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onBack: () => void;
   onNext: () => void;
+  nextDisabled?: boolean;
+  nextLabel?: string;
 }
 
 export default function Step4Photo({
@@ -19,6 +21,8 @@ export default function Step4Photo({
   onPhotoChange,
   onBack,
   onNext,
+  nextDisabled = false,
+  nextLabel = "다음",
 }: Step4PhotoProps) {
   return (
     <>
@@ -61,8 +65,14 @@ export default function Step4Photo({
       </div>
       <div className="grid w-full grid-cols-2 gap-2">
         <PrevButton onClick={onBack} />
-        <Button type="button" variant="primary" className="h-11" onClick={onNext}>
-          다음
+        <Button
+          type="button"
+          variant="primary"
+          className="h-11"
+          disabled={nextDisabled}
+          onClick={onNext}
+        >
+          {nextLabel}
         </Button>
       </div>
     </>
