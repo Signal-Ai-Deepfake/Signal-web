@@ -167,7 +167,11 @@ export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps
             </aside>
           </div>
 
-          <LinkButton href="/report" variant="primary" className="flex items-center gap-1 self-end">
+          <LinkButton
+            href="/support-referral"
+            variant="primary"
+            className="flex items-center gap-1 self-end"
+          >
             전문 기관 연결하기
             <span className="[&>svg]:h-6 [&>svg]:w-6">
               <ArrowUp />
