@@ -4,12 +4,12 @@ import { useMemo, useState } from "react";
 import BotOutline from "@/shared/asset/svg/BotOutline";
 import Button from "@/shared/ui/Button";
 import type { DamageType } from "./Step1TypeSelect";
-import type { ReportDetails } from "./Step2Details";
+import type { ReportDetails, ReportEvidence } from "./Step2Details";
 
 interface Step3DraftProps {
   damageType: DamageType;
   details: ReportDetails;
-  evidenceFileName: string | null;
+  evidence: ReportEvidence | null;
   onBack: () => void;
   onSubmit: (sections: DraftSection[]) => void;
   submitting?: boolean;
@@ -27,7 +27,13 @@ export interface DraftSection {
   body: string;
 }
 
-const shortFieldTitles = new Set(["피해 발생 시점", "피해 유형", "피해 경로", "원본 URL", "증거 목록"]);
+const shortFieldTitles = new Set([
+  "피해 발생 시점",
+  "피해 유형",
+  "피해 경로",
+  "원본 URL",
+  "증거 목록",
+]);
 
 const rowsByTitle: Record<string, number> = {
   "피해 개요": 2,
@@ -39,7 +45,7 @@ const rowsByTitle: Record<string, number> = {
 function buildDraftSections(
   damageType: DamageType,
   details: ReportDetails,
-  evidenceFileName: string | null,
+  evidence: ReportEvidence | null,
 ): DraftSection[] {
   const sections: DraftSection[] = [
     { title: "피해 개요", body: `${damageType} 피해가 발생한 것으로 보여 신고합니다.` },
@@ -52,7 +58,7 @@ function buildDraftSections(
   if (details.additionalNotes.trim()) {
     sections.push({ title: "추가 전달 사항", body: details.additionalNotes });
   }
-  sections.push({ title: "증거 목록", body: evidenceFileName ?? "첨부된 자료 없음" });
+  sections.push({ title: "증거 목록", body: evidence?.name ?? "첨부된 자료 없음" });
   sections.push({
     title: "요청 사항",
     body: "해당 게시물의 삭제, 추가 확산 방지 및 필요한 조치를 요청합니다.",
@@ -64,14 +70,14 @@ function buildDraftSections(
 export default function Step3Draft({
   damageType,
   details,
-  evidenceFileName,
+  evidence,
   onBack,
   onSubmit,
   submitting = false,
 }: Step3DraftProps) {
   const initialSections = useMemo(
-    () => buildDraftSections(damageType, details, evidenceFileName),
-    [damageType, details, evidenceFileName],
+    () => buildDraftSections(damageType, details, evidence),
+    [damageType, details, evidence],
   );
   const [sections, setSections] = useState<DraftSection[]>(initialSections);
 
@@ -134,7 +140,7 @@ export default function Step3Draft({
         <button
           type="button"
           onClick={onBack}
-          className="border-primary-500 text-primary-500 text-body-2 flex h-12 w-[124px] items-center justify-center rounded border transition-colors active:bg-primary-50"
+          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 w-[124px] items-center justify-center rounded border transition-colors"
         >
           이전
         </button>

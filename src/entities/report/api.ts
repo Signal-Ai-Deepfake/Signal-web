@@ -3,6 +3,11 @@ import { api } from "@/shared/api/axios";
 export type ReportDocumentStatus = "DRAFT" | "FINALIZED";
 export type ReportTimelineEvent = "CREATED" | "UPDATED" | "FINALIZED";
 
+export interface ReportTimelineEntry {
+  event: ReportTimelineEvent;
+  occurredAt: string;
+}
+
 export interface CreateReportRequest {
   incidentDate?: string;
   discoveryRoute?: string;
@@ -10,26 +15,15 @@ export interface CreateReportRequest {
   description?: string;
   sourceUrls?: string[];
   evidenceIds?: number[];
+  targetAgencyType?: string;
 }
 
-export interface UpdateReportRequest {
-  incidentDate?: string;
-  discoveryRoute?: string;
-  damageType?: string;
-  description?: string;
-  sourceUrls?: string[];
-  evidenceIds?: number[];
-}
+export type UpdateReportRequest = CreateReportRequest;
 
 export interface ReportStatusResponse {
   reportId: number;
   status: ReportDocumentStatus;
   documentUrl?: string;
-}
-
-export interface TimelineEntryResponse {
-  event: ReportTimelineEvent;
-  occurredAt: string;
 }
 
 export interface ReportResponse {
@@ -43,7 +37,7 @@ export interface ReportResponse {
   evidenceIds?: number[];
   targetAgencyType?: string;
   documentUrl?: string;
-  timeline?: TimelineEntryResponse[];
+  timeline: ReportTimelineEntry[];
   createdAt: string;
 }
 
@@ -52,13 +46,13 @@ export interface ReportEvidenceResponse {
   fileUrl: string;
 }
 
-export async function createReport(payload: CreateReportRequest): Promise<ReportStatusResponse> {
-  const { data } = await api.post<ReportStatusResponse>("/api/v1/reports", payload);
+export async function getMyReports(): Promise<ReportResponse[]> {
+  const { data } = await api.get<ReportResponse[]>("/api/v1/reports");
   return data;
 }
 
-export async function getMyReports(): Promise<ReportResponse[]> {
-  const { data } = await api.get<ReportResponse[]>("/api/v1/reports");
+export async function createReport(payload: CreateReportRequest): Promise<ReportStatusResponse> {
+  const { data } = await api.post<ReportStatusResponse>("/api/v1/reports", payload);
   return data;
 }
 

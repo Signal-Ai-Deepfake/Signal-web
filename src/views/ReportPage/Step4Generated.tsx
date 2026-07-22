@@ -8,21 +8,11 @@ interface Step4GeneratedProps {
   sections: DraftSection[];
   onBack: () => void;
   onFindAgency: () => void;
-  onFinalize: () => void;
-  finalizing?: boolean;
-  finalized?: boolean;
 }
 
 const urlTitles = new Set(["원본 URL"]);
 
-export default function Step4Generated({
-  sections,
-  onBack,
-  onFindAgency,
-  onFinalize,
-  finalizing = false,
-  finalized = false,
-}: Step4GeneratedProps) {
+export default function Step4Generated({ sections, onBack, onFindAgency }: Step4GeneratedProps) {
   return (
     <div className="flex w-full flex-col gap-8">
       <div className="flex w-full flex-col gap-6 rounded-2xl border border-gray-300 p-8">
@@ -63,7 +53,9 @@ export default function Step4Generated({
                     {section.body}
                   </a>
                 ) : (
-                  <p className="text-body-1 w-full text-black whitespace-pre-wrap">{section.body}</p>
+                  <p className="text-body-1 w-full whitespace-pre-wrap text-black">
+                    {section.body}
+                  </p>
                 )}
               </div>
             ))}
@@ -71,27 +63,17 @@ export default function Step4Generated({
         </div>
       </div>
 
-      <div className="flex w-full flex-wrap items-start justify-between gap-3">
+      <div className="flex w-full items-start justify-between">
         <button
           type="button"
           onClick={onBack}
-          className="border-primary-500 text-primary-500 text-body-2 flex h-12 w-[124px] items-center justify-center rounded border transition-colors active:bg-primary-50"
+          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 w-[124px] items-center justify-center rounded border transition-colors"
         >
           이전
         </button>
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={onFinalize}
-            disabled={finalizing || finalized}
-            className="border-primary-500 text-primary-500 text-body-2 flex h-12 items-center justify-center rounded border px-5 transition-colors active:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {finalized ? "제출 확정됨" : finalizing ? "제출 확정 중..." : "신고서 제출 확정"}
-          </button>
-          <Button type="button" variant="primary" onClick={onFindAgency}>
-            적합한 신고 기관 확인하기
-          </Button>
-        </div>
+        <Button type="button" variant="primary" onClick={onFindAgency}>
+          적합한 신고 기관 확인하기
+        </Button>
       </div>
     </div>
   );
