@@ -8,6 +8,7 @@ import Logo from "@/shared/asset/svg/Logo";
 import User from "@/shared/asset/svg/User";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 import { clearAuthTokens } from "@/shared/lib/authToken";
+import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
 import { logout } from "@/entities/user/api";
 import { useMyProfile } from "@/entities/user/useMyProfile";
 import HeaderNav from "@/widgets/HeaderNav";
@@ -75,10 +76,14 @@ export default function HeaderAuthenticated() {
             onClick={() => setOpen((prev) => !prev)}
             className="flex cursor-pointer items-center gap-2 rounded-full p-1 transition-colors active:bg-gray-100"
           >
-            <span className="bg-gray-200 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full text-gray-600 [&>svg]:h-5 [&>svg]:w-5">
+            <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 text-gray-600 [&>svg]:h-5 [&>svg]:w-5">
               {userAvatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={userAvatarUrl} alt="" className="size-full object-cover" />
+                <img
+                  src={resolveFileUrl(userAvatarUrl)}
+                  alt=""
+                  className="size-full object-cover"
+                />
               ) : (
                 <User />
               )}
@@ -95,10 +100,14 @@ export default function HeaderAuthenticated() {
           {open && (
             <div className="absolute top-full right-0 z-20 mt-2 w-[260px] animate-[fade-in-up_0.2s_ease-out] rounded-xl border border-gray-200 bg-white shadow-lg">
               <div className="flex items-center gap-3 p-4">
-                <span className="bg-gray-200 text-body-1 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold text-gray-600 [&>svg]:h-6 [&>svg]:w-6">
+                <span className="text-body-1 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 font-semibold text-gray-600 [&>svg]:h-6 [&>svg]:w-6">
                   {userAvatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={userAvatarUrl} alt="" className="size-full object-cover" />
+                    <img
+                      src={resolveFileUrl(userAvatarUrl)}
+                      alt=""
+                      className="size-full object-cover"
+                    />
                   ) : (
                     userName.charAt(0)
                   )}

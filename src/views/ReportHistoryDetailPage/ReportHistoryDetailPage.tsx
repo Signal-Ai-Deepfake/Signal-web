@@ -16,6 +16,7 @@ import Arrow from "@/shared/asset/svg/Arrow";
 import Button from "@/shared/ui/Button";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
 import NoticeBanner from "@/shared/ui/NoticeBanner";
+import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 
@@ -255,7 +256,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
 
                 {report.documentUrl && (
                   <a
-                    href={report.documentUrl}
+                    href={resolveFileUrl(report.documentUrl)}
                     target="_blank"
                     rel="noreferrer"
                     className="text-secondary-600 text-body-2 w-full max-w-[960px] underline"
