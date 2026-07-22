@@ -53,7 +53,7 @@ export default function AnalysisPanel({
       <div className="flex flex-1 animate-[fade-in-up_0.4s_ease-out] flex-col justify-between gap-3 rounded-2xl border border-gray-300 px-8 py-5">
         <div className="flex items-center gap-6">
           <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
-            <RiskScoreGauge score={result.score} size={80} />
+            <RiskScoreGauge score={result.score} size={80} level={result.level} />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <p className="text-body-2 font-bold text-black">{result.score}</p>
               <p className="text-caption text-gray-650">/100</p>

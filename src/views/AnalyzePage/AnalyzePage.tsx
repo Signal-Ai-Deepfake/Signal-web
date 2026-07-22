@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -10,8 +11,17 @@ import Image from "@/shared/asset/svg/Image";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 import type { RiskFactor } from "@/shared/ui/RiskFactorCard";
 import UploadGuideCard from "@/shared/ui/UploadGuideCard";
+import { pollUntil } from "@/shared/lib/poll";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
+import {
+  createProtection,
+  createRiskAssessment,
+  downloadProtection,
+  getProtection,
+  type RiskAssessmentResponse,
+  type RiskLevel,
+} from "./analyzeApi";
 import AnalysisPanel from "./AnalysisPanel";
 import ResultDetails from "./ResultDetails";
 import UploadCard from "./UploadCard";
@@ -27,34 +37,59 @@ export interface AnalysisResult {
   aiNote: string;
 }
 
-// TODO: 실제 분석 API 연동 시 이 목데이터를 응답 값으로 교체
-const MOCK_RESULT: AnalysisResult = {
-  score: 74,
-  level: "위험",
-  description: "AI 악용 위험이 높습니다.\n이미지 보호 처리 후 업로드를 권장합니다.",
-  factors: [
-    { icon: ScanFace, title: "얼굴 노출 정도", subtitle: "얼굴 식별 가능성", score: 80 },
-    { icon: Image, title: "배경 정보 노출", subtitle: "위치 추정 가능성", score: 30 },
-    { icon: IdCard, title: "개인정보 노출", subtitle: "개인정보 포함 여부", score: 68 },
-    { icon: Hd, title: "이미지 해상도", subtitle: "세부 정보 식별 수준", score: 80 },
-  ],
-  recommendations: [
-    "얼굴이 선명하게 노출되어 있어 AI 악용 가능성이 높습니다.",
-    "얼굴 각도를 조금 변경하거나 얼굴 크기를 줄여 촬영하면 위험도를 낮출 수 있습니다.",
-    "배경 정보와 이미지 해상도는 안전한 수준으로 분석되었습니다.",
-    "SNS 업로드 전 이미지 보호 처리를 적용하는 것을 권장합니다.",
-  ],
-  aiNote: "얼굴 노출 위험이 높습니다. 이미지 보호를 권장합니다.",
+const EMPTY_RESULT: AnalysisResult = {
+  score: 0,
+  level: "안전",
+  description: "",
+  factors: [],
+  recommendations: [],
+  aiNote: "",
 };
 
-// TODO: 실제 얼굴 인식 실패 시 API 응답에 따라 이 상태로 전환
-const SIMULATE_FACE_NOT_FOUND = false;
+const RISK_LEVEL_LABEL: Record<RiskLevel, AnalysisResult["level"]> = {
+  HIGH: "위험",
+  MEDIUM: "주의",
+  LOW: "안전",
+};
+
+const RISK_LEVEL_DESCRIPTION: Record<RiskLevel, string> = {
+  HIGH: "AI 악용 위험이 높습니다.\n이미지 보호 처리 후 업로드를 권장합니다.",
+  MEDIUM: "AI 악용 위험이 있습니다.\n이미지 보호 처리를 고려해 보세요.",
+  LOW: "AI 악용 위험이 낮습니다.",
+};
+
+const FACTOR_ICON_BY_TYPE: Record<string, RiskFactor["icon"]> = {
+  FACE: ScanFace,
+  BACKGROUND: Image,
+  PERSONAL_INFO: IdCard,
+  RESOLUTION: Hd,
+};
+
+function mapAssessment(data: RiskAssessmentResponse): AnalysisResult {
+  return {
+    score: data.overallScore,
+    level: RISK_LEVEL_LABEL[data.overallRiskLevel],
+    description: RISK_LEVEL_DESCRIPTION[data.overallRiskLevel],
+    factors: data.factors.map((factor) => ({
+      icon: FACTOR_ICON_BY_TYPE[factor.type] ?? ScanFace,
+      title: factor.label,
+      subtitle: factor.description,
+      score: factor.score,
+    })),
+    recommendations: data.recommendations,
+    aiNote: data.recommendations[0] ?? RISK_LEVEL_DESCRIPTION[data.overallRiskLevel],
+  };
+}
 
 export default function AnalyzePage() {
   const [status, setStatus] = useState<Status>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [isProtected, setIsProtected] = useState(false);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [assessmentId, setAssessmentId] = useState<number | null>(null);
+  const [protectionId, setProtectionId] = useState<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -64,31 +99,104 @@ export default function AnalyzePage() {
 
   function handleFileSelect(file: File) {
     setPreviewUrl(URL.createObjectURL(file));
+    setSelectedFile(file);
     setShowDetails(false);
     setIsProtected(false);
+    setResult(null);
+    setAssessmentId(null);
+    setProtectionId(null);
     setStatus("selected");
   }
 
   function handleReset() {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
+    setSelectedFile(null);
     setShowDetails(false);
     setIsProtected(false);
+    setResult(null);
+    setAssessmentId(null);
+    setProtectionId(null);
     setStatus("idle");
   }
 
+  const analyzeMutation = useMutation({
+    mutationFn: () => {
+      if (!selectedFile) throw new Error("이미지를 선택해 주세요.");
+      return createRiskAssessment(selectedFile);
+    },
+    onSuccess: (data) => {
+      if (!data.faceDetected) {
+        setStatus("error");
+        return;
+      }
+      setAssessmentId(data.assessmentId);
+      setResult(mapAssessment(data));
+      setStatus("result");
+    },
+    onError: (error) => {
+      setStatus("selected");
+      toast.error("분석에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const protectMutation = useMutation({
+    mutationFn: async () => {
+      if (!assessmentId) throw new Error("먼저 이미지를 분석해 주세요.");
+      const created = await createProtection(assessmentId);
+      return pollUntil(
+        () => getProtection(created.protectionId),
+        (protection) => protection.status !== "PROCESSING"
+      );
+    },
+    onSuccess: (protection) => {
+      if (protection.status === "FAILED") {
+        toast.error("이미지 보호 처리에 실패했습니다.");
+        return;
+      }
+      setProtectionId(protection.protectionId);
+      setIsProtected(true);
+      setShowDetails(true);
+      toast.success("보호 처리된 이미지를 준비했습니다.");
+    },
+    onError: (error) => {
+      toast.error("이미지 보호 처리에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const saveProtectedMutation = useMutation({
+    mutationFn: async () => {
+      if (!protectionId) throw new Error("보호 처리된 이미지가 없습니다.");
+      return downloadProtection(protectionId);
+    },
+    onSuccess: (blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "protected-image";
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success("보호본을 저장했습니다.");
+    },
+    onError: (error) => {
+      toast.error("보호본 저장에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
   function handleAnalyze() {
     setStatus("analyzing");
-    // TODO: 실제 분석 API 연동. 지금은 목업 지연으로 결과 화면만 보여줌.
-    window.setTimeout(() => {
-      setStatus(SIMULATE_FACE_NOT_FOUND ? "error" : "result");
-    }, 1200);
+    analyzeMutation.mutate();
   }
 
   function handleProtect() {
-    setIsProtected(true);
-    setShowDetails(true);
-    toast.success("보호 처리된 이미지를 준비했습니다.");
+    if (protectMutation.isPending) return;
+    protectMutation.mutate();
   }
 
   function handleShare() {
@@ -96,7 +204,8 @@ export default function AnalyzePage() {
   }
 
   function handleSaveProtected() {
-    toast.success("보호본을 저장했습니다.");
+    if (saveProtectedMutation.isPending) return;
+    saveProtectedMutation.mutate();
   }
 
   return (
@@ -135,7 +244,7 @@ export default function AnalyzePage() {
                 status={status}
                 canAnalyze={status === "selected"}
                 onAnalyze={handleAnalyze}
-                result={MOCK_RESULT}
+                result={result ?? EMPTY_RESULT}
                 isProtected={isProtected}
                 showDetails={showDetails}
                 onToggleDetails={() => setShowDetails((prev) => !prev)}
@@ -146,7 +255,9 @@ export default function AnalyzePage() {
             </div>
           </div>
 
-          {status === "result" && <ResultDetails show={showDetails} result={MOCK_RESULT} />}
+          {status === "result" && (
+            <ResultDetails show={showDetails} result={result ?? EMPTY_RESULT} />
+          )}
         </div>
       </main>
       <Footer />
