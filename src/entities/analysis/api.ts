@@ -1,0 +1,53 @@
+import { api } from "@/shared/api/axios";
+
+export type RiskLevel = "HIGH" | "MEDIUM" | "LOW";
+
+export interface RiskFactorResponse {
+  type: string;
+  label: string;
+  score: number;
+  description: string;
+}
+
+export interface BoundingBoxResponse {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface FaceResponse {
+  index: number;
+  boundingBox: BoundingBoxResponse;
+}
+
+export interface RiskAssessmentResponse {
+  assessmentId: number;
+  overallRiskLevel: RiskLevel;
+  overallScore: number;
+  factors: RiskFactorResponse[];
+  recommendations: string[];
+  faceDetected: boolean;
+  faces: FaceResponse[];
+}
+
+export async function createRiskAssessment(file: File): Promise<RiskAssessmentResponse> {
+  const formData = new FormData();
+  formData.append("image", file);
+  const { data } = await api.post<RiskAssessmentResponse>("/api/v1/risk-assessments", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return data;
+}
+
+export async function getMyAssessments(): Promise<RiskAssessmentResponse[]> {
+  const { data } = await api.get<RiskAssessmentResponse[]>("/api/v1/risk-assessments");
+  return data;
+}
+
+export async function getAssessment(assessmentId: number): Promise<RiskAssessmentResponse> {
+  const { data } = await api.get<RiskAssessmentResponse>(
+    `/api/v1/risk-assessments/${assessmentId}`,
+  );
+  return data;
+}
