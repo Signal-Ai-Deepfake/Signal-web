@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Button from "@/shared/ui/Button";
@@ -15,6 +16,7 @@ interface ReportHistoryDetailPageProps {
 }
 
 export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageProps) {
+  const router = useRouter();
   const document = getReportDocumentById(id);
   const [content, setContent] = useState(document?.content ?? "");
   const [draft, setDraft] = useState(content);
@@ -52,7 +54,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
   }
 
   function handleFindAgency() {
-    toast.success("적합한 신고 기관을 확인하는 기능은 준비 중입니다.");
+    router.push("/support-referral");
   }
 
   return (

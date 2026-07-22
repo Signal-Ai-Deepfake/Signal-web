@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import Footer from "@/widgets/Footer";
@@ -29,6 +30,7 @@ function findSectionBody(sections: DraftSection[], title: string): string | unde
 }
 
 export default function ReportPage() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [damageType, setDamageType] = useState<DamageType | null>(null);
   const [details, setDetails] = useState<ReportDetails>(emptyDetails);
@@ -64,7 +66,7 @@ export default function ReportPage() {
   }
 
   function handleFindAgency() {
-    toast.success("적합한 신고 기관을 확인하는 기능은 준비 중입니다.");
+    router.push("/support-referral");
   }
 
   return (
