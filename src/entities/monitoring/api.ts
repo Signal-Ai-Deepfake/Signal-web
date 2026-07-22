@@ -41,3 +41,7 @@ export async function getMonitoringDetections(
   );
   return data;
 }
+
+export async function deleteMonitoring(monitoringId: number): Promise<void> {
+  await api.delete(`/api/v1/monitorings/${monitoringId}`);
+}

@@ -1,16 +1,25 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import type { ChangeEvent, DragEvent } from "react";
 import { toast } from "sonner";
-import { createMonitoring, getMonitoringDetections } from "@/entities/monitoring/api";
+import {
+  createMonitoring,
+  deleteMonitoring,
+  getMonitoringDetections,
+} from "@/entities/monitoring/api";
 import Arrow from "@/shared/asset/svg/Arrow";
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import ImageIcon from "@/shared/asset/svg/Image";
-import { getStoredMonitoringId, setStoredMonitoringId } from "@/shared/lib/monitoringId";
+import {
+  clearStoredMonitoringId,
+  getStoredMonitoringId,
+  setStoredMonitoringId,
+} from "@/shared/lib/monitoringId";
 import Button from "@/shared/ui/Button";
+import ConfirmModal from "@/shared/ui/ConfirmModal";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 
@@ -23,10 +32,12 @@ function formatDateLong(value: string) {
 }
 
 export default function MonitoringPage() {
+  const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [monitoringId, setMonitoringId] = useState<number | null>(() => getStoredMonitoringId());
   const [page, setPage] = useState(0);
+  const [stopModalOpen, setStopModalOpen] = useState(false);
 
   const {
     data: detectionPage,
@@ -48,6 +59,24 @@ export default function MonitoringPage() {
     },
     onError: (error) => {
       toast.error("모니터링을 시작하지 못했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteMonitoring(monitoringId as number),
+    onSuccess: () => {
+      clearStoredMonitoringId();
+      setMonitoringId(null);
+      setPage(0);
+      setStopModalOpen(false);
+      queryClient.removeQueries({ queryKey: ["monitoringDetections"] });
+      toast.success("모니터링을 중지했습니다.");
+    },
+    onError: (error) => {
+      setStopModalOpen(false);
+      toast.error("모니터링 중지에 실패했습니다.", {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -142,9 +171,19 @@ export default function MonitoringPage() {
             </div>
           ) : (
             <>
-              <div className="bg-primary-50 flex flex-col gap-1 rounded-2xl p-6">
-                <p className="text-small text-gray-700">현재 상태</p>
-                <p className="text-h3 font-semibold text-black">모니터링 중</p>
+              <div className="bg-primary-50 flex items-center justify-between rounded-2xl p-6">
+                <div className="flex flex-col gap-1">
+                  <p className="text-small text-gray-700">현재 상태</p>
+                  <p className="text-h3 font-semibold text-black">모니터링 중</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStopModalOpen(true)}
+                  disabled={deleteMutation.isPending}
+                  className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 items-center justify-center rounded border px-6 transition-colors disabled:opacity-50"
+                >
+                  {deleteMutation.isPending ? "중지하는 중..." : "모니터링 중지"}
+                </button>
               </div>
 
               <div className="flex flex-col gap-4">
@@ -239,6 +278,15 @@ export default function MonitoringPage() {
         </div>
       </main>
       <Footer />
+      <ConfirmModal
+        open={stopModalOpen}
+        title="모니터링을 중지할까요?"
+        description="중지하면 더 이상 유사 이미지 탐지 결과를 받아볼 수 없습니다."
+        confirmLabel="중지"
+        cancelLabel="취소"
+        onConfirm={() => deleteMutation.mutate()}
+        onCancel={() => setStopModalOpen(false)}
+      />
     </>
   );
 }

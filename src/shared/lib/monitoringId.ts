@@ -10,3 +10,8 @@ export function setStoredMonitoringId(monitoringId: number) {
   if (typeof window === "undefined") return;
   localStorage.setItem(MONITORING_ID_KEY, String(monitoringId));
 }
+
+export function clearStoredMonitoringId() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(MONITORING_ID_KEY);
+}
