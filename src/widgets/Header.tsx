@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Logo from "@/shared/asset/svg/Logo";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 import LinkButton from "@/shared/ui/LinkButton";
@@ -15,7 +16,9 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto grid h-20 max-w-[1280px] grid-cols-[1fr_auto_1fr] items-center px-5">
-        <Logo />
+        <Link href="/">
+          <Logo />
+        </Link>
         <HeaderNav />
         <div className="flex items-center justify-end gap-4">
           <LinkButton href="/login" variant="outline" className="h-[46px] w-[103px]">

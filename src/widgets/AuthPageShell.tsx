@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 import Logo from "@/shared/asset/svg/Logo";
 import Sparkle from "@/shared/asset/svg/Sparkle";
@@ -56,7 +57,9 @@ export default function AuthPageShell({ children }: { children: ReactNode }) {
         }`}
       >
         <div className="mx-auto flex h-20 max-w-[1280px] items-center px-5">
-          <Logo />
+          <Link href="/">
+            <Logo />
+          </Link>
         </div>
       </header>
 

@@ -75,7 +75,12 @@ export default function HeaderNav() {
   return (
     <nav ref={navRef} className="flex items-center gap-8">
       {navItems.map((nav, index) => (
-        <div key={nav.label} className="relative">
+        <div
+          key={nav.label}
+          className="relative"
+          onMouseEnter={() => setOpenIndex(index)}
+          onMouseLeave={() => setOpenIndex(null)}
+        >
           <button
             type="button"
             onClick={() => setOpenIndex(openIndex === index ? null : index)}

@@ -253,6 +253,17 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                   확인해 주세요.
                 </NoticeBanner>
 
+                {report.documentUrl && (
+                  <a
+                    href={report.documentUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-secondary-600 text-body-2 w-full max-w-[960px] underline"
+                  >
+                    생성된 신고 문서 파일 보기
+                  </a>
+                )}
+
                 <div className="flex w-full max-w-[960px] flex-col gap-2">
                   <p className="text-body-1 text-black">신고 내용</p>
                   {isEditing && draft ? (

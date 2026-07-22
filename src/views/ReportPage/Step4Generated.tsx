@@ -53,7 +53,9 @@ export default function Step4Generated({ sections, onBack, onFindAgency }: Step4
                     {section.body}
                   </a>
                 ) : (
-                  <p className="text-body-1 w-full text-black whitespace-pre-wrap">{section.body}</p>
+                  <p className="text-body-1 w-full whitespace-pre-wrap text-black">
+                    {section.body}
+                  </p>
                 )}
               </div>
             ))}
@@ -65,7 +67,7 @@ export default function Step4Generated({ sections, onBack, onFindAgency }: Step4
         <button
           type="button"
           onClick={onBack}
-          className="border-primary-500 text-primary-500 text-body-2 flex h-12 w-[124px] items-center justify-center rounded border transition-colors active:bg-primary-50"
+          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 w-[124px] items-center justify-center rounded border transition-colors"
         >
           이전
         </button>
