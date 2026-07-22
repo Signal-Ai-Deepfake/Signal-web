@@ -1,9 +1,11 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
+import { createReport } from "./reportApi";
 import ReportHero from "./ReportHero";
 import Step1TypeSelect from "./Step1TypeSelect";
 import type { DamageType } from "./Step1TypeSelect";
@@ -21,6 +23,11 @@ const emptyDetails: ReportDetails = {
   additionalNotes: "",
 };
 
+function findSectionBody(sections: DraftSection[], title: string): string | undefined {
+  const body = sections.find((section) => section.title === title)?.body.trim();
+  return body && body !== "미입력" ? body : undefined;
+}
+
 export default function ReportPage() {
   const [step, setStep] = useState(1);
   const [damageType, setDamageType] = useState<DamageType | null>(null);
@@ -28,9 +35,32 @@ export default function ReportPage() {
   const [evidenceFileName, setEvidenceFileName] = useState<string | null>(null);
   const [generatedSections, setGeneratedSections] = useState<DraftSection[]>([]);
 
+  const createReportMutation = useMutation({
+    mutationFn: (sections: DraftSection[]) => {
+      const sourceUrl = findSectionBody(sections, "원본 URL");
+      return createReport({
+        incidentDate: details.incidentDate || undefined,
+        discoveryRoute: findSectionBody(sections, "피해 경로"),
+        damageType: damageType ?? undefined,
+        description: findSectionBody(sections, "피해 내용"),
+        sourceUrls: sourceUrl ? [sourceUrl] : undefined,
+      });
+    },
+    onSuccess: (_response, sections) => {
+      setGeneratedSections(sections);
+      setStep(4);
+      toast.success("신고 문서를 생성했습니다.");
+    },
+    onError: (error) => {
+      toast.error("신고 문서 생성에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
   function handleSubmit(sections: DraftSection[]) {
-    setGeneratedSections(sections);
-    setStep(4);
+    if (createReportMutation.isPending) return;
+    createReportMutation.mutate(sections);
   }
 
   function handleFindAgency() {
@@ -70,6 +100,7 @@ export default function ReportPage() {
                 evidenceFileName={evidenceFileName}
                 onBack={() => setStep(2)}
                 onSubmit={handleSubmit}
+                submitting={createReportMutation.isPending}
               />
             )}
             {step === 4 && (
