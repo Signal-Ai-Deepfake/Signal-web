@@ -1,35 +1,56 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import type { ChangeEvent } from "react";
 import { toast } from "sonner";
-import Calendar from "@/shared/asset/svg/Calendar";
 import Button from "@/shared/ui/Button";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
 import GenderOption from "@/shared/ui/GenderOption";
 import Input from "@/shared/ui/Input";
-import { mockUserProfile } from "@/entities/user/model";
-import type { Gender, UserProfile } from "@/entities/user/model";
-import { uploadProfileImage } from "@/entities/user/api";
+import {
+  deleteMyAccount,
+  updateMyProfile,
+  uploadProfileImage,
+  type AuthGender,
+  type UserResponse,
+} from "@/entities/user/api";
+import { MY_PROFILE_QUERY_KEY, useMyProfile } from "@/entities/user/useMyProfile";
+import { clearAuthTokens } from "@/shared/lib/authToken";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 
-const genderOptions: { value: Gender; label: string }[] = [
-  { value: "male", label: "남" },
-  { value: "female", label: "여" },
-  { value: "unspecified", label: "선택 안함" },
+interface ProfileDraft {
+  name: string;
+  age: string;
+  gender: AuthGender;
+}
+
+const genderOptions: { value: AuthGender; label: string }[] = [
+  { value: "MALE", label: "남" },
+  { value: "FEMALE", label: "여" },
+  { value: "NONE", label: "선택 안함" },
 ];
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export default function ProfileEditPage() {
-  const [profile, setProfile] = useState<UserProfile>(mockUserProfile);
-  const [draft, setDraft] = useState<UserProfile>(mockUserProfile);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data: profile, isLoading } = useMyProfile();
+
+  const [draft, setDraft] = useState<ProfileDraft | null>(null);
   const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
-  const [emailTouched, setEmailTouched] = useState(false);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [syncedProfile, setSyncedProfile] = useState<UserResponse | undefined>(undefined);
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  if (profile && profile !== syncedProfile) {
+    setSyncedProfile(profile);
+    setDraft({ name: profile.name, age: String(profile.age), gender: profile.gender });
+    if (profileImageUrl === null && profile.profileImageUrl) {
+      setProfileImageUrl(profile.profileImageUrl);
+    }
+  }
 
   const uploadPhotoMutation = useMutation({
     mutationFn: uploadProfileImage,
@@ -44,24 +65,48 @@ export default function ProfileEditPage() {
     },
   });
 
-  const isEmailValid = EMAIL_REGEX.test(draft.email);
-  const emailError = !isEmailValid
-    ? "올바른 이메일 형식으로 입력해 주세요. (예: name@example.com)"
-    : undefined;
+  const updateProfileMutation = useMutation({
+    mutationFn: updateMyProfile,
+    onSuccess: (data) => {
+      queryClient.setQueryData(MY_PROFILE_QUERY_KEY, data);
+      toast.success("변경사항이 저장되었습니다.");
+    },
+    onError: (error) => {
+      toast.error("변경사항 저장에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const withdrawMutation = useMutation({
+    mutationFn: deleteMyAccount,
+    onSuccess: () => {
+      clearAuthTokens();
+      toast.success("탈퇴가 완료되었습니다.");
+      router.push("/");
+    },
+    onError: (error) => {
+      toast.error("회원 탈퇴에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const ageNumber = draft ? Number(draft.age) : NaN;
+  const isAgeValid = Number.isInteger(ageNumber) && ageNumber > 0;
+  const canSave = !!draft && draft.name.trim().length > 0 && isAgeValid;
 
   function handleCancel() {
-    setDraft(profile);
-    setEmailTouched(false);
+    if (!profile) return;
+    setDraft({ name: profile.name, age: String(profile.age), gender: profile.gender });
   }
 
   function handleSave() {
-    if (!isEmailValid) {
-      setEmailTouched(true);
-      toast.error("이메일 형식을 확인해 주세요.");
+    if (!draft || !canSave) {
+      toast.error("이름과 나이를 확인해 주세요.");
       return;
     }
-    setProfile(draft);
-    toast.success("변경사항이 저장되었습니다.");
+    updateProfileMutation.mutate({ name: draft.name, age: ageNumber, gender: draft.gender });
   }
 
   function handlePhotoChange() {
@@ -77,7 +122,8 @@ export default function ProfileEditPage() {
 
   function handleWithdrawConfirm() {
     setWithdrawModalOpen(false);
-    toast.success("회원 탈퇴 기능은 준비 중입니다.");
+    if (withdrawMutation.isPending) return;
+    withdrawMutation.mutate();
   }
 
   return (
@@ -94,87 +140,98 @@ export default function ProfileEditPage() {
             </p>
           </div>
 
-          <div className="flex w-full flex-col gap-8 rounded-2xl border border-gray-300 p-5 sm:p-8">
-            <div className="flex flex-wrap items-center gap-5 border-b border-gray-300 pb-7">
-              <span className="bg-primary-50 text-primary-500 flex size-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full text-[24px] font-semibold">
-                {profileImageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={profileImageUrl} alt="" className="size-full object-cover" />
-                ) : (
-                  draft.name.charAt(0)
-                )}
-              </span>
-              <div className="flex flex-col gap-1">
-                <p className="text-body-2 font-medium text-black">프로필 사진</p>
-                <p className="text-caption text-gray-700">JPG, PNG · 최대 5MB</p>
-                <input
-                  ref={photoInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoFileSelected}
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={handlePhotoChange}
-                  disabled={uploadPhotoMutation.isPending}
-                  className="bg-primary-50 text-primary-500 text-body-2 mt-1 w-fit cursor-pointer rounded px-3 py-1.5 font-medium disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {uploadPhotoMutation.isPending ? "업로드 중..." : "사진 변경"}
-                </button>
-              </div>
+          {isLoading || !draft || !profile ? (
+            <div className="flex w-full flex-col items-center gap-8 rounded-2xl border border-gray-300 p-5 sm:p-8">
+              <p className="text-body-2 text-gray-700">프로필 정보를 불러오는 중입니다...</p>
             </div>
-
-            <div className="flex flex-col">
-              <Input
-                label="이름"
-                value={draft.name}
-                onChange={(event) => setDraft((prev) => ({ ...prev, name: event.target.value }))}
-              />
-              <Input
-                label="생년월일"
-                icon={Calendar}
-                value={draft.birthDate}
-                onChange={(event) =>
-                  setDraft((prev) => ({ ...prev, birthDate: event.target.value }))
-                }
-              />
-              <Input
-                label="이메일"
-                type="email"
-                value={draft.email}
-                onChange={(event) => setDraft((prev) => ({ ...prev, email: event.target.value }))}
-                onBlur={() => setEmailTouched(true)}
-                error={emailTouched ? emailError : undefined}
-              />
-              <div className="flex flex-col gap-2">
-                <p className="text-body-1 px-1 text-black">성별</p>
-                <div className="flex flex-wrap items-center gap-6 sm:gap-10">
-                  {genderOptions.map((option) => (
-                    <GenderOption
-                      key={option.value}
-                      label={option.label}
-                      selected={draft.gender === option.value}
-                      onSelect={() => setDraft((prev) => ({ ...prev, gender: option.value }))}
-                    />
-                  ))}
+          ) : (
+            <div className="flex w-full flex-col gap-8 rounded-2xl border border-gray-300 p-5 sm:p-8">
+              <div className="flex flex-wrap items-center gap-5 border-b border-gray-300 pb-7">
+                <span className="bg-primary-50 text-primary-500 flex size-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full text-[24px] font-semibold">
+                  {profileImageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={profileImageUrl} alt="" className="size-full object-cover" />
+                  ) : (
+                    draft.name.charAt(0)
+                  )}
+                </span>
+                <div className="flex flex-col gap-1">
+                  <p className="text-body-2 font-medium text-black">프로필 사진</p>
+                  <p className="text-caption text-gray-700">JPG, PNG · 최대 5MB</p>
+                  <input
+                    ref={photoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoFileSelected}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={handlePhotoChange}
+                    disabled={uploadPhotoMutation.isPending}
+                    className="bg-primary-50 text-primary-500 text-body-2 mt-1 w-fit cursor-pointer rounded px-3 py-1.5 font-medium disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {uploadPhotoMutation.isPending ? "업로드 중..." : "사진 변경"}
+                  </button>
                 </div>
               </div>
-            </div>
 
-            <div className="flex flex-col-reverse items-stretch justify-end gap-2 sm:flex-row sm:items-center">
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-[50px] cursor-pointer items-center justify-center rounded border px-6 transition-colors"
-              >
-                취소
-              </button>
-              <Button type="button" variant="primary" onClick={handleSave} className="h-[50px]">
-                변경사항 저장
-              </Button>
+              <div className="flex flex-col">
+                <Input
+                  label="이름"
+                  value={draft.name}
+                  onChange={(event) =>
+                    setDraft((prev) => (prev ? { ...prev, name: event.target.value } : prev))
+                  }
+                />
+                <Input
+                  label="나이"
+                  type="number"
+                  min={1}
+                  value={draft.age}
+                  onChange={(event) =>
+                    setDraft((prev) => (prev ? { ...prev, age: event.target.value } : prev))
+                  }
+                  error={!isAgeValid ? "나이를 올바르게 입력해 주세요." : undefined}
+                />
+                <Input label="이메일" type="email" value={profile.email} disabled />
+                <div className="flex flex-col gap-2">
+                  <p className="text-body-1 px-1 text-black">성별</p>
+                  <div className="flex flex-wrap items-center gap-6 sm:gap-10">
+                    {genderOptions.map((option) => (
+                      <GenderOption
+                        key={option.value}
+                        label={option.label}
+                        selected={draft.gender === option.value}
+                        onSelect={() =>
+                          setDraft((prev) => (prev ? { ...prev, gender: option.value } : prev))
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col-reverse items-stretch justify-end gap-2 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-[50px] cursor-pointer items-center justify-center rounded border px-6 transition-colors"
+                >
+                  취소
+                </button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleSave}
+                  disabled={!canSave || updateProfileMutation.isPending}
+                  className="h-[50px]"
+                >
+                  {updateProfileMutation.isPending ? "저장 중..." : "변경사항 저장"}
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex w-full flex-col items-start gap-4 rounded-xl border border-gray-300 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-1">

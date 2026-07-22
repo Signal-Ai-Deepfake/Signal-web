@@ -1,6 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { recentAnalysisResults } from "@/entities/analysis/model";
-import { mockUserProfile } from "@/entities/user/model";
+import { useMyProfile } from "@/entities/user/useMyProfile";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import AnalysisStepStack from "@/shared/ui/AnalysisStepStack";
 import FrameScale from "@/shared/ui/FrameScale";
@@ -10,6 +12,8 @@ import QuickFeaturesSection from "./QuickFeaturesSection";
 import RecentResultsSection from "./RecentResultsSection";
 
 export default function HomeDashboard() {
+  const { data: profile } = useMyProfile();
+
   return (
     <main className="flex w-full flex-col items-center gap-16 bg-white pb-24">
       <section className="w-full bg-white">
@@ -32,7 +36,7 @@ export default function HomeDashboard() {
             <ScrollReveal className="flex w-fit flex-col items-start gap-6">
               <div className="flex flex-col gap-6">
                 <h1 className="text-h1 font-bold text-black lg:whitespace-nowrap">
-                  안녕하세요, {mockUserProfile.name}님
+                  안녕하세요, {profile?.name ?? "사용자"}님
                 </h1>
                 <div className="text-body-1 flex flex-col gap-1 text-gray-800">
                   <p className="lg:whitespace-nowrap">걱정은 줄이고, 안전은 더하고.</p>

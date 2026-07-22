@@ -1,11 +1,27 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Arrow from "@/shared/asset/svg/Arrow";
 import HistoryListItem from "@/shared/ui/HistoryListItem";
-import { reportDocuments } from "@/entities/report/model";
+import { getMyReports } from "@/entities/report/api";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 
+function formatDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return `${date.getFullYear()}. ${String(date.getMonth() + 1).padStart(2, "0")}. ${String(
+    date.getDate()
+  ).padStart(2, "0")}`;
+}
+
 export default function ReportHistoryPage() {
+  const { data: reports, isLoading } = useQuery({
+    queryKey: ["myReports"],
+    queryFn: getMyReports,
+  });
+
   return (
     <>
       <SiteHeader />
@@ -29,15 +45,21 @@ export default function ReportHistoryPage() {
             </div>
           </div>
 
+          {isLoading && <p className="text-body-2 text-gray-700">불러오는 중입니다...</p>}
+
+          {!isLoading && reports?.length === 0 && (
+            <p className="text-body-2 text-gray-700">아직 생성된 신고 문서가 없습니다.</p>
+          )}
+
           <div className="flex w-full flex-col gap-4">
-            {reportDocuments.map((document) => (
+            {reports?.map((report) => (
               <HistoryListItem
-                key={document.id}
-                href={`/mypage/reports/${document.id}`}
-                badge={document.status === "완료" ? "초안 생성 완료" : "작성 중"}
-                badgeTone={document.status === "완료" ? "primary" : "secondary"}
-                title={document.title}
-                meta={document.listMeta}
+                key={report.reportId}
+                href={`/mypage/reports/${report.reportId}`}
+                badge={report.status === "FINALIZED" ? "제출 확정" : "작성 중"}
+                badgeTone={report.status === "FINALIZED" ? "primary" : "secondary"}
+                title={report.damageType ? `${report.damageType} 신고 문서` : "신고 문서"}
+                meta={formatDate(report.createdAt)}
               />
             ))}
           </div>

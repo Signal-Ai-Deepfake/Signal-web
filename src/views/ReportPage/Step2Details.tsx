@@ -29,8 +29,8 @@ export interface ReportDetails {
 interface Step2DetailsProps {
   details: ReportDetails;
   onChange: (details: ReportDetails) => void;
-  evidenceFileName: string | null;
-  onEvidenceChange: (fileName: string | null) => void;
+  evidenceFile: File | null;
+  onEvidenceChange: (file: File | null) => void;
   onBack: () => void;
   onNext: () => void;
 }
@@ -66,7 +66,7 @@ function TextArea({
 export default function Step2Details({
   details,
   onChange,
-  evidenceFileName,
+  evidenceFile,
   onEvidenceChange,
   onBack,
   onNext,
@@ -76,7 +76,7 @@ export default function Step2Details({
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    onEvidenceChange(file ? file.name : null);
+    onEvidenceChange(file ?? null);
   }
 
   function handleDragOver(event: DragEvent<HTMLDivElement>) {
@@ -94,7 +94,7 @@ export default function Step2Details({
     setIsDragging(false);
     const file = event.dataTransfer.files?.[0];
     if (!file) return;
-    onEvidenceChange(file.name);
+    onEvidenceChange(file);
   }
 
   const canProceed = details.description.trim().length > 0;
@@ -174,7 +174,7 @@ export default function Step2Details({
                 </span>
                 <p className="text-body-1 font-semibold text-black">사진 또는 영상 업로드</p>
                 <p className="text-body-2 text-gray-650">
-                  {evidenceFileName ?? "JPG , PNG 파일 지원"}
+                  {evidenceFile?.name ?? "JPG , PNG 파일 지원"}
                 </p>
               </div>
               <input

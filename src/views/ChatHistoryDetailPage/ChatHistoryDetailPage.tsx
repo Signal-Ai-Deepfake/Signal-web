@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { toast } from "sonner";
 import Arrow from "@/shared/asset/svg/Arrow";
@@ -7,7 +8,8 @@ import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import BotOutline from "@/shared/asset/svg/BotOutline";
 import LinkButton from "@/shared/ui/LinkButton";
 import NoticeBanner from "@/shared/ui/NoticeBanner";
-import { getChatSessionById } from "@/entities/chat/model";
+import { getChatSessionMessages, getMyChatSessions } from "@/entities/chat/api";
+import type { ChatMessage } from "@/entities/chat/model";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import ChatDetailBubble from "./ChatDetailBubble";
@@ -16,10 +18,41 @@ interface ChatHistoryDetailPageProps {
   id: string;
 }
 
-export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps) {
-  const session = getChatSessionById(id);
+function formatDateLong(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
 
-  if (!session) {
+export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps) {
+  const { data: sessions } = useQuery({
+    queryKey: ["myChatSessions"],
+    queryFn: getMyChatSessions,
+  });
+  const {
+    data: messagesResponse,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["chatSessionMessages", id],
+    queryFn: () => getChatSessionMessages(id),
+  });
+
+  const session = sessions?.find((item) => item.sessionId === id);
+
+  if (isLoading) {
+    return (
+      <>
+        <SiteHeader />
+        <main className="flex w-full flex-col items-center bg-white px-5 py-20">
+          <p className="text-body-1 text-gray-700">불러오는 중입니다...</p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  if (isError || !messagesResponse) {
     return (
       <>
         <SiteHeader />
@@ -30,6 +63,12 @@ export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps
       </>
     );
   }
+
+  const messages: ChatMessage[] = messagesResponse.messages.map((message, index) => ({
+    id: String(index),
+    role: message.role === "USER" ? "user" : "bot",
+    content: message.content,
+  }));
 
   function handleDelete() {
     toast.success("대화 내역 삭제 기능은 준비 중입니다.");
@@ -58,7 +97,9 @@ export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps
             </div>
             <div className="flex flex-col gap-6">
               <h1 className="text-h1 font-bold text-black">익명 상담 챗봇</h1>
-              <p className="text-body-1 text-gray-700">{session.dateLong}</p>
+              {session && (
+                <p className="text-body-1 text-gray-700">{formatDateLong(session.createdAt)}</p>
+              )}
             </div>
           </div>
 
@@ -70,67 +111,25 @@ export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps
                 </span>
                 <div className="flex flex-col">
                   <p className="text-body-2 font-medium text-black">AI 상담사</p>
-                  <p className="text-small text-gray-800">
-                    {session.status === "완료" ? "상담 완료" : "상담 진행 중"}
-                  </p>
                 </div>
               </div>
               <div className="flex flex-col gap-[18px] overflow-y-auto px-7 py-8">
-                {session.messages.map((message) => (
+                {messages.map((message) => (
                   <ChatDetailBubble key={message.id} message={message} />
                 ))}
               </div>
             </div>
 
             <aside className="flex w-full flex-col gap-[18px] lg:w-[392px]">
-              <div className="border-primary-50 flex w-full flex-col gap-3.5 rounded-2xl border bg-white p-[25px]">
-                <p className="text-body-1 font-semibold text-black">AI 상담 요약</p>
+              <NoticeBanner>AI 상담 요약 정보는 아직 제공되지 않는 기능입니다.</NoticeBanner>
 
-                <div className="border-primary-50 flex flex-col gap-1 border-b pb-3.5">
-                  <p className="text-small font-semibold text-gray-800">현재 상황</p>
-                  <p className="text-small text-black">{session.summary.situation}</p>
-                </div>
-
-                <div className="border-primary-50 flex flex-col gap-1 border-b pb-3.5">
-                  <p className="text-small font-semibold text-gray-800">추천 대응 절차</p>
-                  <p className="text-small text-black">
-                    {session.summary.recommendedSteps
-                      .map((step, index) => `${index + 1}. ${step}`)
-                      .join("   ")}
-                  </p>
-                </div>
-
-                <div className="border-primary-50 flex flex-col gap-1.5 border-b pb-3.5">
-                  <div className="flex items-center justify-between">
-                    <p className="text-small font-semibold text-gray-800">현재 위험 수준</p>
-                    <span className="text-caption bg-secondary-50 text-secondary-500 rounded-full px-2.5 py-1">
-                      {session.summary.riskLevel}
-                    </span>
-                  </div>
-                  <p className="text-small text-black">{session.summary.riskDescription}</p>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-small font-semibold text-gray-800">상담 진행률</p>
-                    <p className="text-small font-semibold text-black">
-                      {session.summary.progressPercent}%
-                    </p>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-gray-300">
-                    <div
-                      className="bg-primary-500 h-2 rounded-full"
-                      style={{ width: `${session.summary.progressPercent}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <NoticeBanner>
-                {session.savedConsent
-                  ? "이 상담은 저장에 동의한 대화 내역입니다."
-                  : "이 상담은 저장에 동의하지 않은 대화 내역입니다."}
-              </NoticeBanner>
+              {session && (
+                <NoticeBanner>
+                  {session.saveConsent
+                    ? "이 상담은 저장에 동의한 대화 내역입니다."
+                    : "이 상담은 저장에 동의하지 않은 대화 내역입니다."}
+                </NoticeBanner>
+              )}
 
               <button
                 type="button"
