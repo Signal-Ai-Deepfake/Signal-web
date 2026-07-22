@@ -1,4 +1,10 @@
 import { api } from "@/shared/api/axios";
+import { getAccessToken } from "@/shared/lib/authToken";
+import { getOrCreateAnonymousId } from "@/shared/lib/anonymousId";
+
+function guestHeaders() {
+  return getAccessToken() ? undefined : { "X-Anonymous-Id": getOrCreateAnonymousId() };
+}
 
 export interface ChatSessionCreateResponse {
   sessionId: string;
@@ -35,19 +41,22 @@ export interface SendMessageResponse {
 }
 
 export async function createChatSession(saveConsent = false): Promise<ChatSessionCreateResponse> {
-  const { data } = await api.post<ChatSessionCreateResponse>("/api/v1/chat/sessions", {
-    saveConsent,
-  });
+  const { data } = await api.post<ChatSessionCreateResponse>(
+    "/api/v1/chat/sessions",
+    { saveConsent },
+    { headers: guestHeaders() },
+  );
   return data;
 }
 
 export async function sendChatMessage(
   sessionId: string,
-  content: string
+  content: string,
 ): Promise<SendMessageResponse> {
   const { data } = await api.post<SendMessageResponse>(
     `/api/v1/chat/sessions/${sessionId}/messages`,
-    { content }
+    { content },
+    { headers: guestHeaders() },
   );
   return data;
 }
@@ -59,7 +68,12 @@ export async function getMyChatSessions(): Promise<ChatSessionResponse[]> {
 
 export async function getChatSessionMessages(sessionId: string): Promise<ChatMessagesResponse> {
   const { data } = await api.get<ChatMessagesResponse>(
-    `/api/v1/chat/sessions/${sessionId}/messages`
+    `/api/v1/chat/sessions/${sessionId}/messages`,
+    { headers: guestHeaders() },
   );
   return data;
+}
+
+export async function deleteChatSession(sessionId: string): Promise<void> {
+  await api.delete(`/api/v1/chat/sessions/${sessionId}`, { headers: guestHeaders() });
 }
