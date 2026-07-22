@@ -18,6 +18,7 @@ import {
 } from "@/entities/user/api";
 import { MY_PROFILE_QUERY_KEY, useMyProfile } from "@/entities/user/useMyProfile";
 import { clearAuthTokens } from "@/shared/lib/authToken";
+import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 
@@ -150,7 +151,11 @@ export default function ProfileEditPage() {
                 <span className="bg-primary-50 text-primary-500 flex size-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full text-[24px] font-semibold">
                   {profileImageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={profileImageUrl} alt="" className="size-full object-cover" />
+                    <img
+                      src={resolveFileUrl(profileImageUrl)}
+                      alt=""
+                      className="size-full object-cover"
+                    />
                   ) : (
                     draft.name.charAt(0)
                   )}
