@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
 import FileText from "@/shared/asset/svg/FileText";
+import Globe from "@/shared/asset/svg/Globe";
 import Image from "@/shared/asset/svg/Image";
 import Message from "@/shared/asset/svg/Message";
 import ScanFace from "@/shared/asset/svg/ScanFace";
@@ -23,6 +24,12 @@ const navItems = [
         title: "AI 이미지 분석",
         description: "사진의 위험도를 분석해요.",
         href: "/analyze",
+      },
+      {
+        icon: Globe,
+        title: "유포 모니터링",
+        description: "웹에서 유사 이미지를 지속적으로 확인해요.",
+        href: "/monitoring",
       },
     ],
   },
