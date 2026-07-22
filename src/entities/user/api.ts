@@ -51,6 +51,22 @@ export interface ProfileImageResponse {
   profileImageUrl: string;
 }
 
+export interface UserResponse {
+  userId: number;
+  email: string;
+  name: string;
+  age: number;
+  gender: AuthGender;
+  profileImageUrl?: string;
+  createdAt: string;
+}
+
+export interface UpdateUserRequest {
+  name?: string;
+  age?: number;
+  gender?: AuthGender;
+}
+
 export async function login(payload: LoginRequest): Promise<TokenResponse> {
   const { data } = await api.post<TokenResponse>("/api/v1/auth/login", payload);
   return data;
@@ -88,4 +104,22 @@ export async function uploadProfileImage(file: File): Promise<ProfileImageRespon
     { headers: { "Content-Type": "multipart/form-data" } }
   );
   return data;
+}
+
+export async function getMyProfile(): Promise<UserResponse> {
+  const { data } = await api.get<UserResponse>("/api/v1/users/me");
+  return data;
+}
+
+export async function updateMyProfile(payload: UpdateUserRequest): Promise<UserResponse> {
+  const { data } = await api.patch<UserResponse>("/api/v1/users/me", payload);
+  return data;
+}
+
+export async function deleteMyAccount(): Promise<void> {
+  await api.delete("/api/v1/users/me");
+}
+
+export async function logout(): Promise<void> {
+  await api.post("/api/v1/auth/logout");
 }
