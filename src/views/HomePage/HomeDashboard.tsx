@@ -1,7 +1,8 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { recentAnalysisResults } from "@/entities/analysis/model";
+import { getMyAssessments } from "@/entities/analysis/api";
 import { useMyProfile } from "@/entities/user/useMyProfile";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import AnalysisStepStack from "@/shared/ui/AnalysisStepStack";
@@ -13,6 +14,10 @@ import RecentResultsSection from "./RecentResultsSection";
 
 export default function HomeDashboard() {
   const { data: profile } = useMyProfile();
+  const { data: assessments } = useQuery({
+    queryKey: ["riskAssessments"],
+    queryFn: getMyAssessments,
+  });
 
   return (
     <main className="flex w-full flex-col items-center gap-16 bg-white pb-24">
@@ -64,7 +69,7 @@ export default function HomeDashboard() {
         </FrameScale>
       </section>
       <QuickFeaturesSection />
-      <RecentResultsSection results={recentAnalysisResults} />
+      <RecentResultsSection results={(assessments ?? []).slice(0, 3)} />
     </main>
   );
 }

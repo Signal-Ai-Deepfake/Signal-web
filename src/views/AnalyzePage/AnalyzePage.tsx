@@ -4,38 +4,20 @@ import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { createRiskAssessment } from "@/entities/analysis/api";
+import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
 import Arrow from "@/shared/asset/svg/Arrow";
-import Hd from "@/shared/asset/svg/Hd";
-import IdCard from "@/shared/asset/svg/IdCard";
-import Image from "@/shared/asset/svg/Image";
-import ScanFace from "@/shared/asset/svg/ScanFace";
-import type { RiskFactor } from "@/shared/ui/RiskFactorCard";
 import UploadGuideCard from "@/shared/ui/UploadGuideCard";
 import { pollUntil } from "@/shared/lib/poll";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
-import {
-  createProtection,
-  createRiskAssessment,
-  downloadProtection,
-  getProtection,
-  type RiskAssessmentResponse,
-  type RiskLevel,
-} from "./analyzeApi";
+import { createProtection, downloadProtection, getProtection } from "./analyzeApi";
 import AnalysisPanel from "./AnalysisPanel";
 import ResultDetails from "./ResultDetails";
 import UploadCard from "./UploadCard";
 
 export type Status = "idle" | "selected" | "analyzing" | "error" | "result";
-
-export interface AnalysisResult {
-  score: number;
-  level: "안전" | "위험" | "주의";
-  description: string;
-  factors: RiskFactor[];
-  recommendations: string[];
-  aiNote: string;
-}
+export type { AnalysisResult };
 
 const EMPTY_RESULT: AnalysisResult = {
   score: 0,
@@ -45,41 +27,6 @@ const EMPTY_RESULT: AnalysisResult = {
   recommendations: [],
   aiNote: "",
 };
-
-const RISK_LEVEL_LABEL: Record<RiskLevel, AnalysisResult["level"]> = {
-  HIGH: "위험",
-  MEDIUM: "주의",
-  LOW: "안전",
-};
-
-const RISK_LEVEL_DESCRIPTION: Record<RiskLevel, string> = {
-  HIGH: "AI 악용 위험이 높습니다.\n이미지 보호 처리 후 업로드를 권장합니다.",
-  MEDIUM: "AI 악용 위험이 있습니다.\n이미지 보호 처리를 고려해 보세요.",
-  LOW: "AI 악용 위험이 낮습니다.",
-};
-
-const FACTOR_ICON_BY_TYPE: Record<string, RiskFactor["icon"]> = {
-  FACE: ScanFace,
-  BACKGROUND: Image,
-  PERSONAL_INFO: IdCard,
-  RESOLUTION: Hd,
-};
-
-function mapAssessment(data: RiskAssessmentResponse): AnalysisResult {
-  return {
-    score: data.overallScore,
-    level: RISK_LEVEL_LABEL[data.overallRiskLevel],
-    description: RISK_LEVEL_DESCRIPTION[data.overallRiskLevel],
-    factors: data.factors.map((factor) => ({
-      icon: FACTOR_ICON_BY_TYPE[factor.type] ?? ScanFace,
-      title: factor.label,
-      subtitle: factor.description,
-      score: factor.score,
-    })),
-    recommendations: data.recommendations,
-    aiNote: data.recommendations[0] ?? RISK_LEVEL_DESCRIPTION[data.overallRiskLevel],
-  };
-}
 
 export default function AnalyzePage() {
   const [status, setStatus] = useState<Status>("idle");
@@ -148,7 +95,7 @@ export default function AnalyzePage() {
       const created = await createProtection(assessmentId);
       return pollUntil(
         () => getProtection(created.protectionId),
-        (protection) => protection.status !== "PROCESSING"
+        (protection) => protection.status !== "PROCESSING",
       );
     },
     onSuccess: (protection) => {
