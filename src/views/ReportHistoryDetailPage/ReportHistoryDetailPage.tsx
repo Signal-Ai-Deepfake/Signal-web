@@ -7,9 +7,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Button from "@/shared/ui/Button";
+import ConfirmModal from "@/shared/ui/ConfirmModal";
 import Input from "@/shared/ui/Input";
 import NoticeBanner from "@/shared/ui/NoticeBanner";
+import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
 import {
+  deleteReport,
   finalizeReport,
   getReport,
   updateReport,
@@ -65,6 +68,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
   const [draft, setDraft] = useState<ReportDraft | null>(null);
   const [syncedReport, setSyncedReport] = useState<ReportResponse | undefined>(undefined);
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   if (report && report !== syncedReport) {
     setSyncedReport(report);
@@ -90,12 +94,26 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
     mutationFn: () => finalizeReport(reportId),
     onSuccess: (data) => {
       queryClient.setQueryData(["report", reportId], (prev: ReportResponse | undefined) =>
-        prev ? { ...prev, status: data.status, documentUrl: data.documentUrl } : prev
+        prev ? { ...prev, status: data.status, documentUrl: data.documentUrl } : prev,
       );
       toast.success("신고서 제출이 확정되었습니다.");
     },
     onError: (error) => {
       toast.error("신고서 제출 확정에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteReport(reportId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myReports"] });
+      toast.success("신고 문서가 삭제되었습니다.");
+      router.push("/mypage/reports");
+    },
+    onError: (error) => {
+      toast.error("신고 문서 삭제에 실패했습니다.", {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -149,7 +167,13 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
   }
 
   function handleDelete() {
-    toast.success("신고 문서 삭제 기능은 준비 중입니다.");
+    setDeleteModalOpen(true);
+  }
+
+  function handleDeleteConfirm() {
+    setDeleteModalOpen(false);
+    if (deleteMutation.isPending) return;
+    deleteMutation.mutate();
   }
 
   function handleFindAgency() {
@@ -208,7 +232,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
 
             {report.documentUrl && (
               <a
-                href={report.documentUrl}
+                href={resolveFileUrl(report.documentUrl)}
                 target="_blank"
                 rel="noreferrer"
                 className="text-secondary-600 text-body-2 w-fit underline"
@@ -225,14 +249,18 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                     type="date"
                     value={draft.incidentDate}
                     onChange={(event) =>
-                      setDraft((prev) => (prev ? { ...prev, incidentDate: event.target.value } : prev))
+                      setDraft((prev) =>
+                        prev ? { ...prev, incidentDate: event.target.value } : prev,
+                      )
                     }
                   />
                   <Input
                     label="피해 유형"
                     value={draft.damageType}
                     onChange={(event) =>
-                      setDraft((prev) => (prev ? { ...prev, damageType: event.target.value } : prev))
+                      setDraft((prev) =>
+                        prev ? { ...prev, damageType: event.target.value } : prev,
+                      )
                     }
                   />
                   <Input
@@ -240,7 +268,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                     value={draft.discoveryRoute}
                     onChange={(event) =>
                       setDraft((prev) =>
-                        prev ? { ...prev, discoveryRoute: event.target.value } : prev
+                        prev ? { ...prev, discoveryRoute: event.target.value } : prev,
                       )
                     }
                   />
@@ -258,7 +286,9 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                   <textarea
                     value={draft.description}
                     onChange={(event) =>
-                      setDraft((prev) => (prev ? { ...prev, description: event.target.value } : prev))
+                      setDraft((prev) =>
+                        prev ? { ...prev, description: event.target.value } : prev,
+                      )
                     }
                     rows={10}
                     className="text-body-1 focus:border-secondary-500 w-full resize-none rounded-lg border border-gray-300 p-[17px] whitespace-pre-wrap text-black outline-none"
@@ -366,6 +396,15 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
         </div>
       </main>
       <Footer />
+      <ConfirmModal
+        open={deleteModalOpen}
+        title="신고 문서를 삭제하시겠습니까?"
+        description="삭제한 신고 문서는 복구할 수 없습니다."
+        confirmLabel="삭제하기"
+        cancelLabel="취소"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteModalOpen(false)}
+      />
     </>
   );
 }
