@@ -67,7 +67,7 @@ export default function UploadCard({
             )}
           </div>
           <div className="flex items-center justify-between">
-            <PhotoResetButton onClick={onReset} />
+            <PhotoResetButton onClick={onReset} disabled={status === "analyzing"} />
             <span className="text-primary-400 text-small">{isProtected ? "보호됨" : "원본"}</span>
           </div>
         </>
