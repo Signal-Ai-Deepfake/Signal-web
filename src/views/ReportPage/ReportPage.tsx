@@ -4,14 +4,14 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { createReport } from "@/entities/report/api";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
-import { createReport } from "./reportApi";
 import ReportHero from "./ReportHero";
 import Step1TypeSelect from "./Step1TypeSelect";
 import type { DamageType } from "./Step1TypeSelect";
 import Step2Details from "./Step2Details";
-import type { ReportDetails } from "./Step2Details";
+import type { ReportDetails, ReportEvidence } from "./Step2Details";
 import Step3Draft from "./Step3Draft";
 import type { DraftSection } from "./Step3Draft";
 import Step4Generated from "./Step4Generated";
@@ -34,7 +34,7 @@ export default function ReportPage() {
   const [step, setStep] = useState(1);
   const [damageType, setDamageType] = useState<DamageType | null>(null);
   const [details, setDetails] = useState<ReportDetails>(emptyDetails);
-  const [evidenceFileName, setEvidenceFileName] = useState<string | null>(null);
+  const [evidence, setEvidence] = useState<ReportEvidence | null>(null);
   const [generatedSections, setGeneratedSections] = useState<DraftSection[]>([]);
 
   const createReportMutation = useMutation({
@@ -46,6 +46,7 @@ export default function ReportPage() {
         damageType: damageType ?? undefined,
         description: findSectionBody(sections, "피해 내용"),
         sourceUrls: sourceUrl ? [sourceUrl] : undefined,
+        evidenceIds: evidence ? [evidence.id] : undefined,
       });
     },
     onSuccess: (_response, sections) => {
@@ -89,8 +90,8 @@ export default function ReportPage() {
               <Step2Details
                 details={details}
                 onChange={setDetails}
-                evidenceFileName={evidenceFileName}
-                onEvidenceChange={setEvidenceFileName}
+                evidence={evidence}
+                onEvidenceChange={setEvidence}
                 onBack={() => setStep(1)}
                 onNext={() => setStep(3)}
               />
@@ -99,7 +100,7 @@ export default function ReportPage() {
               <Step3Draft
                 damageType={damageType}
                 details={details}
-                evidenceFileName={evidenceFileName}
+                evidence={evidence}
                 onBack={() => setStep(2)}
                 onSubmit={handleSubmit}
                 submitting={createReportMutation.isPending}
