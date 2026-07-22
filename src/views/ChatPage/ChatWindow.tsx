@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import BotOutline from "@/shared/asset/svg/BotOutline";
+import Delete from "@/shared/asset/svg/Delete";
 import ChatInputForm from "./ChatInputForm";
 import ChatMessageBubble from "./ChatMessageBubble";
 import ChatQuickReplies from "./ChatQuickReplies";
@@ -12,9 +13,10 @@ interface ChatWindowProps {
   messages: ChatMessage[];
   isSending: boolean;
   onSend: (content: string) => void;
+  onReset: () => void;
 }
 
-export default function ChatWindow({ messages, isSending, onSend }: ChatWindowProps) {
+export default function ChatWindow({ messages, isSending, onSend, onReset }: ChatWindowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,6 +34,16 @@ export default function ChatWindow({ messages, isSending, onSend }: ChatWindowPr
           <p className="text-body-2 font-medium text-black">AI 상담사</p>
           <p className="text-small text-gray-800">상담중</p>
         </div>
+        <button
+          type="button"
+          onClick={onReset}
+          className="text-body-2 text-gray-650 hover:text-gray-800 ml-auto flex shrink-0 cursor-pointer items-center gap-1.5 rounded px-2 py-1.5 transition-colors"
+        >
+          <span className="[&>svg]:h-[18px] [&>svg]:w-[18px]">
+            <Delete />
+          </span>
+          대화 초기화
+        </button>
       </header>
 
       <div

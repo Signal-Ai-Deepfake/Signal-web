@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import Arrow from "@/shared/asset/svg/Arrow";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
+import ConfirmModal from "@/shared/ui/ConfirmModal";
 import LinkButton from "@/shared/ui/LinkButton";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
-import { requestBotReply } from "./chatApi";
+import { createChatSession, sendChatMessage } from "./chatApi";
 import ChatPrivacyCard from "./ChatPrivacyCard";
 import ChatSummaryCard from "./ChatSummaryCard";
 import ChatWindow from "./ChatWindow";
@@ -25,6 +27,34 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [isSending, setIsSending] = useState(false);
   const [saveConsent, setSaveConsent] = useState(false);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  const sessionIdRef = useRef<string | null>(null);
+  const sessionInitRef = useRef(false);
+
+  function startNewSession() {
+    createChatSession()
+      .then((session) => {
+        sessionIdRef.current = session.sessionId;
+      })
+      .catch((error) => {
+        toast.error("상담 세션을 시작하지 못했습니다.", {
+          description: error instanceof Error ? error.message : undefined,
+        });
+      });
+  }
+
+  useEffect(() => {
+    if (sessionInitRef.current) return;
+    sessionInitRef.current = true;
+    startNewSession();
+  }, []);
+
+  function handleResetConfirm() {
+    setResetModalOpen(false);
+    sessionIdRef.current = null;
+    setMessages(INITIAL_MESSAGES);
+    startNewSession();
+  }
 
   async function handleSend(content: string) {
     const trimmed = content.trim();
@@ -37,9 +67,29 @@ export default function ChatPage() {
     setMessages(nextMessages);
     setIsSending(true);
 
-    const reply = await requestBotReply(nextMessages);
-    setMessages((prev) => [...prev, { id: createMessageId(), role: "bot", content: reply }]);
-    setIsSending(false);
+    const sessionId = sessionIdRef.current;
+    if (!sessionId) {
+      toast.error("상담 세션이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+      setIsSending(false);
+      return;
+    }
+
+    try {
+      const response = await sendChatMessage(sessionId, trimmed);
+      setMessages((prev) => [
+        ...prev,
+        { id: createMessageId(), role: "bot", content: response.reply },
+      ]);
+      if (response.crisisDetected) {
+        toast.warning("긴급 상황이 감지되었어요. 전문 기관 연결을 고려해 주세요.");
+      }
+    } catch (error) {
+      toast.error("메시지 전송에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    } finally {
+      setIsSending(false);
+    }
   }
 
   return (
@@ -68,7 +118,12 @@ export default function ChatPage() {
           </div>
 
           <div className="flex w-full flex-col items-stretch gap-6 lg:flex-row">
-            <ChatWindow messages={messages} isSending={isSending} onSend={handleSend} />
+            <ChatWindow
+              messages={messages}
+              isSending={isSending}
+              onSend={handleSend}
+              onReset={() => setResetModalOpen(true)}
+            />
             <aside className="flex w-full flex-col gap-[18px] lg:w-[392px]">
               <ChatSummaryCard summary={MOCK_SUMMARY} />
               <ChatPrivacyCard checked={saveConsent} onChange={setSaveConsent} />
@@ -84,6 +139,15 @@ export default function ChatPage() {
         </div>
       </main>
       <Footer />
+      <ConfirmModal
+        open={resetModalOpen}
+        title="대화 내용을 초기화할까요?"
+        description="지금까지의 대화 내용이 모두 사라지고 새로운 상담이 시작됩니다."
+        confirmLabel="초기화"
+        cancelLabel="취소"
+        onConfirm={handleResetConfirm}
+        onCancel={() => setResetModalOpen(false)}
+      />
     </>
   );
 }

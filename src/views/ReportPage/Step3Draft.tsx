@@ -12,6 +12,7 @@ interface Step3DraftProps {
   evidenceFileName: string | null;
   onBack: () => void;
   onSubmit: (sections: DraftSection[]) => void;
+  submitting?: boolean;
 }
 
 function formatDate(value: string) {
@@ -66,6 +67,7 @@ export default function Step3Draft({
   evidenceFileName,
   onBack,
   onSubmit,
+  submitting = false,
 }: Step3DraftProps) {
   const initialSections = useMemo(
     () => buildDraftSections(damageType, details, evidenceFileName),
@@ -136,8 +138,13 @@ export default function Step3Draft({
         >
           이전
         </button>
-        <Button type="button" variant="primary" onClick={() => onSubmit(sections)}>
-          신고 문서 생성하기
+        <Button
+          type="button"
+          variant="primary"
+          disabled={submitting}
+          onClick={() => onSubmit(sections)}
+        >
+          {submitting ? "생성 중..." : "신고 문서 생성하기"}
         </Button>
       </div>
     </div>

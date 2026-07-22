@@ -65,7 +65,7 @@ export default function DetectUploadCard({
             )}
           </div>
           <div className="flex items-center justify-between">
-            <PhotoResetButton onClick={onReset} />
+            <PhotoResetButton onClick={onReset} disabled={status === "analyzing"} />
           </div>
         </>
       ) : (

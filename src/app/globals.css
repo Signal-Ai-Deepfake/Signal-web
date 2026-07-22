@@ -116,6 +116,11 @@
 :root {
   --background: #ffffff;
   --foreground: var(--color-gray-900);
+  color-scheme: light;
+}
+
+html {
+  background: var(--background);
 }
 
 body {

@@ -33,6 +33,7 @@ export default function DetectResultSection({ result, previewUrl }: DetectResult
           scoreSuffix="/100"
           caption={result.faceTheftCaption}
           suspicion
+          unsupported
         />
         <VerdictCard
           title="딥페이크 여부"
@@ -47,7 +48,7 @@ export default function DetectResultSection({ result, previewUrl }: DetectResult
 
       <div className="flex flex-col gap-6 lg:flex-row">
         <EvidenceHighlightCard highlights={result.evidenceHighlights} previewUrl={previewUrl} />
-        <WebMatchCard matchCount={result.webMatchCount} />
+        <WebMatchCard matchCount={result.webMatchCount} unsupported />
       </div>
 
       <div className="flex flex-col gap-2 sm:w-[536px] sm:flex-row sm:self-end">

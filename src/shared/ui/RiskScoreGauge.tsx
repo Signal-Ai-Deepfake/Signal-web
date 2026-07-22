@@ -5,13 +5,35 @@ import { useEffect, useState } from "react";
 const SWEEP_DEG = 260;
 const ROTATE_DEG = 140;
 
+type RiskLevel = "안전" | "위험" | "주의";
+
+const trackColorClass: Record<RiskLevel, string> = {
+  안전: "text-green-100",
+  주의: "text-yellow-100",
+  위험: "text-red-100",
+};
+
+const fillColorClass: Record<RiskLevel, string> = {
+  안전: "text-green-500",
+  주의: "text-yellow-500",
+  위험: "text-red-500",
+};
+
+function scoreToLevel(score: number): RiskLevel {
+  if (score >= 70) return "위험";
+  if (score >= 40) return "주의";
+  return "안전";
+}
+
 interface RiskScoreGaugeProps {
   score: number;
   size?: number;
+  level?: RiskLevel;
 }
 
-export default function RiskScoreGauge({ score, size = 80 }: RiskScoreGaugeProps) {
+export default function RiskScoreGauge({ score, size = 80, level }: RiskScoreGaugeProps) {
   const clampedScore = Math.min(100, Math.max(0, score));
+  const resolvedLevel = level ?? scoreToLevel(clampedScore);
   const [displayScore, setDisplayScore] = useState(0);
 
   useEffect(() => {
@@ -33,7 +55,7 @@ export default function RiskScoreGauge({ score, size = 80 }: RiskScoreGaugeProps
           cy={size / 2}
           r={radius}
           stroke="currentColor"
-          className="text-red-100"
+          className={trackColorClass[resolvedLevel]}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={`${arcLength} ${circumference}`}
@@ -43,7 +65,7 @@ export default function RiskScoreGauge({ score, size = 80 }: RiskScoreGaugeProps
           cy={size / 2}
           r={radius}
           stroke="currentColor"
-          className="text-red-500 transition-[stroke-dasharray] duration-700 ease-out"
+          className={`${fillColorClass[resolvedLevel]} transition-[stroke-dasharray] duration-700 ease-out`}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={`${filledLength} ${circumference}`}

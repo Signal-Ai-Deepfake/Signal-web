@@ -79,6 +79,9 @@ export default function StepEmailCode({
           placeholder="인증번호 6자리를 입력하세요."
           value={code}
           onChange={(event) => onCodeChange(event.target.value.replace(/\D/g, "").slice(0, 6))}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && canVerifyCode) onVerifyCode();
+          }}
           disabled={!codeSent}
           rightSlot={
             codeSent &&

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import type { ChangeEvent } from "react";
 import { toast } from "sonner";
 import Calendar from "@/shared/asset/svg/Calendar";
 import Button from "@/shared/ui/Button";
@@ -9,6 +11,7 @@ import GenderOption from "@/shared/ui/GenderOption";
 import Input from "@/shared/ui/Input";
 import { mockUserProfile } from "@/entities/user/model";
 import type { Gender, UserProfile } from "@/entities/user/model";
+import { uploadProfileImage } from "@/entities/user/api";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 
@@ -25,6 +28,21 @@ export default function ProfileEditPage() {
   const [draft, setDraft] = useState<UserProfile>(mockUserProfile);
   const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadPhotoMutation = useMutation({
+    mutationFn: uploadProfileImage,
+    onSuccess: (data) => {
+      setProfileImageUrl(data.profileImageUrl);
+      toast.success("프로필 사진을 변경했습니다.");
+    },
+    onError: (error) => {
+      toast.error("프로필 사진 변경에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
 
   const isEmailValid = EMAIL_REGEX.test(draft.email);
   const emailError = !isEmailValid
@@ -47,7 +65,14 @@ export default function ProfileEditPage() {
   }
 
   function handlePhotoChange() {
-    toast.success("프로필 사진 변경 기능은 준비 중입니다.");
+    photoInputRef.current?.click();
+  }
+
+  function handlePhotoFileSelected(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || uploadPhotoMutation.isPending) return;
+    uploadPhotoMutation.mutate(file);
   }
 
   function handleWithdrawConfirm() {
@@ -71,18 +96,31 @@ export default function ProfileEditPage() {
 
           <div className="flex w-full flex-col gap-8 rounded-2xl border border-gray-300 p-5 sm:p-8">
             <div className="flex flex-wrap items-center gap-5 border-b border-gray-300 pb-7">
-              <span className="bg-primary-50 text-primary-500 flex size-[78px] shrink-0 items-center justify-center rounded-full text-[24px] font-semibold">
-                {draft.name.charAt(0)}
+              <span className="bg-primary-50 text-primary-500 flex size-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full text-[24px] font-semibold">
+                {profileImageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profileImageUrl} alt="" className="size-full object-cover" />
+                ) : (
+                  draft.name.charAt(0)
+                )}
               </span>
               <div className="flex flex-col gap-1">
                 <p className="text-body-2 font-medium text-black">프로필 사진</p>
                 <p className="text-caption text-gray-700">JPG, PNG · 최대 5MB</p>
+                <input
+                  ref={photoInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoFileSelected}
+                  className="hidden"
+                />
                 <button
                   type="button"
                   onClick={handlePhotoChange}
-                  className="bg-primary-50 text-primary-500 text-body-2 mt-1 w-fit cursor-pointer rounded px-3 py-1.5 font-medium"
+                  disabled={uploadPhotoMutation.isPending}
+                  className="bg-primary-50 text-primary-500 text-body-2 mt-1 w-fit cursor-pointer rounded px-3 py-1.5 font-medium disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  사진 변경
+                  {uploadPhotoMutation.isPending ? "업로드 중..." : "사진 변경"}
                 </button>
               </div>
             </div>
