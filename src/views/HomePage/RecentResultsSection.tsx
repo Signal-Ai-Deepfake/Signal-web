@@ -59,7 +59,7 @@ export default function RecentResultsSection({ results }: RecentResultsSectionPr
                     </div>
                   </div>
                   <Link
-                    href="/analyze"
+                    href={`/analyze/results/${result.assessmentId}`}
                     className="text-large bg-primary-50 text-primary-500 hover:bg-primary-100 flex items-center gap-2 rounded px-4 py-2 font-medium transition-colors"
                   >
                     결과 보기

@@ -44,3 +44,10 @@ export async function getMyAssessments(): Promise<RiskAssessmentResponse[]> {
   const { data } = await api.get<RiskAssessmentResponse[]>("/api/v1/risk-assessments");
   return data;
 }
+
+export async function getAssessment(assessmentId: number): Promise<RiskAssessmentResponse> {
+  const { data } = await api.get<RiskAssessmentResponse>(
+    `/api/v1/risk-assessments/${assessmentId}`,
+  );
+  return data;
+}
