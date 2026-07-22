@@ -2,23 +2,27 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { getMyReports } from "@/entities/report/api";
 import Arrow from "@/shared/asset/svg/Arrow";
 import HistoryListItem from "@/shared/ui/HistoryListItem";
-import { getMyReports } from "@/entities/report/api";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 
 function formatDate(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return `${date.getFullYear()}. ${String(date.getMonth() + 1).padStart(2, "0")}. ${String(
-    date.getDate()
-  ).padStart(2, "0")}`;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}. ${pad(date.getMonth() + 1)}. ${pad(date.getDate())}`;
 }
 
 export default function ReportHistoryPage() {
-  const { data: reports, isLoading } = useQuery({
-    queryKey: ["myReports"],
+  const {
+    data: reports,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["reports"],
     queryFn: getMyReports,
   });
 
@@ -45,24 +49,33 @@ export default function ReportHistoryPage() {
             </div>
           </div>
 
-          {isLoading && <p className="text-body-2 text-gray-700">불러오는 중입니다...</p>}
+          {isPending && <p className="text-body-1 text-gray-700">불러오는 중...</p>}
 
-          {!isLoading && reports?.length === 0 && (
-            <p className="text-body-2 text-gray-700">아직 생성된 신고 문서가 없습니다.</p>
+          {isError && (
+            <p className="text-body-1 text-red-500">
+              신고 문서 내역을 불러오지 못했습니다.
+              {error instanceof Error ? ` (${error.message})` : ""}
+            </p>
           )}
 
-          <div className="flex w-full flex-col gap-4">
-            {reports?.map((report) => (
-              <HistoryListItem
-                key={report.reportId}
-                href={`/mypage/reports/${report.reportId}`}
-                badge={report.status === "FINALIZED" ? "제출 확정" : "작성 중"}
-                badgeTone={report.status === "FINALIZED" ? "primary" : "secondary"}
-                title={report.damageType ? `${report.damageType} 신고 문서` : "신고 문서"}
-                meta={formatDate(report.createdAt)}
-              />
-            ))}
-          </div>
+          {reports && reports.length === 0 && (
+            <p className="text-body-1 text-gray-700">아직 작성한 신고 문서가 없습니다.</p>
+          )}
+
+          {reports && reports.length > 0 && (
+            <div className="flex w-full flex-col gap-4">
+              {reports.map((report) => (
+                <HistoryListItem
+                  key={report.reportId}
+                  href={`/mypage/reports/${report.reportId}`}
+                  badge={report.status === "FINALIZED" ? "제출 완료" : "작성 중"}
+                  badgeTone={report.status === "FINALIZED" ? "primary" : "secondary"}
+                  title={`${report.damageType ?? "신고"} 피해 신고 문서`}
+                  meta={`${formatDate(report.createdAt)} 생성`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
       <Footer />

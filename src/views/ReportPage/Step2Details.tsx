@@ -2,12 +2,19 @@
 
 import { useRef, useState } from "react";
 import type { ChangeEvent, DragEvent } from "react";
+import { toast } from "sonner";
+import { uploadReportEvidence } from "@/entities/report/api";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import Calendar from "@/shared/asset/svg/Calendar";
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import Button from "@/shared/ui/Button";
 import Input from "@/shared/ui/Input";
 import ReportSectionCard from "./ReportSectionCard";
+
+export interface ReportEvidence {
+  id: number;
+  name: string;
+}
 
 function isValidUrl(value: string) {
   const candidate = /^https?:\/\//i.test(value) ? value : `https://${value}`;
@@ -29,8 +36,8 @@ export interface ReportDetails {
 interface Step2DetailsProps {
   details: ReportDetails;
   onChange: (details: ReportDetails) => void;
-  evidenceFile: File | null;
-  onEvidenceChange: (file: File | null) => void;
+  evidence: ReportEvidence | null;
+  onEvidenceChange: (evidence: ReportEvidence | null) => void;
   onBack: () => void;
   onNext: () => void;
 }
@@ -56,9 +63,9 @@ function TextArea({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         rows={5}
-        className="text-body-1 placeholder:text-gray-600 focus:border-secondary-500 min-h-[140px] w-full resize-none rounded-lg border border-gray-300 p-4 text-black outline-none"
+        className="text-body-1 focus:border-secondary-500 min-h-[140px] w-full resize-none rounded-lg border border-gray-300 p-4 text-black outline-none placeholder:text-gray-600"
       />
-      {hint && <p className="text-caption text-gray-800 px-1">{hint}</p>}
+      {hint && <p className="text-caption px-1 text-gray-800">{hint}</p>}
     </div>
   );
 }
@@ -66,17 +73,33 @@ function TextArea({
 export default function Step2Details({
   details,
   onChange,
-  evidenceFile,
+  evidence,
   onEvidenceChange,
   onBack,
   onNext,
 }: Step2DetailsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  async function uploadFile(file: File) {
+    setIsUploading(true);
+    try {
+      const result = await uploadReportEvidence(file);
+      onEvidenceChange({ id: result.evidenceId, name: file.name });
+    } catch (error) {
+      toast.error("증거 자료 업로드에 실패했습니다.", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  }
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    onEvidenceChange(file ?? null);
+    if (!file) return;
+    uploadFile(file);
   }
 
   function handleDragOver(event: DragEvent<HTMLDivElement>) {
@@ -94,7 +117,7 @@ export default function Step2Details({
     setIsDragging(false);
     const file = event.dataTransfer.files?.[0];
     if (!file) return;
-    onEvidenceChange(file);
+    uploadFile(file);
   }
 
   const canProceed = details.description.trim().length > 0;
@@ -174,7 +197,7 @@ export default function Step2Details({
                 </span>
                 <p className="text-body-1 font-semibold text-black">사진 또는 영상 업로드</p>
                 <p className="text-body-2 text-gray-650">
-                  {evidenceFile?.name ?? "JPG , PNG 파일 지원"}
+                  {isUploading ? "업로드 중..." : (evidence?.name ?? "JPG , PNG 파일 지원")}
                 </p>
               </div>
               <input
@@ -188,9 +211,10 @@ export default function Step2Details({
                 type="button"
                 variant="primary"
                 className="w-[151px]"
+                disabled={isUploading}
                 onClick={() => fileInputRef.current?.click()}
               >
-                파일 찾기
+                {isUploading ? "업로드 중..." : "파일 찾기"}
               </Button>
             </div>
           </div>
@@ -201,7 +225,7 @@ export default function Step2Details({
         <button
           type="button"
           onClick={onBack}
-          className="border-primary-500 text-primary-500 text-body-2 flex h-12 w-[124px] items-center justify-center rounded border transition-colors active:bg-primary-50"
+          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 w-[124px] items-center justify-center rounded border transition-colors"
         >
           이전
         </button>
