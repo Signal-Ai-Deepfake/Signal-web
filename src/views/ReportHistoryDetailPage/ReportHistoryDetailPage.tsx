@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import Arrow from "@/shared/asset/svg/Arrow";
@@ -48,6 +49,7 @@ function toDraft(report: ReportResponse): ReportDraft {
 }
 
 export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageProps) {
+  const router = useRouter();
   const reportId = Number(id);
   const queryClient = useQueryClient();
   const {
@@ -151,7 +153,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
   }
 
   function handleFindAgency() {
-    toast.success("적합한 신고 기관을 확인하는 기능은 준비 중입니다.");
+    router.push("/support-referral");
   }
 
   function handleFinalize() {
