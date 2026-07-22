@@ -9,6 +9,7 @@ import {
   deleteReport,
   getReport,
   updateReport,
+  type ReportResponse,
   type UpdateReportRequest,
 } from "@/entities/report/api";
 import Arrow from "@/shared/asset/svg/Arrow";
@@ -34,6 +35,67 @@ function formatDateLong(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+function ReportContentView({ report }: { report: ReportResponse }) {
+  const sourceUrl = report.sourceUrls?.[0];
+  return (
+    <div className="text-body-1 text-gray-650 flex flex-col gap-6">
+      <p>
+        피해 개요
+        <br />
+        {report.damageType ?? "신고"} 피해가 발생한 것으로 보여 신고합니다.
+      </p>
+      <p>
+        피해 발생 시점
+        <br />
+        {report.incidentDate ? formatDateLong(report.incidentDate) : "미입력"}
+      </p>
+      <p>
+        피해 유형
+        <br />
+        {report.damageType || "미입력"}
+      </p>
+      <p>
+        피해 경로
+        <br />
+        {report.discoveryRoute || "미입력"}
+      </p>
+      <p>
+        원본 URL
+        <br />
+        {sourceUrl ? (
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-secondary-600 underline"
+          >
+            {sourceUrl}
+          </a>
+        ) : (
+          "미입력"
+        )}
+      </p>
+      <p className="whitespace-pre-wrap">
+        피해 내용
+        <br />
+        {report.description || "미입력"}
+      </p>
+      <p>
+        증거 자료
+        <br />
+        {report.evidenceIds && report.evidenceIds.length > 0
+          ? `첨부 파일 ${report.evidenceIds.length}건`
+          : "첨부된 자료 없음"}
+      </p>
+      <p>
+        요청 사항
+        <br />
+        해당 게시물의 삭제, 추가 확산 방지 및 필요한 조치를 요청합니다.
+      </p>
+    </div>
+  );
 }
 
 export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageProps) {
@@ -176,8 +238,8 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
 
           {report && (
             <>
-              <div className="flex w-full flex-col gap-6 rounded-2xl border border-gray-300 p-5 sm:p-8">
-                <div className="flex flex-col gap-1">
+              <div className="flex w-full flex-col items-center gap-6 rounded-2xl border border-gray-300 p-5 sm:p-8">
+                <div className="flex w-full max-w-[960px] flex-col gap-1">
                   <p className="text-h3 font-semibold text-black">신고 문서 내용을 확인해 주세요</p>
                   {isEditing && (
                     <p className="text-body-2 text-gray-700">
@@ -186,98 +248,78 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                   )}
                 </div>
 
-                <NoticeBanner>
+                <NoticeBanner className="w-full max-w-[960px]">
                   AI가 입력 내용을 정리한 문서입니다. 실제 제출 전 날짜, URL, 피해 내용을 한 번 더
                   확인해 주세요.
                 </NoticeBanner>
 
-                <div className="flex flex-col divide-y divide-gray-200 rounded-lg border border-gray-300">
-                  <div className="flex flex-col gap-1.5 p-4">
-                    <p className="text-body-1 font-semibold text-black">피해 발생 시점</p>
-                    {isEditing && draft ? (
-                      <input
-                        type="date"
-                        value={draft.incidentDate}
-                        onChange={(event) =>
-                          setDraft({ ...draft, incidentDate: event.target.value })
-                        }
-                        className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
-                      />
-                    ) : (
-                      <p className="text-body-1 text-gray-700">
-                        {report.incidentDate ? formatDateLong(report.incidentDate) : "미입력"}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-1.5 p-4">
-                    <p className="text-body-1 font-semibold text-black">피해 유형</p>
-                    {isEditing && draft ? (
-                      <input
-                        type="text"
-                        value={draft.damageType}
-                        onChange={(event) => setDraft({ ...draft, damageType: event.target.value })}
-                        className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
-                      />
-                    ) : (
-                      <p className="text-body-1 text-gray-700">{report.damageType || "미입력"}</p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-1.5 p-4">
-                    <p className="text-body-1 font-semibold text-black">피해 경로</p>
-                    {isEditing && draft ? (
-                      <input
-                        type="text"
-                        value={draft.discoveryRoute}
-                        onChange={(event) =>
-                          setDraft({ ...draft, discoveryRoute: event.target.value })
-                        }
-                        className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
-                      />
-                    ) : (
-                      <p className="text-body-1 text-gray-700">
-                        {report.discoveryRoute || "미입력"}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-1.5 p-4">
-                    <p className="text-body-1 font-semibold text-black">원본 URL</p>
-                    {isEditing && draft ? (
-                      <input
-                        type="url"
-                        value={draft.sourceUrl}
-                        onChange={(event) => setDraft({ ...draft, sourceUrl: event.target.value })}
-                        className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
-                      />
-                    ) : report.sourceUrls?.[0] ? (
-                      <a
-                        href={report.sourceUrls[0]}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-body-1 text-secondary-600 w-full text-ellipsis underline"
-                      >
-                        {report.sourceUrls[0]}
-                      </a>
-                    ) : (
-                      <p className="text-body-1 text-gray-700">미입력</p>
-                    )}
-                  </div>
-                  <div className="flex flex-col gap-1.5 p-4">
-                    <p className="text-body-1 font-semibold text-black">피해 내용</p>
-                    {isEditing && draft ? (
-                      <textarea
-                        value={draft.description}
-                        onChange={(event) =>
-                          setDraft({ ...draft, description: event.target.value })
-                        }
-                        rows={6}
-                        className="text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-gray-300 p-3 whitespace-pre-wrap text-black outline-none"
-                      />
-                    ) : (
-                      <p className="text-body-1 w-full whitespace-pre-wrap text-gray-700">
-                        {report.description || "미입력"}
-                      </p>
-                    )}
-                  </div>
+                <div className="flex w-full max-w-[960px] flex-col gap-2">
+                  <p className="text-body-1 text-black">신고 내용</p>
+                  {isEditing && draft ? (
+                    <div className="flex flex-col divide-y divide-gray-200 rounded-lg border border-gray-300">
+                      <div className="flex flex-col gap-1.5 p-4">
+                        <label className="text-body-1 font-semibold text-black">
+                          피해 발생 시점
+                        </label>
+                        <input
+                          type="date"
+                          value={draft.incidentDate}
+                          onChange={(event) =>
+                            setDraft({ ...draft, incidentDate: event.target.value })
+                          }
+                          className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5 p-4">
+                        <label className="text-body-1 font-semibold text-black">피해 유형</label>
+                        <input
+                          type="text"
+                          value={draft.damageType}
+                          onChange={(event) =>
+                            setDraft({ ...draft, damageType: event.target.value })
+                          }
+                          className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5 p-4">
+                        <label className="text-body-1 font-semibold text-black">피해 경로</label>
+                        <input
+                          type="text"
+                          value={draft.discoveryRoute}
+                          onChange={(event) =>
+                            setDraft({ ...draft, discoveryRoute: event.target.value })
+                          }
+                          className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5 p-4">
+                        <label className="text-body-1 font-semibold text-black">원본 URL</label>
+                        <input
+                          type="url"
+                          value={draft.sourceUrl}
+                          onChange={(event) =>
+                            setDraft({ ...draft, sourceUrl: event.target.value })
+                          }
+                          className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5 p-4">
+                        <label className="text-body-1 font-semibold text-black">피해 내용</label>
+                        <textarea
+                          value={draft.description}
+                          onChange={(event) =>
+                            setDraft({ ...draft, description: event.target.value })
+                          }
+                          rows={6}
+                          className="text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-gray-300 p-3 whitespace-pre-wrap text-black outline-none"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="h-[427px] w-full overflow-y-auto rounded-lg border border-gray-300 bg-gray-100 p-[17px]">
+                      <ReportContentView report={report} />
+                    </div>
+                  )}
                 </div>
               </div>
 
