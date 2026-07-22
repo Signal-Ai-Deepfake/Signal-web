@@ -1,13 +1,5 @@
-import LandingPage from "@/views/LandingPage";
-import Footer from "@/widgets/Footer";
-import Header from "@/widgets/Header";
+import HomePage from "@/views/HomePage/HomePage";
 
 export default function Home() {
-  return (
-    <>
-      <Header />
-      <LandingPage />
-      <Footer />
-    </>
-  );
+  return <HomePage />;
 }
