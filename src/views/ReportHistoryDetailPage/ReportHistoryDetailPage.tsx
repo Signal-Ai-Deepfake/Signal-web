@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import {
   deleteReport,
+  finalizeReport,
   getReport,
   updateReport,
   type ReportResponse,
@@ -106,6 +107,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<EditableFields | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [finalizeModalOpen, setFinalizeModalOpen] = useState(false);
 
   const {
     data: report,
@@ -144,6 +146,24 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
     onError: (mutationError) => {
       setDeleteModalOpen(false);
       toast.error("신고 문서 삭제에 실패했습니다.", {
+        description: mutationError instanceof Error ? mutationError.message : undefined,
+      });
+    },
+  });
+
+  const finalizeMutation = useMutation({
+    mutationFn: () => finalizeReport(reportId),
+    onSuccess: (result) => {
+      queryClient.setQueryData(
+        ["reports", reportId],
+        report ? { ...report, status: result.status, documentUrl: result.documentUrl } : report,
+      );
+      setFinalizeModalOpen(false);
+      toast.success("신고 문서를 확정했습니다.");
+    },
+    onError: (mutationError) => {
+      setFinalizeModalOpen(false);
+      toast.error("신고 문서 확정에 실패했습니다.", {
         description: mutationError instanceof Error ? mutationError.message : undefined,
       });
     },
@@ -372,6 +392,16 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                       >
                         내용수정
                       </button>
+                      {report.status === "DRAFT" && (
+                        <button
+                          type="button"
+                          onClick={() => setFinalizeModalOpen(true)}
+                          disabled={finalizeMutation.isPending}
+                          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 items-center justify-center rounded border px-6 transition-colors disabled:opacity-50"
+                        >
+                          {finalizeMutation.isPending ? "확정하는 중..." : "신고 문서 확정하기"}
+                        </button>
+                      )}
                       <Button type="button" variant="primary" onClick={handleFindAgency}>
                         적합한 신고 기관 확인하기
                       </Button>
@@ -392,6 +422,15 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
         cancelLabel="취소"
         onConfirm={() => deleteMutation.mutate()}
         onCancel={() => setDeleteModalOpen(false)}
+      />
+      <ConfirmModal
+        open={finalizeModalOpen}
+        title="신고 문서를 확정할까요?"
+        description="확정하면 더 이상 초안 수정 이력이 아닌 제출용 문서로 표시됩니다."
+        confirmLabel="확정"
+        cancelLabel="취소"
+        onConfirm={() => finalizeMutation.mutate()}
+        onCancel={() => setFinalizeModalOpen(false)}
       />
     </>
   );
