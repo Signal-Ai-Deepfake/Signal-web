@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import Arrow from "@/shared/asset/svg/Arrow";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
 import LinkButton from "@/shared/ui/LinkButton";
+import { createChatSession, sendChatMessage } from "@/entities/chat/api";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
-import { createChatSession, sendChatMessage } from "./chatApi";
 import ChatPrivacyCard from "./ChatPrivacyCard";
 import ChatSummaryCard from "./ChatSummaryCard";
 import ChatWindow from "./ChatWindow";
@@ -29,31 +29,26 @@ export default function ChatPage() {
   const [saveConsent, setSaveConsent] = useState(false);
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const sessionIdRef = useRef<string | null>(null);
-  const sessionInitRef = useRef(false);
+  const sessionCreatingRef = useRef<Promise<string> | null>(null);
 
-  function startNewSession() {
-    createChatSession()
+  function ensureSession(): Promise<string> {
+    if (sessionIdRef.current) return Promise.resolve(sessionIdRef.current);
+    sessionCreatingRef.current ??= createChatSession(saveConsent)
       .then((session) => {
         sessionIdRef.current = session.sessionId;
+        return session.sessionId;
       })
-      .catch((error) => {
-        toast.error("상담 세션을 시작하지 못했습니다.", {
-          description: error instanceof Error ? error.message : undefined,
-        });
+      .finally(() => {
+        sessionCreatingRef.current = null;
       });
+    return sessionCreatingRef.current;
   }
-
-  useEffect(() => {
-    if (sessionInitRef.current) return;
-    sessionInitRef.current = true;
-    startNewSession();
-  }, []);
 
   function handleResetConfirm() {
     setResetModalOpen(false);
     sessionIdRef.current = null;
+    sessionCreatingRef.current = null;
     setMessages(INITIAL_MESSAGES);
-    startNewSession();
   }
 
   async function handleSend(content: string) {
@@ -67,14 +62,8 @@ export default function ChatPage() {
     setMessages(nextMessages);
     setIsSending(true);
 
-    const sessionId = sessionIdRef.current;
-    if (!sessionId) {
-      toast.error("상담 세션이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
-      setIsSending(false);
-      return;
-    }
-
     try {
+      const sessionId = await ensureSession();
       const response = await sendChatMessage(sessionId, trimmed);
       setMessages((prev) => [
         ...prev,
