@@ -1,7 +1,12 @@
+import Link from "next/link";
+
 import Logo from "@/shared/asset/svg/Logo";
 
 const serviceLinks = ["AI 이미지 분석", "얼굴 도용·딥페이크 탐지", "익명 상담 챗봇", "신고 지원"];
-const legalLinks = ["개인정보처리방침", "이용약관"];
+const legalLinks = [
+  { label: "개인정보처리방침", href: "/privacy" },
+  { label: "이용약관", href: "/terms" },
+];
 
 export default function Footer() {
   return (
@@ -30,9 +35,13 @@ export default function Footer() {
           <p className="text-caption text-gray-600">© 2026 SIGNAL. All rights reserved.</p>
           <div className="flex gap-14">
             {legalLinks.map((link) => (
-              <span key={link} className="text-small text-gray-650">
-                {link}
-              </span>
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-small text-gray-650 hover:underline"
+              >
+                {link.label}
+              </Link>
             ))}
           </div>
         </div>
