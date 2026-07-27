@@ -57,7 +57,7 @@ api.interceptors.response.use(
 
     if (
       typeof window !== "undefined" &&
-      error.response?.status === 401 &&
+      (error.response?.status === 401 || error.response?.status === 403) &&
       original &&
       !original._retry &&
       !isAuthEndpoint
