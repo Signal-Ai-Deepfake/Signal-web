@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Signal",
-  description: "-",
+  description: "AI 기반 딥페이크 피해 예방·탐지·대응 솔루션",
 };
 
 export default function RootLayout({
