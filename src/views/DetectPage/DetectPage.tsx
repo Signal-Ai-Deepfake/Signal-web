@@ -74,7 +74,9 @@ function mapDetection(data: DeepfakeDetectionResponse): DetectResult {
     overallScore,
     overallCaption: VERDICT_CAPTION[verdict],
     modelConfidence: confidencePercent,
-    modelConfidenceNote: "AI 모델이 이미지를 분석한 결과입니다.",
+    modelConfidenceNote: data.fallbackUsed
+      ? "⚠️ AI 모델 응답에 실패해 실제 이미지 분석이 아닌 참고용 추정치가 표시되고 있습니다."
+      : "AI 모델이 이미지를 분석한 결과입니다.",
     evidenceHighlights,
     faceTheftVerdict: "준비 중",
     faceTheftScore: 0,
@@ -114,7 +116,7 @@ export default function DetectPage() {
       const created = await createDeepfakeDetection(selectedFile);
       return pollUntil(
         () => getDeepfakeDetection(created.detectionId),
-        (detection) => detection.status !== "PROCESSING"
+        (detection) => detection.status !== "PROCESSING",
       );
     },
     onSuccess: (data) => {

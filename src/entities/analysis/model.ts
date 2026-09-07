@@ -48,6 +48,8 @@ export function mapAssessment(data: RiskAssessmentResponse): AnalysisResult {
       score: factor.score,
     })),
     recommendations: data.recommendations,
-    aiNote: data.recommendations[0] ?? RISK_LEVEL_DESCRIPTION[data.overallRiskLevel],
+    aiNote: data.fallbackUsed
+      ? "⚠️ AI 모델 응답에 실패해 이번 결과는 참고용 추정치(자동 폴백)입니다. 실제 이미지 분석 결과가 아닐 수 있어요."
+      : (data.recommendations[0] ?? RISK_LEVEL_DESCRIPTION[data.overallRiskLevel]),
   };
 }
