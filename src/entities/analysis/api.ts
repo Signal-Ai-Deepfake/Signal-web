@@ -29,6 +29,8 @@ export interface RiskAssessmentResponse {
   recommendations: string[];
   faceDetected: boolean;
   faces: FaceResponse[];
+  /** true면 실제 AI 분석이 아니라 서버가 자동으로 대체한 참고용 추정치(폴백)입니다. */
+  fallbackUsed: boolean;
 }
 
 export async function createRiskAssessment(file: File): Promise<RiskAssessmentResponse> {
