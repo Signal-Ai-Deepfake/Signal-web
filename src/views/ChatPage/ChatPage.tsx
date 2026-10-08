@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import type { SendMessageResponse } from "@/entities/chat/api";
+import { getChatSummary, type SendMessageResponse } from "@/entities/chat/api";
 import Arrow from "@/shared/asset/svg/Arrow";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
@@ -25,24 +25,16 @@ function createMessageId() {
 }
 
 function mapChatSummary(response: SendMessageResponse): ChatSummary | null {
-  const summary: ChatSummary = {
-    situation:
-      response.situationType === "IMAGE_ABUSE"
+  if (!response.progress) return null;
+  return {
+    situation: response.situationType
+      ? response.situationType === "IMAGE_ABUSE"
         ? "이미지 관련 상담"
-        : response.situationType === "GENERAL"
-          ? "일반 상담"
-          : null,
+        : "일반 상담"
+      : undefined,
     recommendedSteps: response.suggestedActions ?? [],
-    crisisDetected: response.crisisDetected === true,
-    recommendedAgencies: response.recommendedAgencies ?? [],
+    progress: response.progress,
   };
-
-  return summary.situation ||
-    summary.recommendedSteps.length > 0 ||
-    summary.crisisDetected ||
-    summary.recommendedAgencies.length > 0
-    ? summary
-    : null;
 }
 
 export default function ChatPage() {
@@ -94,6 +86,13 @@ export default function ChatPage() {
         ...prev,
         { id: createMessageId(), role: "bot", content: response.reply },
       ]);
+      try {
+        setSummary(await getChatSummary(sessionId));
+      } catch (summaryError) {
+        toast.error("상담 요약을 불러오지 못했습니다.", {
+          description: summaryError instanceof Error ? summaryError.message : undefined,
+        });
+      }
       if (response.crisisDetected) {
         toast.warning("긴급 상황이 감지되었어요. 전문 기관 연결을 고려해 주세요.");
       }

@@ -38,6 +38,31 @@ export interface SendMessageResponse {
   suggestedActions?: string[];
   crisisDetected?: boolean;
   recommendedAgencies?: string[];
+  sessionEnded?: boolean;
+  progress?: ConsultationProgressResponse;
+}
+
+export interface ConsultationStage {
+  stage: string;
+  label: string;
+  status: string;
+}
+
+export interface ConsultationProgressResponse {
+  status: string;
+  currentStage: string;
+  completedStages: string[];
+  stages: ConsultationStage[];
+  progressPercent: number;
+}
+
+export interface ChatSummaryResponse {
+  situation: string;
+  recommendedSteps: string[];
+  riskLevel: string;
+  riskDescription: string;
+  progressPercent: number;
+  progress: ConsultationProgressResponse;
 }
 
 export async function createChatSession(saveConsent = false): Promise<ChatSessionCreateResponse> {
@@ -56,6 +81,14 @@ export async function sendChatMessage(
   const { data } = await api.post<SendMessageResponse>(
     `/api/v1/chat/sessions/${sessionId}/messages`,
     { content },
+    { headers: guestHeaders() },
+  );
+  return data;
+}
+
+export async function getChatSummary(sessionId: string): Promise<ChatSummaryResponse> {
+  const { data } = await api.get<ChatSummaryResponse>(
+    `/api/v1/chat/sessions/${sessionId}/summary`,
     { headers: guestHeaders() },
   );
   return data;

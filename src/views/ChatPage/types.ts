@@ -1,3 +1,5 @@
+import type { ChatSummaryResponse, ConsultationProgressResponse } from "@/entities/chat/api";
+
 export type ChatRole = "bot" | "user";
 
 export interface ChatMessage {
@@ -6,9 +8,6 @@ export interface ChatMessage {
   content: string;
 }
 
-export interface ChatSummary {
-  situation: string | null;
-  recommendedSteps: string[];
-  crisisDetected: boolean;
-  recommendedAgencies: string[];
-}
+export type ChatSummary = Partial<ChatSummaryResponse> & {
+  progress?: ConsultationProgressResponse;
+};
