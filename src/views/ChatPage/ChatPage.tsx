@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import type { SendMessageResponse } from "@/entities/chat/api";
 import Arrow from "@/shared/asset/svg/Arrow";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
@@ -13,8 +14,8 @@ import SiteHeader from "@/widgets/SiteHeader";
 import ChatPrivacyCard from "./ChatPrivacyCard";
 import ChatSummaryCard from "./ChatSummaryCard";
 import ChatWindow from "./ChatWindow";
-import { INITIAL_MESSAGES, MOCK_SUMMARY } from "./mockConversation";
-import type { ChatMessage } from "./types";
+import { INITIAL_MESSAGES } from "./mockConversation";
+import type { ChatMessage, ChatSummary } from "./types";
 
 let messageIdCounter = INITIAL_MESSAGES.length;
 
@@ -23,8 +24,30 @@ function createMessageId() {
   return String(messageIdCounter);
 }
 
+function mapChatSummary(response: SendMessageResponse): ChatSummary | null {
+  const summary: ChatSummary = {
+    situation:
+      response.situationType === "IMAGE_ABUSE"
+        ? "이미지 관련 상담"
+        : response.situationType === "GENERAL"
+          ? "일반 상담"
+          : null,
+    recommendedSteps: response.suggestedActions ?? [],
+    crisisDetected: response.crisisDetected === true,
+    recommendedAgencies: response.recommendedAgencies ?? [],
+  };
+
+  return summary.situation ||
+    summary.recommendedSteps.length > 0 ||
+    summary.crisisDetected ||
+    summary.recommendedAgencies.length > 0
+    ? summary
+    : null;
+}
+
 export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
+  const [summary, setSummary] = useState<ChatSummary | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [saveConsent, setSaveConsent] = useState(false);
   const [resetModalOpen, setResetModalOpen] = useState(false);
@@ -49,6 +72,7 @@ export default function ChatPage() {
     sessionIdRef.current = null;
     sessionCreatingRef.current = null;
     setMessages(INITIAL_MESSAGES);
+    setSummary(null);
   }
 
   async function handleSend(content: string) {
@@ -65,6 +89,7 @@ export default function ChatPage() {
     try {
       const sessionId = await ensureSession();
       const response = await sendChatMessage(sessionId, trimmed);
+      setSummary(mapChatSummary(response));
       setMessages((prev) => [
         ...prev,
         { id: createMessageId(), role: "bot", content: response.reply },
@@ -114,7 +139,7 @@ export default function ChatPage() {
               onReset={() => setResetModalOpen(true)}
             />
             <aside className="flex w-full flex-col gap-[18px] lg:w-[392px]">
-              <ChatSummaryCard summary={MOCK_SUMMARY} />
+              {summary && <ChatSummaryCard summary={summary} />}
               <ChatPrivacyCard checked={saveConsent} onChange={setSaveConsent} />
             </aside>
           </div>

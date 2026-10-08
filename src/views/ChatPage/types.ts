@@ -7,9 +7,8 @@ export interface ChatMessage {
 }
 
 export interface ChatSummary {
-  situation: string;
+  situation: string | null;
   recommendedSteps: string[];
-  riskLevel: string;
-  riskDescription: string;
-  progressPercent: number;
+  crisisDetected: boolean;
+  recommendedAgencies: string[];
 }
