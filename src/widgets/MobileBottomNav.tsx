@@ -9,11 +9,11 @@ import PhotoScan from "@/shared/asset/svg/PhotoScan";
 import User from "@/shared/asset/svg/User";
 import { useIsLoggedIn } from "@/shared/lib/useIsLoggedIn";
 
-const navItems: { icon: ComponentType; label: string; href: string }[] = [
+const navItems: { icon: ComponentType; label: string; href: string; match?: string }[] = [
   { icon: Home, label: "홈", href: "/" },
   { icon: PhotoScan, label: "분석", href: "/analyze" },
   { icon: Message, label: "채팅", href: "/chat" },
-  { icon: User, label: "마이페이지", href: "/mypage/profile" },
+  { icon: User, label: "마이페이지", href: "/mypage/profile", match: "/mypage" },
 ];
 
 export default function MobileBottomNav() {
@@ -24,16 +24,17 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      <div className="h-16 w-full md:hidden" aria-hidden />
-      <nav className="fixed bottom-0 left-0 z-30 flex h-16 w-full items-center justify-around border-t border-gray-300 bg-white md:hidden">
-        {navItems.map(({ icon: Icon, label, href }) => {
-          const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
+      <div className="h-[calc(4rem+env(safe-area-inset-bottom))] w-full md:hidden" aria-hidden />
+      <nav className="fixed bottom-0 left-0 z-30 flex h-[calc(4rem+env(safe-area-inset-bottom))] w-full items-center justify-around border-t border-gray-300 bg-white pb-[env(safe-area-inset-bottom)] md:hidden">
+        {navItems.map(({ icon: Icon, label, href, match = href }) => {
+          const isActive = match === "/" ? pathname === "/" : pathname.startsWith(match);
           return (
             <Link
               key={href}
               href={href}
+              aria-current={isActive ? "page" : undefined}
               className={`flex flex-col items-center gap-1 px-4 py-2 ${
-                isActive ? "text-primary-500" : "text-gray-500"
+                isActive ? "text-primary-500" : "text-gray-650"
               }`}
             >
               <span className="[&>svg]:h-6 [&>svg]:w-6">
