@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MobileBottomNav from "@/widgets/MobileBottomNav";
 import Providers from "./providers";
 import "./globals.css";
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko">
       <body className="antialiased">
         <Providers>{children}</Providers>
+        <MobileBottomNav />
       </body>
     </html>
   );
