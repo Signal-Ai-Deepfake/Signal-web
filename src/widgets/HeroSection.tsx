@@ -7,7 +7,7 @@ import ScrollReveal from "@/shared/ui/ScrollReveal";
 
 export default function HeroSection() {
   return (
-    <section className="w-full bg-white">
+    <section className="hidden w-full bg-white md:block">
       <FrameScale>
         <Image
           src="/images/landing/ellipse-blue.svg"
