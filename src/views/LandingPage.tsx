@@ -1,5 +1,6 @@
 import HeroSection from "@/widgets/HeroSection";
 import HowItWorksSection from "@/widgets/HowItWorksSection";
+import LandingAutoScroll from "@/widgets/LandingAutoScroll";
 import MobileFeatureGrid from "@/widgets/MobileFeatureGrid";
 import MobileHeroSection from "@/widgets/MobileHeroSection";
 import MobileWhySignalList from "@/widgets/MobileWhySignalList";
@@ -14,6 +15,7 @@ export default function LandingPage() {
       <WhySignalSection />
       <MobileWhySignalList />
       <HowItWorksSection />
+      <LandingAutoScroll />
     </main>
   );
 }

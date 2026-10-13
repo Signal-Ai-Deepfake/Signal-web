@@ -45,7 +45,7 @@ const howItWorksSteps: {
 
 export default function HowItWorksSection() {
   return (
-    <section className="w-full bg-white">
+    <section id="how-it-works" className="w-full bg-white">
       <FrameScale>
         <Image
           src="/images/landing/ellipse-blue.svg"

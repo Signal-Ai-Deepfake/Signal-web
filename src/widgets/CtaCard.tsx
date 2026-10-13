@@ -7,6 +7,7 @@ import LinkButton from "@/shared/ui/LinkButton";
 export default function CtaCard() {
   return (
     <div
+      id="cta"
       className="relative w-full max-w-[1280px] overflow-hidden rounded-2xl"
       style={{
         backgroundImage: "linear-gradient(78deg, #ffffff 52%, var(--color-secondary-50) 100%)",
