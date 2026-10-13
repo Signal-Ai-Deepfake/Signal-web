@@ -1,4 +1,5 @@
 import { api } from "@/shared/api/axios";
+import { guestHeaders } from "@/shared/api/guestHeaders";
 
 export type RiskLevel = "HIGH" | "MEDIUM" | "LOW";
 
@@ -35,7 +36,7 @@ export async function createRiskAssessment(file: File): Promise<RiskAssessmentRe
   const formData = new FormData();
   formData.append("image", file);
   const { data } = await api.post<RiskAssessmentResponse>("/api/v1/risk-assessments", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: { "Content-Type": "multipart/form-data", ...guestHeaders() },
   });
   return data;
 }
