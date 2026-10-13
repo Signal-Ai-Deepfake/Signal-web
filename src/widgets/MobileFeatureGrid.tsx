@@ -4,6 +4,7 @@ import FileText from "@/shared/asset/svg/FileText";
 import HandHeart from "@/shared/asset/svg/HandHeart";
 import Message from "@/shared/asset/svg/Message";
 import PhotoScan from "@/shared/asset/svg/PhotoScan";
+import ScrollReveal from "@/shared/ui/ScrollReveal";
 
 const features: {
   icon: ComponentType;
@@ -45,9 +46,11 @@ export default function MobileFeatureGrid() {
   return (
     <section className="w-full px-5 py-4 md:hidden">
       <div className="flex flex-col gap-4">
-        <h2 className="text-primary-500 text-h3 font-bold">주요 기능</h2>
+        <ScrollReveal distance={24}>
+          <h2 className="text-primary-500 text-h3 font-bold">주요 기능</h2>
+        </ScrollReveal>
         <div className="grid grid-cols-2 gap-4">
-          {features.map(({ icon: Icon, title, description, iconBg, href }) => {
+          {features.map(({ icon: Icon, title, description, iconBg, href }, index) => {
             const content = (
               <>
                 <div
@@ -63,20 +66,19 @@ export default function MobileFeatureGrid() {
                 </div>
               </>
             );
-            const cardStyle = "flex flex-col gap-3 rounded-2xl border border-gray-300 bg-white p-5";
+            const cardStyle =
+              "flex h-full flex-col gap-3 rounded-2xl border border-gray-300 bg-white p-5";
 
-            return href ? (
-              <Link
-                key={title}
-                href={href}
-                className={`${cardStyle} transition-colors active:bg-gray-100`}
-              >
-                {content}
-              </Link>
-            ) : (
-              <div key={title} className={cardStyle}>
-                {content}
-              </div>
+            return (
+              <ScrollReveal key={title} delay={80 + index * 80} distance={24}>
+                {href ? (
+                  <Link href={href} className={`${cardStyle} transition-colors active:bg-gray-100`}>
+                    {content}
+                  </Link>
+                ) : (
+                  <div className={cardStyle}>{content}</div>
+                )}
+              </ScrollReveal>
             );
           })}
         </div>
