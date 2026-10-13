@@ -1,6 +1,7 @@
 import Lock from "@/shared/asset/svg/Lock";
 import AnalysisStepList from "@/shared/ui/AnalysisStepList";
 import LinkButton from "@/shared/ui/LinkButton";
+import SectionBadge from "@/shared/ui/SectionBadge";
 
 export default function MobileHeroSection() {
   return (
@@ -9,6 +10,9 @@ export default function MobileHeroSection() {
       <div className="bg-secondary-50/60 pointer-events-none absolute top-20 left-0 size-[140px] -translate-x-1/3 rounded-full" />
       <div className="relative flex flex-col gap-6">
         <div className="flex flex-col gap-1">
+          <span className="mb-2 self-start">
+            <SectionBadge>AI 기반 딥페이크 피해 예방·탐지·대응</SectionBadge>
+          </span>
           <h1 className="text-[28px] leading-[1.3] font-bold tracking-tight text-black">
             당신이 보낸 구조 신호,
             <br />
