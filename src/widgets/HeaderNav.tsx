@@ -80,7 +80,7 @@ export default function HeaderNav() {
   }, [openIndex]);
 
   return (
-    <nav ref={navRef} className="flex items-center gap-8">
+    <nav ref={navRef} className="hidden items-center gap-8 md:flex">
       {navItems.map((nav, index) => (
         <div
           key={nav.label}

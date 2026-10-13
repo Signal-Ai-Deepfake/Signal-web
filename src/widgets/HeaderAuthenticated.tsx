@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Arrow from "@/shared/asset/svg/Arrow";
+import Bell from "@/shared/asset/svg/Bell";
 import Logo from "@/shared/asset/svg/Logo";
 import User from "@/shared/asset/svg/User";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
@@ -56,7 +57,7 @@ export default function HeaderAuthenticated() {
     }
     clearAuthTokens();
     setOpen(false);
-    router.push("/login");
+    router.push("/");
   }
 
   return (
@@ -65,18 +66,26 @@ export default function HeaderAuthenticated() {
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="mx-auto grid h-20 max-w-[1280px] grid-cols-[1fr_auto_1fr] items-center px-5">
-        <Link href="/">
+      <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-5 md:grid md:grid-cols-[1fr_auto_1fr]">
+        <Link href="/" className="shrink-0 max-md:[&>svg]:h-[30px] max-md:[&>svg]:w-[95px]">
           <Logo />
         </Link>
         <HeaderNav />
-        <div ref={menuRef} className="relative flex items-center justify-end">
+        <div ref={menuRef} className="relative flex items-center justify-end gap-4 md:gap-0">
           <button
             type="button"
-            onClick={() => setOpen((prev) => !prev)}
-            className="flex cursor-pointer items-center gap-2 rounded-full p-1 transition-colors active:bg-gray-100"
+            aria-label="알림"
+            className="text-primary-500 flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-100 transition-colors active:bg-gray-200 md:hidden"
           >
-            <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 text-gray-600 [&>svg]:h-5 [&>svg]:w-5">
+            <Bell />
+          </button>
+          <button
+            type="button"
+            aria-label="내 메뉴"
+            onClick={() => setOpen((prev) => !prev)}
+            className="flex cursor-pointer items-center gap-2 rounded-full transition-colors active:bg-gray-100 md:p-1"
+          >
+            <span className="border-primary-50 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 bg-gray-200 text-gray-600 md:size-8 md:border-0 [&>svg]:h-5 [&>svg]:w-5">
               {userAvatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -88,9 +97,9 @@ export default function HeaderAuthenticated() {
                 <User />
               )}
             </span>
-            <span className="text-body-2 text-black">{userName}</span>
+            <span className="text-body-2 hidden text-black md:inline">{userName}</span>
             <span
-              className={`text-gray-600 transition-transform [&>svg]:h-3 [&>svg]:w-3 ${
+              className={`hidden text-gray-600 transition-transform md:inline [&>svg]:h-3 [&>svg]:w-3 ${
                 open ? "-rotate-90" : "rotate-90"
               }`}
             >
