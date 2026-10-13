@@ -1,8 +1,10 @@
 import type { ComponentType } from "react";
 import type { RiskAssessmentResponse, RiskLevel } from "./api";
+import FileText from "@/shared/asset/svg/FileText";
 import Hd from "@/shared/asset/svg/Hd";
 import IdCard from "@/shared/asset/svg/IdCard";
 import Image from "@/shared/asset/svg/Image";
+import ImageSearch from "@/shared/asset/svg/ImageSearch";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 import type { RiskFactor } from "@/shared/ui/RiskFactorCard";
 
@@ -36,13 +38,34 @@ const FACTOR_ICON_BY_TYPE: Record<string, ComponentType> = {
   RESOLUTION: Hd,
 };
 
+// type이 위 표에 없을 때 type·label에 포함된 단어로 아이콘을 고른다.
+const FACTOR_ICON_BY_KEYWORD: [keywords: string[], icon: ComponentType][] = [
+  [["quality", "resolution", "품질", "해상도"], Hd],
+  [["meta", "메타"], FileText],
+  [["search", "검색"], ImageSearch],
+  [["background", "배경"], Image],
+  [["personal", "개인"], IdCard],
+  [["face", "얼굴"], ScanFace],
+];
+
+function resolveFactorIcon(type: string, label: string): ComponentType {
+  const exact = FACTOR_ICON_BY_TYPE[type];
+  if (exact) return exact;
+
+  const text = `${type} ${label}`.toLowerCase();
+  const matched = FACTOR_ICON_BY_KEYWORD.find(([keywords]) =>
+    keywords.some((keyword) => text.includes(keyword)),
+  );
+  return matched?.[1] ?? ScanFace;
+}
+
 export function mapAssessment(data: RiskAssessmentResponse): AnalysisResult {
   return {
     score: data.overallScore,
     level: RISK_LEVEL_LABEL[data.overallRiskLevel],
     description: RISK_LEVEL_DESCRIPTION[data.overallRiskLevel],
     factors: data.factors.map((factor) => ({
-      icon: FACTOR_ICON_BY_TYPE[factor.type] ?? ScanFace,
+      icon: resolveFactorIcon(factor.type, factor.label),
       title: factor.label,
       subtitle: factor.description,
       score: factor.score,
