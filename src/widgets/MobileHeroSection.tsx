@@ -4,7 +4,7 @@ import LinkButton from "@/shared/ui/LinkButton";
 
 export default function MobileHeroSection() {
   return (
-    <section className="relative w-full overflow-hidden px-5 pt-6 pb-8 md:hidden">
+    <section className="relative w-full overflow-hidden px-5 pt-12 pb-8 md:hidden">
       <div className="bg-primary-50/60 pointer-events-none absolute top-0 right-0 size-[180px] -translate-y-1/4 translate-x-1/4 rounded-full" />
       <div className="bg-secondary-50/60 pointer-events-none absolute top-20 left-0 size-[140px] -translate-x-1/3 rounded-full" />
       <div className="relative flex flex-col gap-6">
