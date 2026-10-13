@@ -57,7 +57,7 @@ export default function HeaderAuthenticated() {
     }
     clearAuthTokens();
     setOpen(false);
-    router.push("/login");
+    router.push("/");
   }
 
   return (
