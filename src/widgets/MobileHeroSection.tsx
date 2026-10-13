@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Lock from "@/shared/asset/svg/Lock";
+import AnalysisStepList from "@/shared/ui/AnalysisStepList";
 import LinkButton from "@/shared/ui/LinkButton";
 
 export default function MobileHeroSection() {
@@ -22,17 +22,7 @@ export default function MobileHeroSection() {
             혼자 고민하지 말고 Signal을 켜세요.
           </p>
         </div>
-        <div className="relative h-[180px] w-full overflow-hidden rounded-2xl">
-          <Image
-            src="/images/landing/mobile-hero.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        </div>
+        <AnalysisStepList percent={72} riskPercent={24} level="안전" />
         <LinkButton href="/analyze" variant="primary" className="w-full justify-center">
           AI 분석 시작하기
         </LinkButton>
