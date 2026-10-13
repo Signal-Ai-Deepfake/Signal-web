@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { animateScrollTo } from "@/shared/lib/animateScrollTo";
 
 const IDLE_DELAY = 5000;
-const SCROLL_DURATION = 1600;
 const FILL_RESET_DURATION = 250;
+
+const MOBILE_TARGET_ID = "mobile-features";
 
 type Fill = "empty" | "filling" | "full";
 
@@ -13,10 +15,6 @@ const targets: { id: string; block: "start" | "center" }[] = [
   { id: "how-it-works", block: "start" },
   { id: "cta", block: "center" },
 ];
-
-function easeInOutCubic(t: number) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
 
 function getTargetY(el: HTMLElement, block: "start" | "center") {
   const rect = el.getBoundingClientRect();
@@ -52,16 +50,9 @@ export default function LandingAutoScroll() {
 
     function scrollToSection(index: number) {
       const { el, block } = sections[index];
-      const startY = window.scrollY;
-      const distance = getTargetY(el, block) - startY;
-      const startTime = performance.now();
-
-      const step = (now: number) => {
-        const progress = Math.min((now - startTime) / SCROLL_DURATION, 1);
-        window.scrollTo({ top: startY + distance * easeInOutCubic(progress), behavior: "instant" });
-        frame = progress < 1 ? requestAnimationFrame(step) : 0;
-      };
-      frame = requestAnimationFrame(step);
+      animateScrollTo(getTargetY(el, block), (id) => {
+        frame = id;
+      });
     }
 
     function schedule() {
@@ -137,6 +128,40 @@ export default function LandingAutoScroll() {
       observer.disconnect();
       document.removeEventListener("click", handleAnchorClick);
       userEvents.forEach((type) => window.removeEventListener(type, handleUserInput));
+    };
+  }, []);
+
+  // 모바일 히어로의 "스크롤해서 더 알아보기" 링크도 같은 속도로 내려가게 한다.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(min-width: 768px)").matches) return;
+
+    let frame = 0;
+
+    function handleAnchorClick(event: MouseEvent) {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest(`a[href="#${MOBILE_TARGET_ID}"]`)) return;
+      const el = document.getElementById(MOBILE_TARGET_ID);
+      if (!el) return;
+      event.preventDefault();
+      animateScrollTo(getTargetY(el, "start"), (id) => {
+        frame = id;
+      });
+    }
+    function cancelScroll() {
+      if (!frame) return;
+      cancelAnimationFrame(frame);
+      frame = 0;
+    }
+
+    document.addEventListener("click", handleAnchorClick);
+    window.addEventListener("touchstart", cancelScroll, { passive: true });
+    window.addEventListener("wheel", cancelScroll, { passive: true });
+    return () => {
+      cancelScroll();
+      document.removeEventListener("click", handleAnchorClick);
+      window.removeEventListener("touchstart", cancelScroll);
+      window.removeEventListener("wheel", cancelScroll);
     };
   }, []);
 
