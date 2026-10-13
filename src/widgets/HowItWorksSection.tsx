@@ -72,10 +72,10 @@ export default function HowItWorksSection() {
                 사진 한 장으로 위험을 분석하고, 안전한 대응 방법을 안내해 드립니다.
               </p>
             </ScrollReveal>
-            <div className="grid w-full grid-cols-2 gap-3 md:flex md:w-auto md:flex-wrap md:items-center md:justify-center md:gap-6">
+            <div className="grid w-full grid-cols-2 gap-3 md:gap-5 xl:flex xl:w-auto xl:items-center xl:justify-center xl:gap-6">
               {howItWorksSteps.map((step, index) => (
-                <div key={step.step} className="flex items-stretch gap-6 md:items-center">
-                  <ScrollReveal delay={120 + index * 80} className="w-full md:w-auto">
+                <div key={step.step} className="flex items-stretch gap-6 xl:items-center">
+                  <ScrollReveal delay={120 + index * 80} className="w-full xl:w-auto">
                     <StepCard {...step} />
                   </ScrollReveal>
                   {index < howItWorksSteps.length - 1 && <StepArrow />}

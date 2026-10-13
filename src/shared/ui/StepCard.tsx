@@ -17,7 +17,7 @@ export default function StepCard({
 }: StepCardProps) {
   return (
     <div
-      className={`h-full w-full rounded-2xl border border-gray-200 bg-white p-4 md:h-[199px] md:w-[250px] md:p-6 ${
+      className={`h-full w-full rounded-2xl border border-gray-200 bg-white p-4 md:p-6 xl:h-[199px] xl:w-[250px] ${
         emphasized ? "shadow-md" : ""
       }`}
     >
