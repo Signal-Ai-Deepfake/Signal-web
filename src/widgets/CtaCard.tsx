@@ -12,7 +12,7 @@ export default function CtaCard() {
         backgroundImage: "linear-gradient(78deg, #ffffff 52%, var(--color-secondary-50) 100%)",
       }}
     >
-      <div className="relative z-10 flex flex-col items-start gap-6 px-5 py-7 md:px-9 md:py-10">
+      <div className="relative z-10 flex flex-col items-start gap-6 px-5 py-7 md:max-xl:items-center md:max-xl:py-14 md:max-xl:text-center md:px-9 xl:py-10">
         <div className="flex flex-col gap-2">
           <div className="flex flex-col">
             <p className="text-body-1 md:text-h3 font-semibold text-black">혼자 고민하지 마세요.</p>
@@ -39,7 +39,7 @@ export default function CtaCard() {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[560px] lg:block">
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[560px] xl:block">
         <Image
           src="/images/landing/wave-2.svg"
           alt=""
