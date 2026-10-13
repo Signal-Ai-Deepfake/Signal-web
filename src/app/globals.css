@@ -172,6 +172,17 @@ body {
   }
 }
 
+/* 페이지 스크롤바는 모든 화면에서 숨긴다 (스크롤 자체는 그대로 동작). */
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes legal-target-flash {
   0% {
     background-color: var(--color-primary-50);
