@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Arrow from "@/shared/asset/svg/Arrow";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import AnalysisStepRow from "@/shared/ui/AnalysisStepRow";
 import AnalysisStepStack from "@/shared/ui/AnalysisStepStack";
@@ -25,7 +26,7 @@ export default function HeroSection() {
           height={824}
           className="pointer-events-none absolute -top-96 left-24 h-[824px] w-[824px]"
         />
-        <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-12 px-5 py-20 xl:flex-row xl:items-center xl:justify-between xl:gap-16 xl:py-32">
+        <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-12 px-5 pt-20 pb-36 xl:flex-row xl:items-center xl:justify-between xl:gap-16 xl:py-32">
           <ScrollReveal className="flex w-fit flex-col items-center gap-6 text-center xl:items-start xl:text-left">
             <span className="xl:hidden">
               <SectionBadge>AI 기반 딥페이크 피해 예방·탐지·대응</SectionBadge>
@@ -74,6 +75,17 @@ export default function HeroSection() {
             />
           </ScrollReveal>
         </div>
+        <a
+          href="#why-signal"
+          className="text-caption hover:text-primary-500 absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-gray-700 transition-colors"
+        >
+          스크롤해서 더 알아보기
+          <span className="animate-bounce motion-reduce:animate-none">
+            <span className="block rotate-90 [&>svg]:h-4 [&>svg]:w-4">
+              <Arrow />
+            </span>
+          </span>
+        </a>
       </FrameScale>
     </section>
   );

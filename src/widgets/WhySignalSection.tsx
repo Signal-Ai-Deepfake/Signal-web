@@ -33,7 +33,7 @@ const whySignalItems: { icon: ComponentType; title: string; description: string 
 
 export default function WhySignalSection() {
   return (
-    <section className="hidden w-full bg-white md:block">
+    <section id="why-signal" className="hidden w-full bg-white md:block">
       <FrameScale>
         <div className="mx-auto flex w-full max-w-[1360px] flex-col items-center justify-center gap-10 px-5 py-20 lg:py-24">
           <ScrollReveal className="flex flex-col items-center gap-4 text-center">
