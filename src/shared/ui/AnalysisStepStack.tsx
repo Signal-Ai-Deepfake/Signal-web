@@ -16,16 +16,21 @@ export default function AnalysisStepStack({
   message,
 }: AnalysisStepStackProps) {
   return (
-    <div className="relative h-[460px] w-[460px]">
-      <div className="absolute top-12 right-68 -rotate-4 rounded-3xl shadow-lg">
-        <UploadStepCard />
+    <div className="relative h-[300px] w-[300px] overflow-visible sm:h-[380px] sm:w-[380px] lg:h-[460px] lg:w-[460px]">
+      <div className="relative h-[460px] w-[460px] origin-top scale-[0.65] sm:scale-[0.826] lg:scale-100">
+        <div className="absolute top-12 right-68 -rotate-4 rounded-3xl shadow-lg">
+          <UploadStepCard />
+        </div>
+        <div className="absolute top-12 left-68 rotate-4 rounded-3xl shadow-lg">
+          <AnalysisResultCard riskPercent={riskPercent} level={level} message={message} />
+        </div>
+        <div className="absolute top-0 left-1/2 z-10 -translate-x-1/2 rounded-3xl shadow-xl">
+          <AnalysisProgressCard percent={percent} />
+        </div>
       </div>
-      <div className="absolute top-12 left-68 rotate-4 rounded-3xl shadow-lg">
-        <AnalysisResultCard riskPercent={riskPercent} level={level} message={message} />
-      </div>
-      <div className="absolute top-0 left-1/2 z-10 -translate-x-1/2 rounded-3xl shadow-xl">
-        <AnalysisProgressCard percent={percent} />
-      </div>
+      <p className="text-caption absolute inset-x-0 bottom-0 text-center text-gray-700">
+        예시 화면 · 사진을 분석하면 이런 순서로 결과를 확인할 수 있어요.
+      </p>
     </div>
   );
 }
