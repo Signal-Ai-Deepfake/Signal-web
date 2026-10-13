@@ -3,8 +3,8 @@ import Arrow from "@/shared/asset/svg/Arrow";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import AnalysisStepRow from "@/shared/ui/AnalysisStepRow";
 import AnalysisStepStack from "@/shared/ui/AnalysisStepStack";
-import Button from "@/shared/ui/Button";
 import FrameScale from "@/shared/ui/FrameScale";
+import LinkButton from "@/shared/ui/LinkButton";
 import ScrollReveal from "@/shared/ui/ScrollReveal";
 import SectionBadge from "@/shared/ui/SectionBadge";
 
@@ -51,12 +51,12 @@ export default function HeroSection() {
                 </p>
               </div>
             </div>
-            <Button variant="primary" className="gap-1">
+            <LinkButton href="/analyze" variant="primary" className="gap-1">
               AI 분석 시작하기
               <span className="[&>svg]:h-6 [&>svg]:w-6">
                 <ArrowUp />
               </span>
-            </Button>
+            </LinkButton>
           </ScrollReveal>
           <ScrollReveal delay={120} className="w-full xl:hidden">
             <AnalysisStepRow
