@@ -58,7 +58,7 @@ export default function HomeDashboard() {
                 </span>
               </LinkButton>
             </ScrollReveal>
-            <ScrollReveal delay={120} className="hidden w-full md:block xl:hidden">
+            <ScrollReveal distance={0} className="hidden w-full md:block xl:hidden">
               <AnalysisStepRow
                 percent={72}
                 riskPercent={24}
@@ -66,7 +66,7 @@ export default function HomeDashboard() {
                 message="현재 이미지는 안전합니다."
               />
             </ScrollReveal>
-            <ScrollReveal delay={120} className="hidden xl:block">
+            <ScrollReveal distance={0} className="hidden xl:block">
               <AnalysisStepStack
                 percent={72}
                 riskPercent={24}
