@@ -99,11 +99,6 @@ export default function AnalyzePage() {
                 onShare={handleShare}
                 onSaveProtected={handleSaveProtected}
               />
-              {(status === "idle" || status === "selected") && (
-                <p className="text-caption -mt-4 text-center text-gray-800 md:hidden">
-                  파일을 업로드하면 분석을 시작할 수 있습니다.
-                </p>
-              )}
             </div>
           </div>
 
