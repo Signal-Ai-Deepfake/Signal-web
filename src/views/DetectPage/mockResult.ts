@@ -1,6 +1,5 @@
 import type { DetectResult } from "./types";
 
-// TODO: 실제 얼굴 도용·딥페이크 탐지 API 연동 시 이 목데이터를 응답 값으로 교체
 export const MOCK_RESULT: DetectResult = {
   faceTheftVerdict: "도용 의심",
   faceTheftScore: 80,

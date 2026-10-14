@@ -12,7 +12,6 @@ import { createProtection, downloadProtection, getProtection } from "./analyzeAp
 
 export type Status = "idle" | "selected" | "analyzing" | "error" | "result";
 
-// 비로그인 사용자에게 그대로 보여주기엔 부적절한 서버 메시지 (내부 용어, 인증 오류).
 function isInternalMessage(message?: string) {
   return !message || message.includes("X-Anonymous-Id") || message === "인증이 필요합니다.";
 }
@@ -34,7 +33,6 @@ export function useAnalyzeFlow() {
     };
   }, [previewUrl]);
 
-  // 비로그인 상태에서는 로그인 안내와 로그인 버튼을 함께 보여준다.
   function showError(title: string, error: unknown, guestFallback: string) {
     const message = error instanceof Error ? error.message : undefined;
     if (getAccessToken()) {

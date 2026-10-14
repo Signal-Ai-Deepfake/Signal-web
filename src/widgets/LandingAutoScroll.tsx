@@ -23,7 +23,6 @@ function getTargetY(el: HTMLElement, block: "start" | "center") {
   return Math.min(Math.max(rect.top + window.scrollY - offset, 0), maxY);
 }
 
-// 섹션에 머문 채 일정 시간 조작이 없으면 다음 섹션으로 한 번씩 자동 스크롤한다.
 export default function LandingAutoScroll() {
   const [indicator, setIndicator] = useState<{ current: number; count: number; fill: Fill }>({
     current: -1,
@@ -62,7 +61,6 @@ export default function LandingAutoScroll() {
       setIndicator({ current, count: sections.length, fill: counting ? "empty" : "full" });
       if (!counting) return;
 
-      // 막대를 먼저 부드럽게 비운 뒤 남은 시간 동안 다시 채운다.
       fillTimer = setTimeout(() => {
         setIndicator((prev) => ({ ...prev, fill: "filling" }));
       }, FILL_RESET_DURATION);
@@ -74,7 +72,6 @@ export default function LandingAutoScroll() {
       }, IDLE_DELAY);
     }
 
-    // 화면 세로 중앙을 지나는 섹션을 현재 섹션으로 본다.
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -96,7 +93,6 @@ export default function LandingAutoScroll() {
     );
     sections.forEach((section) => observer.observe(section.el));
 
-    // 사용자가 직접 조작하면 진행 중인 자동 스크롤을 멈추고 대기 시간을 다시 센다.
     function handleUserInput() {
       if (frame) {
         cancelAnimationFrame(frame);
@@ -109,7 +105,6 @@ export default function LandingAutoScroll() {
       window.addEventListener(type, handleUserInput, { passive: true });
     });
 
-    // 히어로의 "스크롤해서 더 알아보기" 링크도 같은 속도로 내려가게 한다.
     function handleAnchorClick(event: MouseEvent) {
       if (!(event.target instanceof Element)) return;
       const index = sections.findIndex((section) =>
@@ -131,7 +126,6 @@ export default function LandingAutoScroll() {
     };
   }, []);
 
-  // 모바일 히어로의 "스크롤해서 더 알아보기" 링크도 같은 속도로 내려가게 한다.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (window.matchMedia("(min-width: 768px)").matches) return;

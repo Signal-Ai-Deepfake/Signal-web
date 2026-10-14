@@ -8,22 +8,18 @@ interface Segment {
 }
 
 interface TypingHeadlineProps {
-  /** 줄 단위로 나눈 문구. 한 줄은 색이 다른 조각 여러 개로 이뤄질 수 있다. */
   lines: Segment[][];
   className?: string;
   speed?: number;
   startDelay?: number;
-  /** 타이핑이 끝난 뒤에 나타날 내용. */
   children?: ReactNode;
   afterClassName?: string;
 }
 
 const CARET_LINGER = 1200;
-// 타이핑이 끝난 뒤 쉬는 시간과, 뒤따르는 요소들이 차례로 나타나는 간격.
 const REVEAL_PAUSE = 600;
 const REVEAL_STAGGER = 600;
 
-// 글자를 미리 투명하게 깔아두고 하나씩 드러내므로, 타이핑 중에도 줄바꿈과 레이아웃이 변하지 않는다.
 export default function TypingHeadline({
   lines,
   className = "",
@@ -62,7 +58,6 @@ export default function TypingHeadline({
     };
   }, [total, speed, startDelay]);
 
-  // 타이핑이 끝나면 data-typing 조상에 알려, 그 안에서 멈춰 있던 애니메이션이 이어서 재생되게 한다.
   useEffect(() => {
     if (!done) return;
     headingRef.current?.closest("[data-typing]")?.setAttribute("data-typing", "done");

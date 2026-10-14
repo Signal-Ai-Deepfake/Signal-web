@@ -15,7 +15,6 @@ export default function ScrollToTopButton() {
     function handleScroll() {
       setVisible(window.scrollY > SHOW_AFTER);
     }
-    // 올라가는 도중에 사용자가 직접 조작하면 멈춘다.
     function cancelScroll() {
       if (!frameRef.current) return;
       cancelAnimationFrame(frameRef.current);

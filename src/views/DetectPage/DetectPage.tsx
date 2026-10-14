@@ -33,8 +33,6 @@ const VERDICT_CAPTION: Record<DeepfakeVerdict, string> = {
   REAL: "얼굴 영역에서 합성 흔적이 발견되지 않았습니다.",
 };
 
-// 백엔드가 evidence.type을 enum 코드(영문 대문자 스네이크 케이스)로 내려줘서 한글 라벨로 변환.
-// 목록에 없는 새 코드가 오면 formatEvidenceType의 fallback으로 대체 표시.
 const EVIDENCE_TYPE_LABEL: Record<string, string> = {
   BLINK_PATTERN_ANOMALY: "눈 깜빡임 패턴",
   COMPRESSION_ARTIFACT: "압축 아티팩트",

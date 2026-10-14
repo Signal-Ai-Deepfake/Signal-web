@@ -50,11 +50,7 @@ export default function HeaderAuthenticated() {
   }, [open]);
 
   async function handleLogout() {
-    try {
-      await logout();
-    } catch {
-      // 서버 로그아웃이 실패해도 로컬 세션은 정리하고 진행한다.
-    }
+    await logout().catch(() => undefined);
     clearAuthTokens();
     setOpen(false);
     router.push("/");

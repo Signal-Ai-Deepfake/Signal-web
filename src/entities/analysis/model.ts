@@ -38,7 +38,6 @@ const FACTOR_ICON_BY_TYPE: Record<string, ComponentType> = {
   RESOLUTION: Hd,
 };
 
-// type이 위 표에 없을 때 type·label에 포함된 단어로 아이콘을 고른다.
 const FACTOR_ICON_BY_KEYWORD: [keywords: string[], icon: ComponentType][] = [
   [["quality", "resolution", "품질", "해상도"], Hd],
   [["meta", "메타"], FileText],

@@ -126,8 +126,6 @@ export default function SignupPage() {
         agreements: { termsOfService: agreeTerms, privacyPolicy: agreePrivacy },
       }),
     onSuccess: async () => {
-      // 계정 생성 자체는 끝났으므로, 이후 자동 로그인/사진 업로드가 실패해도
-      // "회원가입 실패"로 보여주지 않고 완료 화면으로 보낸다 (재시도 시 "이미 가입된 이메일" 오류 방지).
       try {
         const tokens = await login({ email, password });
         setAuthTokens(tokens.accessToken, tokens.refreshToken);
