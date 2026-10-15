@@ -34,7 +34,7 @@ export default function AnalysisPanel({
 }: AnalysisPanelProps) {
   if (status === "error") {
     return (
-      <div className="flex h-[217px] animate-[fade-in-up_0.4s_ease-out] flex-col justify-between rounded-2xl border border-gray-300 px-8 py-5">
+      <div className="flex animate-[fade-in-up_0.4s_ease-out] flex-col gap-4 rounded-2xl border border-gray-300 p-5 md:h-[217px] md:justify-between md:px-8">
         <p className="text-body-1 font-semibold text-black">실시간 분석</p>
         <div className="flex flex-col items-center gap-2 text-center">
           <p className="text-body-1 font-semibold text-black">
