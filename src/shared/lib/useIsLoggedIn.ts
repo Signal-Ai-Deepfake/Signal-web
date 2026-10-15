@@ -17,9 +17,9 @@ function getSnapshot() {
 }
 
 function getServerSnapshot() {
-  return false;
+  return null;
 }
 
-export function useIsLoggedIn() {
+export function useIsLoggedIn(): boolean | null {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
