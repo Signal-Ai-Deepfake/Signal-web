@@ -14,6 +14,8 @@ interface TypingHeadlineProps {
   startDelay?: number;
   children?: ReactNode;
   afterClassName?: string;
+  as?: "h1" | "p";
+  revealMotion?: "rise" | "fade";
 }
 
 const CARET_LINGER = 1200;
@@ -27,12 +29,14 @@ export default function TypingHeadline({
   startDelay = 300,
   children,
   afterClassName = "",
+  as: Tag = "h1",
+  revealMotion = "rise",
 }: TypingHeadlineProps) {
   const total = lines.flat().reduce((sum, segment) => sum + Array.from(segment.text).length, 0);
   const [count, setCount] = useState(0);
   const [caretVisible, setCaretVisible] = useState(true);
   const done = count >= total;
-  const headingRef = useRef<HTMLHeadingElement>(null);
+  const headingRef = useRef<HTMLHeadingElement & HTMLParagraphElement>(null);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -79,7 +83,7 @@ export default function TypingHeadline({
 
   return (
     <>
-      <h1
+      <Tag
         ref={headingRef}
         className={className}
         aria-label={lines
@@ -106,14 +110,16 @@ export default function TypingHeadline({
             {caretVisible && count >= total && lineIndex === lines.length - 1 && caret}
           </span>
         ))}
-      </h1>
+      </Tag>
       {children && (
         <div className={`${done ? "" : "pointer-events-none"} ${afterClassName}`}>
           {Children.toArray(children).map((child, childIndex) => (
             <div
               key={childIndex}
               className={`transition-all duration-[1400ms] ease-out motion-reduce:!delay-0 ${
-                done ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+                done
+                  ? "translate-y-0 opacity-100"
+                  : `opacity-0 ${revealMotion === "rise" ? "translate-y-6" : ""}`
               }`}
               style={{ transitionDelay: `${REVEAL_PAUSE + childIndex * REVEAL_STAGGER}ms` }}
             >
