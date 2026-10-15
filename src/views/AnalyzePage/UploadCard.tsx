@@ -116,6 +116,7 @@ export default function UploadCard({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
+                aria-label="갤러리에서 사진 선택"
                 className="flex size-16 items-center justify-center rounded-2xl bg-white text-black shadow-sm [&>svg]:h-6 [&>svg]:w-6"
               >
                 <ImageIcon />
@@ -123,6 +124,7 @@ export default function UploadCard({
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
+                aria-label="카메라로 사진 촬영"
                 className="flex size-16 items-center justify-center rounded-2xl bg-white text-black shadow-sm [&>svg]:h-6 [&>svg]:w-6"
               >
                 <Camera />
