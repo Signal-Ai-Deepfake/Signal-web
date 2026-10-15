@@ -1,7 +1,14 @@
+import type { RiskLevel } from "@/entities/analysis/api";
+import { RISK_LEVEL_LABEL } from "@/entities/analysis/model";
+import RiskTag from "@/shared/ui/RiskTag";
 import type { ChatSummary } from "./types";
 
 interface ChatSummaryCardProps {
   summary: ChatSummary;
+}
+
+function isRiskLevel(value?: string): value is RiskLevel {
+  return value === "HIGH" || value === "MEDIUM" || value === "LOW";
 }
 
 export default function ChatSummaryCard({ summary }: ChatSummaryCardProps) {
@@ -31,9 +38,13 @@ export default function ChatSummaryCard({ summary }: ChatSummaryCardProps) {
         <div className="flex flex-col gap-1.5 border-b border-primary-50 pb-3.5">
           <div className="flex items-center justify-between">
             <p className="text-small font-semibold text-gray-800">현재 위험 수준</p>
-            <span className="text-caption rounded-full bg-secondary-50 px-2.5 py-1 text-secondary-500">
-              {summary.riskLevel}
-            </span>
+            {isRiskLevel(summary.riskLevel) ? (
+              <RiskTag level={RISK_LEVEL_LABEL[summary.riskLevel]} />
+            ) : (
+              <span className="text-caption bg-secondary-50 text-secondary-500 rounded-full px-2.5 py-1">
+                {summary.riskLevel}
+              </span>
+            )}
           </div>
           {summary.riskDescription && (
             <p className="text-small text-black">{summary.riskDescription}</p>
