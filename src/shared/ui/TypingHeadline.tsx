@@ -83,14 +83,13 @@ export default function TypingHeadline({
 
   return (
     <>
-      <Tag
-        ref={headingRef}
-        className={className}
-        aria-label={lines
-          .flat()
-          .map((segment) => segment.text)
-          .join(" ")}
-      >
+      <Tag ref={headingRef} className={className}>
+        <span className="sr-only">
+          {lines
+            .flat()
+            .map((segment) => segment.text)
+            .join(" ")}
+        </span>
         {lines.map((line, lineIndex) => (
           <span key={lineIndex} aria-hidden className="block">
             {line.map((segment) =>
