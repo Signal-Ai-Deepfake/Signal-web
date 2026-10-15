@@ -80,6 +80,7 @@ export function useAnalyzeFlow() {
         return;
       }
       queryClient.setQueryData(["riskAssessments", data.assessmentId], data);
+      queryClient.invalidateQueries({ queryKey: ["riskAssessments"], exact: true });
       setAssessmentId(data.assessmentId);
       setResult(mapAssessment(data));
       setStatus("result");
