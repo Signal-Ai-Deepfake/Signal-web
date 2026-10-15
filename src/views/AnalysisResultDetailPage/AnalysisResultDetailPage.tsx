@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { toast } from "sonner";
 import { getAssessment } from "@/entities/analysis/api";
-import { mapAssessment } from "@/entities/analysis/model";
+import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Share from "@/shared/asset/svg/Share";
 import { useIsLoggedIn } from "@/shared/lib/useIsLoggedIn";
@@ -21,11 +21,24 @@ interface AnalysisResultDetailPageProps {
   id: string;
 }
 
-async function shareResult() {
-  const url = window.location.href;
+function buildShareText(result: AnalysisResult) {
+  const topFactors = [...result.factors]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map((factor) => `- ${factor.title} ${factor.score}%`);
+  return [
+    "[Signal 사진 위험도 분석 결과]",
+    `위험도: ${result.level} (${result.score}%)`,
+    result.description.replace(/\n/g, " "),
+    ...(topFactors.length > 0 ? ["", "주요 위험 요인", ...topFactors] : []),
+  ].join("\n");
+}
+
+async function shareResult(result: AnalysisResult) {
+  const text = buildShareText(result);
   if (navigator.share) {
     try {
-      await navigator.share({ title: "Signal 분석 결과", url });
+      await navigator.share({ title: "Signal 분석 결과", text });
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
       toast.error("공유하지 못했습니다.");
@@ -33,10 +46,10 @@ async function shareResult() {
     return;
   }
   try {
-    await navigator.clipboard.writeText(url);
-    toast.success("결과 링크를 복사했어요.");
+    await navigator.clipboard.writeText(text);
+    toast.success("분석 결과 요약을 복사했어요.");
   } catch {
-    toast.error("링크를 복사하지 못했습니다.");
+    toast.error("결과를 복사하지 못했습니다.");
   }
 }
 
@@ -60,7 +73,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
   return (
     <>
       <SiteHeader className="max-md:hidden print:hidden" />
-      <ResultMobileHeader onShare={shareResult} />
+      <ResultMobileHeader onShare={result ? () => shareResult(result) : undefined} />
       <main
         className={`flex w-full flex-col items-center bg-gray-100 px-5 py-5 md:bg-white md:py-10 md:pb-[120px] ${
           result ? "max-md:pb-[184px]" : "max-md:pb-10"
@@ -88,7 +101,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
               {result && (
                 <button
                   type="button"
-                  onClick={shareResult}
+                  onClick={() => shareResult(result)}
                   className="text-body-2 text-primary-500 border-primary-500 hover:bg-primary-50 flex h-[50px] shrink-0 cursor-pointer items-center gap-2 rounded border px-5 transition-colors print:hidden [&>svg]:h-4 [&>svg]:w-3.5"
                 >
                   <Share />
@@ -113,7 +126,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
             </p>
           )}
 
-          {result && assessment && (
+          {assessment && result && (
             <>
               <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2 lg:gap-8">
                 <div className="flex flex-col gap-6 lg:gap-8">

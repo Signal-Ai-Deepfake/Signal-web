@@ -3,7 +3,7 @@ import ChevronLeft from "@/shared/asset/svg/ChevronLeft";
 import Share from "@/shared/asset/svg/Share";
 
 interface ResultMobileHeaderProps {
-  onShare: () => void;
+  onShare?: () => void;
 }
 
 export default function ResultMobileHeader({ onShare }: ResultMobileHeaderProps) {
@@ -19,14 +19,16 @@ export default function ResultMobileHeader({ onShare }: ResultMobileHeaderProps)
         </Link>
         <h1 className="text-body-1 text-primary-500 font-bold">분석 결과</h1>
       </div>
-      <button
-        type="button"
-        onClick={onShare}
-        aria-label="결과 공유하기"
-        className="text-primary-500 active:bg-primary-50 flex size-10 cursor-pointer items-center justify-center rounded-full [&>svg]:h-4 [&>svg]:w-3.5"
-      >
-        <Share />
-      </button>
+      {onShare && (
+        <button
+          type="button"
+          onClick={onShare}
+          aria-label="결과 공유하기"
+          className="text-primary-500 active:bg-primary-50 flex size-10 cursor-pointer items-center justify-center rounded-full [&>svg]:h-4 [&>svg]:w-3.5"
+        >
+          <Share />
+        </button>
+      )}
     </header>
   );
 }
