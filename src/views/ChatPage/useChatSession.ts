@@ -38,12 +38,14 @@ export function useChatSession() {
   const [saveConsent, setSaveConsent] = useState(false);
   const sessionIdRef = useRef<string | null>(null);
   const sessionCreatingRef = useRef<Promise<string> | null>(null);
+  const generationRef = useRef(0);
 
   function ensureSession(): Promise<string> {
     if (sessionIdRef.current) return Promise.resolve(sessionIdRef.current);
+    const generation = generationRef.current;
     sessionCreatingRef.current ??= createChatSession(saveConsent)
       .then((session) => {
-        sessionIdRef.current = session.sessionId;
+        if (generation === generationRef.current) sessionIdRef.current = session.sessionId;
         return session.sessionId;
       })
       .finally(() => {
@@ -53,6 +55,8 @@ export function useChatSession() {
   }
 
   function reset() {
+    generationRef.current += 1;
+    setIsSending(false);
     sessionIdRef.current = null;
     sessionCreatingRef.current = null;
     setMessages(INITIAL_MESSAGES.map((message) => ({ ...message, id: createMessageId() })));
@@ -68,10 +72,13 @@ export function useChatSession() {
       { id: createMessageId(), role: "user", content: trimmed, createdAt: Date.now() },
     ]);
     setIsSending(true);
+    const generation = generationRef.current;
+    const isStale = () => generation !== generationRef.current;
 
     try {
       const sessionId = await ensureSession();
       const response = await sendChatMessage(sessionId, trimmed);
+      if (isStale()) return;
       setSummary(mapChatSummary(response));
       setMessages((prev) => [
         ...prev,
@@ -84,8 +91,10 @@ export function useChatSession() {
         },
       ]);
       try {
-        setSummary(await getChatSummary(sessionId));
+        const latestSummary = await getChatSummary(sessionId);
+        if (!isStale()) setSummary(latestSummary);
       } catch (summaryError) {
+        if (isStale()) return;
         toast.error("상담 요약을 불러오지 못했습니다.", {
           description: summaryError instanceof Error ? summaryError.message : undefined,
         });
@@ -94,11 +103,12 @@ export function useChatSession() {
         toast.warning("긴급 상황이 감지되었어요. 전문 기관 연결을 고려해 주세요.");
       }
     } catch (error) {
+      if (isStale()) return;
       toast.error("메시지 전송에 실패했습니다.", {
         description: error instanceof Error ? error.message : undefined,
       });
     } finally {
-      setIsSending(false);
+      if (!isStale()) setIsSending(false);
     }
   }
 
