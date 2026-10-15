@@ -1,13 +1,26 @@
 import Link from "next/link";
-import type { RiskAssessmentResponse } from "@/entities/analysis/api";
+import type { RiskAssessmentResponse, RiskFactorResponse } from "@/entities/analysis/api";
 import { RISK_LEVEL_LABEL } from "@/entities/analysis/model";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
-import ImageIcon from "@/shared/asset/svg/Image";
 import LinkButton from "@/shared/ui/LinkButton";
 import RiskTag from "@/shared/ui/RiskTag";
 
 interface RecentResultsSectionProps {
   results: RiskAssessmentResponse[];
+}
+
+function TopFactor({ factors }: { factors: RiskFactorResponse[] }) {
+  const top = factors.reduce<RiskFactorResponse | null>(
+    (highest, factor) => (!highest || factor.score > highest.score ? factor : highest),
+    null,
+  );
+  if (!top) return null;
+
+  return (
+    <p className="text-small px-1 text-gray-700">
+      가장 높은 위험: {top.label} {top.score}%
+    </p>
+  );
 }
 
 export default function RecentResultsSection({ results }: RecentResultsSectionProps) {
@@ -49,16 +62,15 @@ export default function RecentResultsSection({ results }: RecentResultsSectionPr
             {results.map((result) => (
               <div key={result.assessmentId}>
                 <div className="flex h-full flex-col items-end gap-4 rounded-2xl border border-gray-300 bg-white p-5 md:gap-6 md:p-8">
-                  <div className="flex w-full items-start gap-4">
-                    <div className="flex size-20 shrink-0 items-center justify-center rounded-lg bg-gray-200 text-gray-600 md:size-[104px] [&>svg]:h-8 [&>svg]:w-8">
-                      <ImageIcon />
-                    </div>
-                    <div className="flex flex-col items-start gap-2">
-                      <RiskTag level={RISK_LEVEL_LABEL[result.overallRiskLevel]} />
-                      <p className="text-body-1 px-1 font-semibold text-black">
-                        위험도 {result.overallScore}%
-                      </p>
-                    </div>
+                  <div className="flex w-full flex-col items-start gap-2">
+                    <RiskTag level={RISK_LEVEL_LABEL[result.overallRiskLevel]} />
+                    <p className="text-body-1 px-1 font-semibold text-black">
+                      위험도 {result.overallScore}%
+                    </p>
+                    <TopFactor factors={result.factors} />
+                    <p className="text-caption px-1 text-gray-600">
+                      분석 번호 #{result.assessmentId}
+                    </p>
                   </div>
                   <Link
                     href={`/analyze/results/${result.assessmentId}`}

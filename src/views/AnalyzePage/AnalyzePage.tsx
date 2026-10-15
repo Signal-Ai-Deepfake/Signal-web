@@ -33,6 +33,7 @@ export default function AnalyzePage() {
     showDetails,
     isProtected,
     result,
+    assessmentId,
     toggleDetails,
     handleFileSelect,
     handleReset,
@@ -92,6 +93,7 @@ export default function AnalyzePage() {
                 canAnalyze={status === "selected"}
                 onAnalyze={handleAnalyze}
                 result={result ?? EMPTY_RESULT}
+                detailHref={assessmentId ? `/analyze/results/${assessmentId}` : null}
                 isProtected={isProtected}
                 showDetails={showDetails}
                 onToggleDetails={toggleDetails}
