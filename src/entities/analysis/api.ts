@@ -49,6 +49,7 @@ export async function getMyAssessments(): Promise<RiskAssessmentResponse[]> {
 export async function getAssessment(assessmentId: number): Promise<RiskAssessmentResponse> {
   const { data } = await api.get<RiskAssessmentResponse>(
     `/api/v1/risk-assessments/${assessmentId}`,
+    { headers: guestHeaders() },
   );
   return data;
 }
