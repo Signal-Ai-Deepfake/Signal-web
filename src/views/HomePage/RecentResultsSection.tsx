@@ -5,7 +5,6 @@ import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import ImageIcon from "@/shared/asset/svg/Image";
 import LinkButton from "@/shared/ui/LinkButton";
 import RiskTag from "@/shared/ui/RiskTag";
-import ScrollReveal from "@/shared/ui/ScrollReveal";
 
 interface RecentResultsSectionProps {
   results: RiskAssessmentResponse[];
@@ -47,11 +46,11 @@ export default function RecentResultsSection({ results }: RecentResultsSectionPr
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-            {results.map((result, index) => (
-              <ScrollReveal key={result.assessmentId} delay={index * 80}>
+            {results.map((result) => (
+              <div key={result.assessmentId}>
                 <div className="flex h-full flex-col items-end gap-4 rounded-2xl border border-gray-300 bg-white p-5 md:gap-6 md:p-8">
                   <div className="flex w-full items-start gap-4">
-                    <div className="flex size-20 shrink-0 md:size-[104px] items-center justify-center rounded-lg bg-gray-200 text-gray-600 [&>svg]:h-8 [&>svg]:w-8">
+                    <div className="flex size-20 shrink-0 items-center justify-center rounded-lg bg-gray-200 text-gray-600 md:size-[104px] [&>svg]:h-8 [&>svg]:w-8">
                       <ImageIcon />
                     </div>
                     <div className="flex flex-col items-start gap-2">
@@ -71,7 +70,7 @@ export default function RecentResultsSection({ results }: RecentResultsSectionPr
                     </span>
                   </Link>
                 </div>
-              </ScrollReveal>
+              </div>
             ))}
           </div>
         )}

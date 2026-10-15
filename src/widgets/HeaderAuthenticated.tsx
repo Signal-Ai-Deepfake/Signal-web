@@ -20,7 +20,7 @@ const myMenuItems = [
   { label: "신고 문서 내역", href: "/mypage/reports" },
 ];
 
-export default function HeaderAuthenticated() {
+export default function HeaderAuthenticated({ className = "" }: { className?: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -60,7 +60,7 @@ export default function HeaderAuthenticated() {
     <header
       className={`sticky top-0 z-30 w-full border-b border-gray-300 bg-white transition-transform duration-300 ${
         hidden ? "-translate-y-full" : "translate-y-0"
-      }`}
+      } ${className}`}
     >
       <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-5 md:grid md:grid-cols-[1fr_auto_1fr]">
         <Link href="/" className="shrink-0 max-md:[&>svg]:h-[30px] max-md:[&>svg]:w-[95px]">

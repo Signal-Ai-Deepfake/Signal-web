@@ -46,7 +46,11 @@ export default function ConfirmModal({
       >
         <div className="flex flex-col gap-2">
           <h2 className="text-body-1 font-semibold text-black">{title}</h2>
-          {description && <p className="text-body-2 text-gray-700">{description}</p>}
+          {description && (
+            <p className="text-body-2 break-keep whitespace-pre-line text-gray-700">
+              {description}
+            </p>
+          )}
         </div>
         <div className="flex items-center justify-end gap-2">
           <button

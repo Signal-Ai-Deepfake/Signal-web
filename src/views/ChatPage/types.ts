@@ -6,6 +6,8 @@ export interface ChatMessage {
   id: string;
   role: ChatRole;
   content: string;
+  createdAt?: number;
+  typing?: boolean;
 }
 
 export type ChatSummary = Partial<ChatSummaryResponse> & {
