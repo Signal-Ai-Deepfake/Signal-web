@@ -4,6 +4,7 @@ export const INITIAL_MESSAGES: ChatMessage[] = [
   {
     id: "1",
     role: "bot",
+    typing: true,
     content:
       "안녕하세요. 이곳에서는 신원을 밝히지 않고 안전하게 상담할 수 있어요. 지금 어떤 상황을 겪고 계신지 편하게 말씀해 주세요.",
   },
