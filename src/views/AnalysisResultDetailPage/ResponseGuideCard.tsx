@@ -15,7 +15,7 @@ export default function ResponseGuideCard({ items }: ResponseGuideCardProps) {
       </h3>
       <ol className="flex flex-col gap-4">
         {items.map((item, index) => (
-          <li key={item} className="flex items-start gap-4">
+          <li key={`${index}-${item}`} className="flex items-start gap-4">
             <span className="bg-primary-500 text-caption flex size-6 shrink-0 items-center justify-center rounded-full font-bold text-white">
               {index + 1}
             </span>
