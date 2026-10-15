@@ -2,22 +2,47 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { toast } from "sonner";
 import { getAssessment } from "@/entities/analysis/api";
 import { mapAssessment } from "@/entities/analysis/model";
 import Arrow from "@/shared/asset/svg/Arrow";
-import RecommendationCard from "@/shared/ui/RecommendationCard";
-import RiskFactorCard from "@/shared/ui/RiskFactorCard";
-import RiskScoreGauge from "@/shared/ui/RiskScoreGauge";
-import RiskTag from "@/shared/ui/RiskTag";
+import Share from "@/shared/asset/svg/Share";
+import { useIsLoggedIn } from "@/shared/lib/useIsLoggedIn";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
+import ResponseGuideCard from "./ResponseGuideCard";
+import ResultActions from "./ResultActions";
+import ResultMobileHeader from "./ResultMobileHeader";
+import ResultSummaryCard from "./ResultSummaryCard";
+import RiskFactorList from "./RiskFactorList";
+import RiskLevelCard from "./RiskLevelCard";
 
 interface AnalysisResultDetailPageProps {
   id: string;
 }
 
+async function shareResult() {
+  const url = window.location.href;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: "Signal 분석 결과", url });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      toast.error("공유하지 못했습니다.");
+    }
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    toast.success("결과 링크를 복사했어요.");
+  } catch {
+    toast.error("링크를 복사하지 못했습니다.");
+  }
+}
+
 export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPageProps) {
   const assessmentId = Number(id);
+  const isLoggedIn = useIsLoggedIn();
 
   const {
     data: assessment,
@@ -34,11 +59,16 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
 
   return (
     <>
-      <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
-        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-8">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-4">
+      <SiteHeader className="max-md:hidden print:hidden" />
+      <ResultMobileHeader onShare={shareResult} />
+      <main
+        className={`flex w-full flex-col items-center bg-gray-100 px-5 py-5 md:bg-white md:py-10 md:pb-[120px] ${
+          result ? "max-md:pb-[184px]" : "max-md:pb-10"
+        }`}
+      >
+        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
+          <div className="hidden flex-col gap-6 md:flex">
+            <div className="flex items-center gap-4 print:hidden">
               <Link href="/" className="text-body-1 text-gray-800">
                 홈
               </Link>
@@ -53,7 +83,19 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
               </span>
               <span className="text-body-1 text-primary-500">분석 결과 상세</span>
             </div>
-            <h1 className="text-h1 font-bold text-black">분석 결과 상세</h1>
+            <div className="flex items-center justify-between gap-4">
+              <h1 className="text-h2 lg:text-h1 font-bold text-black">분석 결과 상세</h1>
+              {result && (
+                <button
+                  type="button"
+                  onClick={shareResult}
+                  className="text-body-2 text-primary-500 border-primary-500 hover:bg-primary-50 flex h-[50px] shrink-0 cursor-pointer items-center gap-2 rounded border px-5 transition-colors print:hidden [&>svg]:h-4 [&>svg]:w-3.5"
+                >
+                  <Share />
+                  공유하기
+                </button>
+              )}
+            </div>
           </div>
 
           {!Number.isFinite(assessmentId) && (
@@ -71,36 +113,35 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
             </p>
           )}
 
-          {result && (
+          {result && assessment && (
             <>
-              <div className="flex flex-col gap-4 rounded-2xl border border-gray-300 px-8 py-6 sm:flex-row sm:items-center sm:gap-6">
-                <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
-                  <RiskScoreGauge score={result.score} size={80} level={result.level} />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <p className="text-body-2 font-bold text-black">{result.score}</p>
-                    <p className="text-caption text-gray-650">/100</p>
-                  </div>
+              <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2 lg:gap-8">
+                <div className="flex flex-col gap-6 lg:gap-8">
+                  <ResultSummaryCard
+                    assessmentId={assessment.assessmentId}
+                    faceCount={assessment.faces.length}
+                  />
+                  <RiskLevelCard
+                    score={result.score}
+                    level={result.level}
+                    description={result.description}
+                  />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <p className="text-large font-semibold text-black">위험도 등급</p>
-                    <RiskTag level={result.level} />
-                  </div>
-                  <p className="text-body-2 whitespace-pre-line text-gray-800">
-                    {result.description}
-                  </p>
+                <div className="flex flex-col gap-6 lg:gap-8">
+                  {result.factors.length > 0 && <RiskFactorList factors={result.factors} />}
+                  {result.recommendations.length > 0 && (
+                    <ResponseGuideCard items={result.recommendations} />
+                  )}
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <RiskFactorCard factors={result.factors} />
-                <RecommendationCard items={result.recommendations} aiNote={result.aiNote} />
-              </div>
+              <ResultActions aboveBottomNav={isLoggedIn === true} onSave={() => window.print()} />
             </>
           )}
         </div>
       </main>
-      <Footer />
+      <div className="max-md:hidden print:hidden">
+        <Footer />
+      </div>
     </>
   );
 }
