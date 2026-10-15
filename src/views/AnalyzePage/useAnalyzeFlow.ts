@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ function isInternalMessage(message?: string) {
 
 export function useAnalyzeFlow() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [status, setStatus] = useState<Status>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -78,6 +79,7 @@ export function useAnalyzeFlow() {
         setStatus("error");
         return;
       }
+      queryClient.setQueryData(["riskAssessments", data.assessmentId], data);
       setAssessmentId(data.assessmentId);
       setResult(mapAssessment(data));
       setStatus("result");
@@ -160,6 +162,7 @@ export function useAnalyzeFlow() {
     showDetails,
     isProtected,
     result,
+    assessmentId,
     toggleDetails: () => setShowDetails((prev) => !prev),
     handleFileSelect,
     handleReset,
