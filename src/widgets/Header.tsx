@@ -6,14 +6,14 @@ import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 import LinkButton from "@/shared/ui/LinkButton";
 import HeaderNav from "@/widgets/HeaderNav";
 
-export default function Header() {
+export default function Header({ className = "" }: { className?: string }) {
   const hidden = useHideOnScroll();
 
   return (
     <header
       className={`sticky top-0 z-30 w-full border-b border-gray-300 bg-white transition-transform duration-300 ${
         hidden ? "-translate-y-full" : "translate-y-0"
-      }`}
+      } ${className}`}
     >
       <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-5 md:grid md:grid-cols-[1fr_auto_1fr]">
         <Link href="/" className="shrink-0 max-md:[&>svg]:h-[30px] max-md:[&>svg]:w-[95px]">
