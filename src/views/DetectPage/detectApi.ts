@@ -1,6 +1,5 @@
 import { api } from "@/shared/api/axios";
-import { getAccessToken } from "@/shared/lib/authToken";
-import { getOrCreateAnonymousId } from "@/shared/lib/anonymousId";
+import { guestHeaders } from "@/shared/api/guestHeaders";
 
 export type ProcessingStatus = "PROCESSING" | "COMPLETED" | "FAILED";
 export type DeepfakeVerdict = "REAL" | "FAKE" | "SUSPICIOUS";
@@ -32,10 +31,6 @@ export interface DeepfakeDetectionResponse {
   riskScore?: number;
   evidences?: EvidenceResponse[];
   highlightedResultUrl?: string;
-}
-
-function guestHeaders() {
-  return getAccessToken() ? undefined : { "X-Anonymous-Id": getOrCreateAnonymousId() };
 }
 
 export async function createDeepfakeDetection(file: File): Promise<DeepfakeDetectionCreateResponse> {

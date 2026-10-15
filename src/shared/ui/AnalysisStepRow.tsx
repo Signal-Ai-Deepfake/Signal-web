@@ -12,14 +12,18 @@ interface AnalysisStepRowProps {
 function StepPanel({
   step,
   title,
+  className,
   children,
 }: {
   step: string;
   title: string;
+  className: string;
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-3 rounded-2xl bg-gray-100 p-5">
+    <div
+      className={`flex min-w-0 animate-[step-in_0.7s_ease-out_both] flex-col gap-3 rounded-2xl bg-gray-100 p-5 group-data-[typing=pending]/hero:[animation-play-state:paused] motion-reduce:animate-none ${className}`}
+    >
       <div className="flex items-center gap-2">
         <span className="text-small text-primary-500 bg-primary-50 rounded-full px-2.5 py-1">
           {step}
@@ -48,7 +52,7 @@ export default function AnalysisStepRow({
         </p>
       </div>
       <div className="grid grid-cols-3 gap-4">
-        <StepPanel step="01" title="이미지 업로드">
+        <StepPanel step="01" title="이미지 업로드" className="[animation-delay:600ms]">
           <div className="flex h-[136px] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-400 bg-white">
             <span className="text-primary-500 [&>svg]:h-8 [&>svg]:w-8">
               <ImageArrowUp />
@@ -56,7 +60,7 @@ export default function AnalysisStepRow({
             <p className="text-caption text-gray-700">JPG, PNG 파일 지원</p>
           </div>
         </StepPanel>
-        <StepPanel step="02" title="AI 분석 중">
+        <StepPanel step="02" title="AI 분석 중" className="[animation-delay:950ms]">
           <div className="flex items-center justify-between">
             <p className="text-small font-bold text-black">분석 진행 중...</p>
             <span className="text-small text-primary-500 font-bold">{percent}%</span>
@@ -68,7 +72,7 @@ export default function AnalysisStepRow({
             얼굴 도용, 딥페이크 여부를 AI가 분석하고 있습니다.
           </p>
         </StepPanel>
-        <StepPanel step="03" title="분석 완료">
+        <StepPanel step="03" title="분석 완료" className="[animation-delay:1300ms]">
           <div className="flex items-center gap-2">
             <p className="text-h2 text-primary-500 font-bold">{riskPercent}%</p>
             <RiskTag level={level} />

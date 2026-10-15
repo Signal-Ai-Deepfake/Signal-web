@@ -1,3 +1,6 @@
+import CheckCircle from "@/shared/asset/svg/CheckCircle";
+import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
+import Loading from "@/shared/asset/svg/Loading";
 import Button from "@/shared/ui/Button";
 import RiskScoreGauge from "@/shared/ui/RiskScoreGauge";
 import RiskTag from "@/shared/ui/RiskTag";
@@ -31,14 +34,14 @@ export default function AnalysisPanel({
 }: AnalysisPanelProps) {
   if (status === "error") {
     return (
-      <div className="flex h-[217px] animate-[fade-in-up_0.4s_ease-out] flex-col justify-between rounded-2xl border border-gray-300 px-8 py-5">
+      <div className="flex animate-[fade-in-up_0.4s_ease-out] flex-col gap-4 rounded-2xl border border-gray-300 p-5 md:h-[217px] md:justify-between md:px-8">
         <p className="text-body-1 font-semibold text-black">실시간 분석</p>
         <div className="flex flex-col items-center gap-2 text-center">
           <p className="text-body-1 font-semibold text-black">
             얼굴을 찾을 수 없어 분석할 수 없습니다.
           </p>
           <p className="text-body-2 text-gray-650">
-            얼굴이 선명하게 보이는 사진이나 영상을 다시 업로드해 주세요.
+            얼굴이 선명하게 보이는 사진을 다시 업로드해 주세요.
           </p>
         </div>
         <Button type="button" variant="primary" className="w-full" onClick={onAnalyze}>
@@ -65,7 +68,7 @@ export default function AnalysisPanel({
               <ScoreInfoTooltip />
               <RiskTag level={result.level} />
             </div>
-            <p className="text-body-2 text-gray-800 whitespace-pre-line">{result.description}</p>
+            <p className="text-body-2 whitespace-pre-line text-gray-800">{result.description}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -106,9 +109,22 @@ export default function AnalysisPanel({
     );
   }
 
+  const guide =
+    status === "analyzing"
+      ? { icon: Loading, text: "AI가 사진을 분석하고 있어요.", iconClass: "animate-spin" }
+      : canAnalyze
+        ? { icon: CheckCircle, text: "사진이 준비됐어요. 분석하기를 눌러 주세요.", iconClass: "" }
+        : { icon: ImageArrowUp, text: "사진을 올리면 분석을 시작할 수 있어요.", iconClass: "" };
+
   return (
-    <div className="flex h-[217px] flex-col justify-between rounded-2xl border border-gray-300 px-8 py-5">
+    <div className="flex flex-col gap-4 rounded-2xl border border-gray-300 p-5 md:h-[217px] md:justify-between md:px-8">
       <p className="text-body-1 font-semibold text-black">실시간 분석</p>
+      <div className="flex items-center gap-3 rounded-xl bg-gray-100 px-4 py-3">
+        <span className={`text-primary-500 shrink-0 [&>svg]:h-6 [&>svg]:w-6 ${guide.iconClass}`}>
+          <guide.icon />
+        </span>
+        <p className="text-small break-keep text-gray-800">{guide.text}</p>
+      </div>
       <Button
         type="button"
         variant="primary"

@@ -1,10 +1,5 @@
 import { api } from "@/shared/api/axios";
-import { getAccessToken } from "@/shared/lib/authToken";
-import { getOrCreateAnonymousId } from "@/shared/lib/anonymousId";
-
-function guestHeaders() {
-  return getAccessToken() ? undefined : { "X-Anonymous-Id": getOrCreateAnonymousId() };
-}
+import { guestHeaders } from "@/shared/api/guestHeaders";
 
 export interface ChatSessionCreateResponse {
   sessionId: string;

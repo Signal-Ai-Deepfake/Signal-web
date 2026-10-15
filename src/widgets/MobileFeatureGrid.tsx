@@ -1,9 +1,9 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
 import FileText from "@/shared/asset/svg/FileText";
-import HandHeart from "@/shared/asset/svg/HandHeart";
 import Message from "@/shared/asset/svg/Message";
 import PhotoScan from "@/shared/asset/svg/PhotoScan";
+import ScanFace from "@/shared/asset/svg/ScanFace";
 import ScrollReveal from "@/shared/ui/ScrollReveal";
 
 const features: {
@@ -35,19 +35,21 @@ const features: {
     href: "/report",
   },
   {
-    icon: HandHeart,
-    title: "커뮤니티",
-    description: "전문가 및 지지 그룹",
+    icon: ScanFace,
+    title: "딥페이크 탐지",
+    description: "얼굴 도용·합성 여부 확인",
     iconBg: "bg-secondary-50",
+    href: "/detect",
   },
 ];
 
 export default function MobileFeatureGrid() {
   return (
-    <section className="w-full px-5 py-4 md:hidden">
+    <section id="mobile-features" className="w-full px-5 py-4 md:hidden">
       <div className="flex flex-col gap-4">
-        <ScrollReveal distance={24}>
+        <ScrollReveal distance={24} className="flex items-baseline justify-between gap-3">
           <h2 className="text-primary-500 text-h3 font-bold">주요 기능</h2>
+          <p className="text-caption text-gray-700">카드를 누르면 바로 이동해요</p>
         </ScrollReveal>
         <div className="grid grid-cols-2 gap-4">
           {features.map(({ icon: Icon, title, description, iconBg, href }, index) => {

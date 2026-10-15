@@ -4,6 +4,7 @@ import LandingAutoScroll from "@/widgets/LandingAutoScroll";
 import MobileFeatureGrid from "@/widgets/MobileFeatureGrid";
 import MobileHeroSection from "@/widgets/MobileHeroSection";
 import MobileWhySignalList from "@/widgets/MobileWhySignalList";
+import ScrollToTopButton from "@/widgets/ScrollToTopButton";
 import WhySignalSection from "@/widgets/WhySignalSection";
 
 export default function LandingPage() {
@@ -16,6 +17,7 @@ export default function LandingPage() {
       <MobileWhySignalList />
       <HowItWorksSection />
       <LandingAutoScroll />
+      <ScrollToTopButton />
     </main>
   );
 }
