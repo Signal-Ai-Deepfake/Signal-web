@@ -3,7 +3,7 @@ import Comments from "@/shared/asset/svg/Comments";
 import Download from "@/shared/asset/svg/Download";
 
 interface ResultActionsProps {
-  aboveBottomNav: boolean;
+  aboveBottomNav: boolean | null;
   onSave: () => void;
 }
 
@@ -14,9 +14,11 @@ export default function ResultActions({ aboveBottomNav, onSave }: ResultActionsP
   return (
     <div
       className={`flex w-full flex-col gap-3 max-md:fixed max-md:inset-x-0 max-md:z-20 max-md:border-t max-md:border-gray-200 max-md:bg-white max-md:p-5 max-md:shadow-[0_-10px_10px_rgba(0,0,0,0.03)] md:flex-row md:justify-end print:hidden ${
-        aboveBottomNav
-          ? "max-md:bottom-[calc(4rem+env(safe-area-inset-bottom))]"
-          : "max-md:bottom-0 max-md:pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
+        aboveBottomNav === null
+          ? "max-md:invisible"
+          : aboveBottomNav
+            ? "max-md:bottom-[calc(4rem+env(safe-area-inset-bottom))]"
+            : "max-md:bottom-0 max-md:pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
       }`}
     >
       <Link

@@ -147,7 +147,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
                   )}
                 </div>
               </div>
-              <ResultActions aboveBottomNav={isLoggedIn === true} onSave={() => window.print()} />
+              <ResultActions aboveBottomNav={isLoggedIn} onSave={() => window.print()} />
             </>
           )}
         </div>
