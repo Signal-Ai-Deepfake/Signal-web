@@ -35,7 +35,10 @@ export default function Step3Profile({
 }: Step3ProfileProps) {
   return (
     <>
-      <StepHeader title="기본 정보 입력" description="서비스 이용을 위한 기본 정보를 입력해 주세요." />
+      <StepHeader
+        title="기본 정보 입력"
+        description="서비스 이용을 위한 기본 정보를 입력해 주세요."
+      />
       <div className="flex w-full flex-col gap-3">
         <Input
           label="이름"
@@ -53,7 +56,7 @@ export default function Step3Profile({
         />
         <div className="flex w-full flex-col gap-2">
           <label className="text-body-2 px-1 text-black">성별</label>
-          <div className="flex items-center gap-8">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 md:gap-8">
             {GENDER_OPTIONS.map((option) => (
               <GenderOption
                 key={option}

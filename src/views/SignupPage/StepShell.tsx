@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 import StepIndicator from "@/shared/ui/StepIndicator";
 import StepFooter from "./StepFooter";
+import { authCardClass } from "@/widgets/AuthPageShell";
 
 const TOTAL_STEPS = 4;
 
 export default function StepShell({ step, children }: { step: number; children: ReactNode }) {
   return (
-    <div className="flex w-full max-w-[480px] flex-col gap-5 rounded-2xl bg-white px-12 py-8 shadow-md">
+    <div className={`${authCardClass} lg:max-w-[480px]`}>
       <div className="flex w-full flex-col items-center gap-8">
         <StepIndicator total={TOTAL_STEPS} current={step} />
         {children}

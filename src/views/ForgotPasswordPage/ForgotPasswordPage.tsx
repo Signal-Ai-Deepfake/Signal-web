@@ -4,8 +4,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import AuthPageShell from "@/widgets/AuthPageShell";
-import { resetPassword, sendVerification, verifyCode as verifyCodeRequest } from "@/entities/user/api";
+import AuthPageShell, { authCardClass } from "@/widgets/AuthPageShell";
+import {
+  resetPassword,
+  sendVerification,
+  verifyCode as verifyCodeRequest,
+} from "@/entities/user/api";
 import StepComplete from "./StepComplete";
 import StepEmailCode from "./StepEmailCode";
 import StepNewPassword from "./StepNewPassword";
@@ -98,7 +102,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthPageShell>
-      <div className="flex w-full max-w-[480px] flex-col gap-5 rounded-2xl bg-white px-12 py-8 shadow-md">
+      <div className={`${authCardClass} lg:max-w-[480px]`}>
         <div key={stage} className="flex w-full animate-[fade-in-up_0.3s_ease-out] flex-col gap-5">
           {stage === "email-code" && (
             <StepEmailCode
