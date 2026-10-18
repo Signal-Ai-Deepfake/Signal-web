@@ -42,7 +42,7 @@ export default function Step2EmailCode({
       <div className="flex w-full flex-col gap-2">
         <label className="text-body-2 px-1 text-black">이메일</label>
         <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-          <div className="focus-within:border-secondary-500 flex h-[52px] w-full items-center gap-2 rounded-lg border border-gray-400 p-3 transition-colors sm:w-[244px] sm:shrink-0">
+          <div className="focus-within:border-secondary-500 flex h-[52px] w-full items-center gap-2 rounded-lg border border-gray-400 p-3 transition-colors sm:min-w-0 sm:flex-1">
             <span className="text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5">
               <Mail />
             </span>
@@ -57,7 +57,7 @@ export default function Step2EmailCode({
           <Button
             type="button"
             variant="primary"
-            className="text-small h-[52px] w-full text-center leading-tight sm:w-[128px] sm:shrink-0"
+            className="text-small h-[52px] w-full text-center leading-tight sm:w-32 sm:shrink-0"
             disabled={!email}
             onClick={onSendCode}
           >
