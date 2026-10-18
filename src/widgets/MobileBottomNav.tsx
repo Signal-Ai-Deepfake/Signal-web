@@ -24,8 +24,11 @@ export default function MobileBottomNav() {
 
   return (
     <>
-      <div className="h-[calc(4rem+env(safe-area-inset-bottom))] w-full md:hidden" aria-hidden />
-      <nav className="fixed bottom-0 left-0 z-30 flex h-[calc(4rem+env(safe-area-inset-bottom))] w-full items-center justify-around border-t border-gray-300 bg-white pb-[env(safe-area-inset-bottom)] md:hidden">
+      <div
+        className="h-[calc(4rem+env(safe-area-inset-bottom))] w-full md:hidden print:hidden"
+        aria-hidden
+      />
+      <nav className="fixed bottom-0 left-0 z-30 flex h-[calc(4rem+env(safe-area-inset-bottom))] w-full items-center justify-around border-t border-gray-300 bg-white pb-[env(safe-area-inset-bottom)] md:hidden print:hidden">
         {navItems.map(({ icon: Icon, label, href, match = href }) => {
           const isActive = match === "/" ? pathname === "/" : pathname.startsWith(match);
           return (

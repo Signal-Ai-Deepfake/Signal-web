@@ -1,3 +1,5 @@
+import Link from "next/link";
+import Arrow from "@/shared/asset/svg/Arrow";
 import CheckCircle from "@/shared/asset/svg/CheckCircle";
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import Loading from "@/shared/asset/svg/Loading";
@@ -12,6 +14,7 @@ interface AnalysisPanelProps {
   canAnalyze: boolean;
   onAnalyze: () => void;
   result: AnalysisResult;
+  detailHref: string | null;
   isProtected: boolean;
   showDetails: boolean;
   onToggleDetails: () => void;
@@ -25,6 +28,7 @@ export default function AnalysisPanel({
   canAnalyze,
   onAnalyze,
   result,
+  detailHref,
   isProtected,
   showDetails,
   onToggleDetails,
@@ -105,6 +109,17 @@ export default function AnalysisPanel({
             </>
           )}
         </div>
+        {detailHref && (
+          <Link
+            href={detailHref}
+            className="text-small text-primary-500 flex items-center justify-center gap-1 self-center py-1 font-medium hover:underline"
+          >
+            분석 결과 상세 페이지로 이동
+            <span className="[&>svg]:h-4 [&>svg]:w-4">
+              <Arrow />
+            </span>
+          </Link>
+        )}
       </div>
     );
   }
