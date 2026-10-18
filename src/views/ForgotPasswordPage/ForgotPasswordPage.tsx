@@ -4,8 +4,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import AuthPageShell from "@/widgets/AuthPageShell";
-import { resetPassword, sendVerification, verifyCode as verifyCodeRequest } from "@/entities/user/api";
+import StepTransition from "@/shared/ui/StepTransition";
+import AuthPageShell, { authCardClass } from "@/widgets/AuthPageShell";
+import {
+  resetPassword,
+  sendVerification,
+  verifyCode as verifyCodeRequest,
+} from "@/entities/user/api";
 import StepComplete from "./StepComplete";
 import StepEmailCode from "./StepEmailCode";
 import StepNewPassword from "./StepNewPassword";
@@ -13,6 +18,12 @@ import StepNewPassword from "./StepNewPassword";
 const CODE_DURATION_SECONDS = 300;
 
 type Stage = "email-code" | "new-password" | "complete";
+
+const STAGE_ORDER: Record<Stage, number> = {
+  "email-code": 1,
+  "new-password": 2,
+  complete: 3,
+};
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -98,8 +109,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthPageShell>
-      <div className="flex w-full max-w-[480px] flex-col gap-5 rounded-2xl bg-white px-12 py-8 shadow-md">
-        <div key={stage} className="flex w-full animate-[fade-in-up_0.3s_ease-out] flex-col gap-5">
+      <div className={`${authCardClass} lg:max-w-[480px]`}>
+        <StepTransition order={STAGE_ORDER[stage]} className="flex w-full flex-col gap-5">
           {stage === "email-code" && (
             <StepEmailCode
               email={email}
@@ -135,7 +146,7 @@ export default function ForgotPasswordPage() {
           )}
 
           {stage === "complete" && <StepComplete />}
-        </div>
+        </StepTransition>
       </div>
     </AuthPageShell>
   );

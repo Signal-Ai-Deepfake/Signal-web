@@ -35,7 +35,7 @@ export default function SignupPage() {
   if (step === 2) {
     return (
       <AuthPageShell>
-        <StepShell step={2}>
+        <StepShell step={2} order={account.emailVerified ? 2.5 : 2}>
           <StepHeader
             title="이메일 인증"
             description={

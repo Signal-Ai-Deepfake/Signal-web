@@ -23,7 +23,7 @@ export default function Checkbox({ checked, onChange, label, ...props }: Checkbo
       >
         <Check checked={checked} />
       </span>
-      <span className="text-body-2 text-gray-600">{label}</span>
+      <span className="text-body-2 whitespace-nowrap text-gray-600">{label}</span>
     </button>
   );
 }
