@@ -28,6 +28,7 @@ const AGENCY = /([가-힣]*(?:경찰청|수사대|센터|위원회|상담소|지
 const HOTLINE =
   /(?<![\d-])(\d{2,4}-\d{3,4}-\d{4}|112|117|118|119|182|1332|1366|1377|1388|1398)(?![\d-])/g;
 const SENTENCES_PER_PARAGRAPH = 2;
+const FULL_HOTLINE = /^(\d{2,4}-\d{3,4}-\d{4}|112|117|118|119|182|1332|1366|1377|1388|1398)$/;
 
 function formatPlainReply(text: string) {
   if (text.includes("\n") || text.includes("**")) return text;
@@ -130,7 +131,16 @@ function InlineText({ line }: { line: Inline[] }) {
   return (
     <>
       {line.map((inline, index) =>
-        inline.bold ? (
+        inline.bold && FULL_HOTLINE.test(inline.text) ? (
+          <a
+            key={index}
+            href={`tel:${inline.text.replace(/-/g, "")}`}
+            aria-label={`${inline.text}로 전화 걸기`}
+            className="text-primary-500 font-bold underline underline-offset-2"
+          >
+            {inline.text}
+          </a>
+        ) : inline.bold ? (
           <strong key={index} className="text-primary-500 font-bold">
             {inline.text}
           </strong>
