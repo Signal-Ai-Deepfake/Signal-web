@@ -33,12 +33,6 @@
 }
 
 @theme {
-  /* ---------------------------------- */
-  /* Colors                             */
-  /* TODO: 각 색상 값 채워넣기 (아래는 임시값) */
-  /* ---------------------------------- */
-
-  /* blue */
   --color-primary-900: #212529;
   --color-primary-800: #14222e;
   --color-primary-700: #1c3042;
@@ -51,7 +45,6 @@
   --color-primary-100: #dce7f0;
   --color-primary-50: #edf3f8;
 
-  /* purple */
   --color-secondary-900: #5f4870;
   --color-secondary-800: #86689c;
   --color-secondary-700: #a383b7;
@@ -74,9 +67,6 @@
   --color-gray-200: #f1f3f5;
   --color-gray-100: #f8f9fa;
 
-  /* ---------------------------------- */
-  /* Typography - Pretendard            */
-  /* ---------------------------------- */
   --font-pretendard: "Pretendard", sans-serif;
 
   --text-h1: 48px;
@@ -103,9 +93,6 @@
   --text-caption: 12px;
   --text-caption--line-height: 140%;
 
-  /* ---------------------------------- */
-  /* Shadows                            */
-  /* ---------------------------------- */
   --shadow-sm: 0px 1px 3px 0px rgba(39, 39, 39, 0.05);
   --shadow-md: 0px 2px 4px 0px rgba(45, 75, 102, 0.1);
   --shadow-lg: 0px 5px 10px 0px rgba(45, 75, 102, 0.1);
@@ -170,6 +157,27 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes step-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes legal-target-flash {

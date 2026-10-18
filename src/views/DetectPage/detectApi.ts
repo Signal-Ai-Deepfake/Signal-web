@@ -1,6 +1,5 @@
 import { api } from "@/shared/api/axios";
-import { getAccessToken } from "@/shared/lib/authToken";
-import { getOrCreateAnonymousId } from "@/shared/lib/anonymousId";
+import { guestHeaders } from "@/shared/api/guestHeaders";
 
 export type ProcessingStatus = "PROCESSING" | "COMPLETED" | "FAILED";
 export type DeepfakeVerdict = "REAL" | "FAKE" | "SUSPICIOUS";
@@ -34,10 +33,6 @@ export interface DeepfakeDetectionResponse {
   highlightedResultUrl?: string;
   /** true면 실제 AI 분석이 아니라 서버가 자동으로 대체한 참고용 추정치(폴백)입니다. */
   fallbackUsed?: boolean;
-}
-
-function guestHeaders() {
-  return getAccessToken() ? undefined : { "X-Anonymous-Id": getOrCreateAnonymousId() };
 }
 
 export async function createDeepfakeDetection(

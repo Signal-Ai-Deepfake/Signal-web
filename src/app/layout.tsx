@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import ScrollTopOnReload from "@/shared/lib/ScrollTopOnReload";
+import MobileBottomNav from "@/widgets/MobileBottomNav";
 import Providers from "./providers";
 import "./globals.css";
 
@@ -17,9 +19,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="ko" data-scroll-behavior="smooth">
       <body className="antialiased">
+        <ScrollTopOnReload />
         <Providers>{children}</Providers>
+        <MobileBottomNav />
       </body>
     </html>
   );

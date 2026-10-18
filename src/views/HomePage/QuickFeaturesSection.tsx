@@ -6,7 +6,6 @@ import ScanFace from "@/shared/asset/svg/ScanFace";
 import Search from "@/shared/asset/svg/Search";
 import ShieldTask from "@/shared/asset/svg/ShieldTask";
 import QuickActionLink from "@/shared/ui/QuickActionLink";
-import ScrollReveal from "@/shared/ui/ScrollReveal";
 import ServiceCategory from "@/shared/ui/ServiceCategory";
 
 export default function QuickFeaturesSection() {
@@ -14,8 +13,8 @@ export default function QuickFeaturesSection() {
     <section className="w-full">
       <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-5">
         <h2 className="text-h3 px-1 font-semibold text-black">빠른 기능</h2>
-        <div className="flex flex-col gap-6 md:flex-row md:justify-center md:gap-8">
-          <ScrollReveal className="md:shrink-0">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-[342fr_342fr_528fr] xl:gap-8">
+          <div>
             <ServiceCategory
               icon={ShieldTask}
               label="예방"
@@ -26,7 +25,7 @@ export default function QuickFeaturesSection() {
                   이미지를 안전하게 보호하세요.
                 </>
               }
-              className="w-full md:h-[323px] md:w-[342px]"
+              className="h-full w-full xl:h-[323px]"
             >
               <QuickActionLink
                 icon={PhotoScan}
@@ -41,8 +40,8 @@ export default function QuickFeaturesSection() {
                 href="/analyze"
               />
             </ServiceCategory>
-          </ScrollReveal>
-          <ScrollReveal delay={80} className="md:shrink-0">
+          </div>
+          <div>
             <ServiceCategory
               icon={Search}
               label="탐지"
@@ -53,7 +52,7 @@ export default function QuickFeaturesSection() {
                   합성 여부를 확인하세요.
                 </>
               }
-              className="w-full md:h-[323px] md:w-[342px]"
+              className="h-full w-full xl:h-[323px]"
             >
               <QuickActionLink
                 icon={ScanFace}
@@ -67,8 +66,8 @@ export default function QuickFeaturesSection() {
                 href="/detect"
               />
             </ServiceCategory>
-          </ScrollReveal>
-          <ScrollReveal delay={160} className="md:shrink-0">
+          </div>
+          <div className="md:col-span-2 xl:col-span-1">
             <ServiceCategory
               icon={Message}
               label="대응"
@@ -79,7 +78,7 @@ export default function QuickFeaturesSection() {
                   필요한 도움을 빠르게 받으세요.
                 </>
               }
-              className="w-full md:h-[323px] md:w-[528px]"
+              className="h-full w-full xl:h-[323px]"
             >
               <QuickActionLink
                 icon={Bot}
@@ -106,7 +105,7 @@ export default function QuickFeaturesSection() {
                 href="/report"
               />
             </ServiceCategory>
-          </ScrollReveal>
+          </div>
         </div>
       </div>
     </section>

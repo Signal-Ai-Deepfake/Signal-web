@@ -1,9 +1,10 @@
 import CheckCircle from "@/shared/asset/svg/CheckCircle";
 import LinkButton from "@/shared/ui/LinkButton";
+import { authCardClass } from "@/widgets/AuthPageShell";
 
 export default function StepComplete() {
   return (
-    <div className="flex w-full max-w-[480px] flex-col items-center gap-5 rounded-2xl bg-white px-12 py-8 shadow-md">
+    <div className={`${authCardClass} items-center lg:max-w-[480px]`}>
       <div className="text-secondary-500 [&>svg]:h-14 [&>svg]:w-14">
         <CheckCircle />
       </div>

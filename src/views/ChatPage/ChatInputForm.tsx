@@ -2,14 +2,23 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
+import Plus from "@/shared/asset/svg/Plus";
+import Send from "@/shared/asset/svg/Send";
 import Button from "@/shared/ui/Button";
 
 interface ChatInputFormProps {
   onSend: (content: string) => void;
   disabled?: boolean;
+  menuOpen?: boolean;
+  onToggleMenu?: () => void;
 }
 
-export default function ChatInputForm({ onSend, disabled }: ChatInputFormProps) {
+export default function ChatInputForm({
+  onSend,
+  disabled,
+  menuOpen = false,
+  onToggleMenu,
+}: ChatInputFormProps) {
   const [value, setValue] = useState("");
 
   function handleSubmit(event: FormEvent) {
@@ -20,17 +29,49 @@ export default function ChatInputForm({ onSend, disabled }: ChatInputFormProps) 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2.5 px-[22px] pt-3.5 pb-[22px]">
+    <form
+      onSubmit={handleSubmit}
+      className="flex items-center gap-3 border-t border-gray-300 bg-white px-5 py-3 md:items-stretch md:gap-2.5 md:border-t-0 md:px-[22px] md:pt-3.5 md:pb-[22px]"
+    >
+      {onToggleMenu && (
+        <button
+          type="button"
+          onClick={onToggleMenu}
+          aria-label={menuOpen ? "상담 저장 설정 닫기" : "상담 저장 설정 열기"}
+          aria-expanded={menuOpen}
+          className="bg-primary-50 text-primary-500 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full md:hidden"
+        >
+          <span
+            className={`transition-transform duration-200 [&>svg]:h-4 [&>svg]:w-3.5 ${
+              menuOpen ? "rotate-45" : ""
+            }`}
+          >
+            <Plus />
+          </span>
+        </button>
+      )}
       <input
         value={value}
         onChange={(event) => setValue(event.target.value)}
         disabled={disabled}
         placeholder="현재 상황을 입력해 주세요"
-        className="text-body-1 placeholder:text-gray-600 h-[60px] flex-1 rounded-lg border border-gray-300 px-4 text-black outline-none focus:border-primary-400 disabled:bg-gray-200"
+        className="text-small bg-primary-50 focus:ring-primary-200 md:text-body-1 md:focus:border-primary-400 h-10 min-w-0 flex-1 rounded-2xl px-4 text-black outline-none placeholder:text-gray-800/50 focus:ring-2 disabled:opacity-60 md:h-[60px] md:rounded-lg md:border md:border-gray-300 md:bg-white md:placeholder:text-gray-600 md:focus:ring-0 md:disabled:bg-gray-200 md:disabled:opacity-100"
       />
-      <Button type="submit" variant="primary" disabled={disabled} className="h-[60px] w-[104px]">
-        전송
-      </Button>
+      <button
+        type="submit"
+        disabled={disabled}
+        aria-label="전송"
+        className="bg-primary-500 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-white disabled:cursor-not-allowed disabled:bg-gray-200 md:hidden"
+      >
+        <span className="[&>svg]:size-3.5">
+          <Send />
+        </span>
+      </button>
+      <div className="hidden md:flex">
+        <Button type="submit" variant="primary" disabled={disabled} className="h-[60px] w-[104px]">
+          전송
+        </Button>
+      </div>
     </form>
   );
 }

@@ -45,7 +45,7 @@ const howItWorksSteps: {
 
 export default function HowItWorksSection() {
   return (
-    <section className="w-full bg-white">
+    <section id="how-it-works" className="w-full bg-white">
       <FrameScale>
         <Image
           src="/images/landing/ellipse-blue.svg"
@@ -61,19 +61,21 @@ export default function HowItWorksSection() {
           height={824}
           className="pointer-events-none absolute -top-60 -left-60 h-[824px] w-[824px]"
         />
-        <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-16 px-5 py-20 lg:py-24">
-          <div className="flex flex-col items-center gap-8">
+        <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-10 px-5 py-10 md:gap-16 md:py-20 lg:py-24">
+          <div className="flex w-full flex-col items-center gap-8">
             <ScrollReveal className="flex flex-col items-center gap-4 text-center">
               <SectionBadge>HOW IT WORKS</SectionBadge>
-              <h2 className="text-h2 text-primary-500 font-bold">AI 분석은 이렇게 진행돼요</h2>
-              <p className="text-body-1 text-gray-800">
+              <h2 className="text-h3 md:text-h2 text-primary-500 font-bold">
+                AI 분석은 이렇게 진행돼요
+              </h2>
+              <p className="text-small md:text-body-1 break-keep text-gray-800">
                 사진 한 장으로 위험을 분석하고, 안전한 대응 방법을 안내해 드립니다.
               </p>
             </ScrollReveal>
-            <div className="flex flex-wrap items-center justify-center gap-6">
+            <div className="grid w-full grid-cols-2 gap-3 md:gap-5 xl:flex xl:w-auto xl:items-center xl:justify-center xl:gap-6">
               {howItWorksSteps.map((step, index) => (
-                <div key={step.step} className="flex items-center gap-6">
-                  <ScrollReveal delay={120 + index * 80}>
+                <div key={step.step} className="flex items-stretch gap-6 xl:items-center">
+                  <ScrollReveal delay={120 + index * 80} className="w-full xl:w-auto">
                     <StepCard {...step} />
                   </ScrollReveal>
                   {index < howItWorksSteps.length - 1 && <StepArrow />}

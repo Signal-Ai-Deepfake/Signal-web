@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+const HEADER_HEIGHT = 80;
+
 export function useHideOnScroll(threshold = 4) {
   const [hidden, setHidden] = useState(false);
 
@@ -12,7 +14,7 @@ export function useHideOnScroll(threshold = 4) {
       const currentY = window.scrollY;
       const diff = currentY - lastY;
 
-      if (currentY <= 0) {
+      if (currentY <= HEADER_HEIGHT) {
         setHidden(false);
       } else if (diff > threshold) {
         setHidden(true);

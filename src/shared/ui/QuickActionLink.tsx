@@ -23,8 +23,8 @@ export default function QuickActionLink({
       <span className="text-primary-500 [&>svg]:h-8 [&>svg]:w-8">
         <Icon />
       </span>
-      <p className="text-body-1 text-black">{title}</p>
-      <p className="text-body-2 text-gray-700">{description}</p>
+      <p className="text-body-2 md:text-body-1 font-medium text-black md:font-normal">{title}</p>
+      <p className="text-small md:text-body-2 text-gray-700">{description}</p>
       <span className="text-primary-500 self-end [&>svg]:h-6 [&>svg]:w-6">
         <ArrowUp />
       </span>

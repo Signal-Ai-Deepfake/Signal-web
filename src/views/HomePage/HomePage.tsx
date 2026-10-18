@@ -12,8 +12,14 @@ export default function HomePage() {
   return (
     <>
       <SiteHeader />
-      {isLoggedIn ? <HomeDashboard /> : <LandingPage />}
-      <Footer />
+      {isLoggedIn === null ? (
+        <main className="min-h-screen bg-white" />
+      ) : (
+        <>
+          {isLoggedIn ? <HomeDashboard /> : <LandingPage />}
+          <Footer />
+        </>
+      )}
     </>
   );
 }
