@@ -9,6 +9,7 @@ import {
   type SendMessageResponse,
 } from "@/entities/chat/api";
 import { INITIAL_MESSAGES } from "./mockConversation";
+import { resolveReplyActions } from "./replyActions";
 import type { ChatMessage, ChatSummary } from "./types";
 
 let messageIdCounter = INITIAL_MESSAGES.length;
@@ -89,6 +90,7 @@ export function useChatSession(canSave: boolean) {
           content: response.reply,
           createdAt: Date.now(),
           typing: true,
+          actions: resolveReplyActions(response.reply),
         },
       ]);
       try {

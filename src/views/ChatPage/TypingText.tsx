@@ -9,9 +9,10 @@ const MAX_TICKS = 100;
 interface TypingTextProps {
   text: string;
   onProgress?: () => void;
+  onComplete?: () => void;
 }
 
-export default function TypingText({ text, onProgress }: TypingTextProps) {
+export default function TypingText({ text, onProgress, onComplete }: TypingTextProps) {
   const blocks = useMemo(() => parseChatMarkdown(text), [text]);
   const total = countChatMarkdown(blocks);
   const [count, setCount] = useState(0);
@@ -32,6 +33,10 @@ export default function TypingText({ text, onProgress }: TypingTextProps) {
   useEffect(() => {
     onProgress?.();
   }, [count, onProgress]);
+
+  useEffect(() => {
+    if (total > 0 && count >= total) onComplete?.();
+  }, [count, total, onComplete]);
 
   return (
     <>

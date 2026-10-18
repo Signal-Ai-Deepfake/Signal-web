@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import Arrow from "@/shared/asset/svg/Arrow";
 import BotFilled from "@/shared/asset/svg/BotFilled";
 import BotOutline from "@/shared/asset/svg/BotOutline";
 import ChatMarkdown, { parseChatMarkdown } from "./ChatMarkdown";
@@ -20,6 +23,13 @@ export default function ChatMessageBubble({ message, pending, onTyping }: ChatMe
   const timeLabel = time && (
     <p className="text-caption text-gray-800 opacity-60 md:hidden">{time}</p>
   );
+
+  const [typed, setTyped] = useState(!message.typing);
+  const actions = typed ? (message.actions ?? []) : [];
+
+  useEffect(() => {
+    if (actions.length > 0) onTyping?.();
+  }, [actions.length, onTyping]);
 
   if (message.role === "user") {
     return (
@@ -58,14 +68,34 @@ export default function ChatMessageBubble({ message, pending, onTyping }: ChatMe
             </span>
           ) : (
             <div className="text-body-2 break-words text-black">
-              {message.typing ? (
-                <TypingText text={message.content} onProgress={onTyping} />
+              {message.typing && !typed ? (
+                <TypingText
+                  text={message.content}
+                  onProgress={onTyping}
+                  onComplete={() => setTyped(true)}
+                />
               ) : (
                 <ChatMarkdown blocks={parseChatMarkdown(message.content)} />
               )}
             </div>
           )}
         </div>
+        {actions.length > 0 && (
+          <div className="flex animate-[fade-in-up_0.3s_ease-out] flex-wrap gap-2">
+            {actions.map((action) => (
+              <Link
+                key={action.href}
+                href={action.href}
+                className="text-small border-primary-200 text-primary-500 hover:bg-primary-50 active:bg-primary-50 flex items-center gap-1 rounded-full border bg-white px-3 py-1.5 font-medium transition-colors"
+              >
+                {action.label}
+                <span className="[&>svg]:h-4 [&>svg]:w-4">
+                  <Arrow />
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
         {timeLabel}
       </div>
     </div>
