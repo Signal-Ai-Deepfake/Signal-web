@@ -22,7 +22,7 @@ export default function ChatPage() {
   const router = useRouter();
   const isLoggedIn = useIsLoggedIn();
   const { messages, summary, isSending, hasStarted, saveConsent, setSaveConsent, send, reset } =
-    useChatSession();
+    useChatSession(isLoggedIn === true);
   const [modal, setModal] = useState<ModalKind>(null);
 
   function handleConfirm() {
@@ -93,6 +93,7 @@ export default function ChatPage() {
                   checked={saveConsent}
                   onChange={setSaveConsent}
                   locked={hasStarted}
+                  guest={isLoggedIn === false}
                 />
               }
             />
@@ -102,6 +103,7 @@ export default function ChatPage() {
                 checked={saveConsent}
                 onChange={setSaveConsent}
                 locked={hasStarted}
+                guest={isLoggedIn === false}
               />
             </aside>
           </div>
@@ -119,8 +121,10 @@ export default function ChatPage() {
           modal === "end"
             ? `${currentChatNotice}
 홈으로 이동합니다.`
-            : `${currentChatNotice}
+            : isLoggedIn
+              ? `${currentChatNotice}
 새 상담을 저장하려면 첫 메시지를 보내기 전에 '상담 내역 저장'을 켜 주세요.`
+              : currentChatNotice
         }
         confirmLabel={modal === "end" ? "종료" : "새로 시작"}
         cancelLabel="취소"

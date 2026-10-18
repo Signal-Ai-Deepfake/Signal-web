@@ -9,6 +9,7 @@ import {
   type SendMessageResponse,
 } from "@/entities/chat/api";
 import { INITIAL_MESSAGES } from "./mockConversation";
+import { resolveReplyActions } from "./replyActions";
 import type { ChatMessage, ChatSummary } from "./types";
 
 let messageIdCounter = INITIAL_MESSAGES.length;
@@ -31,7 +32,7 @@ function mapChatSummary(response: SendMessageResponse): ChatSummary | null {
   };
 }
 
-export function useChatSession() {
+export function useChatSession(canSave: boolean) {
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [summary, setSummary] = useState<ChatSummary | null>(null);
   const [isSending, setIsSending] = useState(false);
@@ -39,11 +40,12 @@ export function useChatSession() {
   const sessionIdRef = useRef<string | null>(null);
   const sessionCreatingRef = useRef<Promise<string> | null>(null);
   const generationRef = useRef(0);
+  const effectiveConsent = canSave && saveConsent;
 
   function ensureSession(): Promise<string> {
     if (sessionIdRef.current) return Promise.resolve(sessionIdRef.current);
     const generation = generationRef.current;
-    sessionCreatingRef.current ??= createChatSession(saveConsent)
+    sessionCreatingRef.current ??= createChatSession(effectiveConsent)
       .then((session) => {
         if (generation === generationRef.current) sessionIdRef.current = session.sessionId;
         return session.sessionId;
@@ -88,6 +90,7 @@ export function useChatSession() {
           content: response.reply,
           createdAt: Date.now(),
           typing: true,
+          actions: resolveReplyActions(response.reply),
         },
       ]);
       try {
@@ -117,7 +120,7 @@ export function useChatSession() {
     summary,
     isSending,
     hasStarted: messages.length > INITIAL_MESSAGES.length,
-    saveConsent,
+    saveConsent: effectiveConsent,
     setSaveConsent,
     send,
     reset,

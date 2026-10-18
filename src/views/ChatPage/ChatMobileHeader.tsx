@@ -78,7 +78,7 @@ export default function ChatMobileHeader({
         <p className="text-caption break-keep">
           {saveConsent
             ? "상담 내용은 익명으로 보호되며, 동의에 따라 내 대화 내역에 저장됩니다."
-            : "상담 내용은 익명으로 보호되며 기록이 남지 않습니다."}
+            : "상담 내용은 익명으로 보호되며, 동의 없이는 저장되지 않습니다."}
         </p>
       </div>
 
