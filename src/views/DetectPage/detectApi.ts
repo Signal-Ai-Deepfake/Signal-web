@@ -35,12 +35,9 @@ export interface DeepfakeDetectionResponse {
   fallbackUsed?: boolean;
 }
 
-export async function createDeepfakeDetection(file: File): Promise<DeepfakeDetectionCreateResponse> {
-function guestHeaders() {
-  return getAccessToken() ? undefined : { "X-Anonymous-Id": getOrCreateAnonymousId() };
-}
-
-
+export async function createDeepfakeDetection(
+  file: File,
+): Promise<DeepfakeDetectionCreateResponse> {
   const formData = new FormData();
   formData.append("file", file);
   const { data } = await api.post<DeepfakeDetectionCreateResponse>(
