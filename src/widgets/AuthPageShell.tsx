@@ -9,7 +9,7 @@ import Sparkle from "@/shared/asset/svg/Sparkle";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 
 export const authCardClass =
-  "relative flex w-full flex-col gap-5 rounded-2xl bg-white px-6 py-8 shadow-md md:max-w-[520px] md:px-14 md:py-10 lg:px-12 lg:py-8";
+  "relative flex w-full motion-safe:animate-[fade-in-up_0.4s_ease-out] flex-col gap-5 rounded-2xl bg-white px-6 py-8 shadow-md md:max-w-[520px] md:px-14 md:py-10 lg:px-12 lg:py-8";
 
 export default function AuthPageShell({ children }: { children: ReactNode }) {
   const hidden = useHideOnScroll();

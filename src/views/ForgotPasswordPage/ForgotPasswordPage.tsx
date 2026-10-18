@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import StepTransition from "@/shared/ui/StepTransition";
 import AuthPageShell, { authCardClass } from "@/widgets/AuthPageShell";
 import {
   resetPassword,
@@ -17,6 +18,12 @@ import StepNewPassword from "./StepNewPassword";
 const CODE_DURATION_SECONDS = 300;
 
 type Stage = "email-code" | "new-password" | "complete";
+
+const STAGE_ORDER: Record<Stage, number> = {
+  "email-code": 1,
+  "new-password": 2,
+  complete: 3,
+};
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -103,7 +110,7 @@ export default function ForgotPasswordPage() {
   return (
     <AuthPageShell>
       <div className={`${authCardClass} lg:max-w-[480px]`}>
-        <div key={stage} className="flex w-full animate-[fade-in-up_0.3s_ease-out] flex-col gap-5">
+        <StepTransition order={STAGE_ORDER[stage]} className="flex w-full flex-col gap-5">
           {stage === "email-code" && (
             <StepEmailCode
               email={email}
@@ -139,7 +146,7 @@ export default function ForgotPasswordPage() {
           )}
 
           {stage === "complete" && <StepComplete />}
-        </div>
+        </StepTransition>
       </div>
     </AuthPageShell>
   );
