@@ -31,23 +31,32 @@ export interface DeepfakeDetectionResponse {
   riskScore?: number;
   evidences?: EvidenceResponse[];
   highlightedResultUrl?: string;
+  /** true면 실제 AI 분석이 아니라 서버가 자동으로 대체한 참고용 추정치(폴백)입니다. */
+  fallbackUsed?: boolean;
 }
 
 export async function createDeepfakeDetection(file: File): Promise<DeepfakeDetectionCreateResponse> {
+function guestHeaders() {
+  return getAccessToken() ? undefined : { "X-Anonymous-Id": getOrCreateAnonymousId() };
+}
+
+
   const formData = new FormData();
   formData.append("file", file);
   const { data } = await api.post<DeepfakeDetectionCreateResponse>(
     "/api/v1/deepfake-detections",
     formData,
-    { headers: { "Content-Type": "multipart/form-data", ...guestHeaders() } }
+    { headers: { "Content-Type": "multipart/form-data", ...guestHeaders() } },
   );
   return data;
 }
 
-export async function getDeepfakeDetection(detectionId: number): Promise<DeepfakeDetectionResponse> {
+export async function getDeepfakeDetection(
+  detectionId: number,
+): Promise<DeepfakeDetectionResponse> {
   const { data } = await api.get<DeepfakeDetectionResponse>(
     `/api/v1/deepfake-detections/${detectionId}`,
-    { headers: guestHeaders() }
+    { headers: guestHeaders() },
   );
   return data;
 }
