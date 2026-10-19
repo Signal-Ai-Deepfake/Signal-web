@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import ScrollTopOnReload from "@/shared/lib/ScrollTopOnReload";
 import MobileBottomNav from "@/widgets/MobileBottomNav";
 import Providers from "./providers";
@@ -15,6 +15,15 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     type: "website",
   },
+  appleWebApp: {
+    capable: true,
+    title: "Signal",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
