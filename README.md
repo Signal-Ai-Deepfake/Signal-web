@@ -53,3 +53,42 @@ npm install
 # 4. 개발 서버 실행 (Run development server)
 npm run dev
 ```
+
+<h3>공개 원칙</h3> <hr>
+
+프로젝트에 사용한 AI 모델, 오픈소스, 외부 자문 내역을 아래와 같이 공개합니다.
+
+**서비스에 사용한 AI 모델** (백엔드 [Signal-server](https://github.com/Signal-Ai-Deepfake/Signal-server)에서 [Groq](https://console.groq.com) API로 호출)
+
+| 기능 | 모델 | 비고 |
+| :--- | :--- | :--- |
+| 익명 상담 챗봇 | `openai/gpt-oss-120b` | 일반 대화 답변만 LLM 생성, 위기 감지·추천 행동/기관은 룰 기반 |
+| AI 이미지 위험도 분석 | `qwen/qwen3.6-27b` (비전 LLM) | 메타데이터 노출은 EXIF 직접 판독 |
+| 얼굴 도용·딥페이크 탐지 | `qwen/qwen3.6-27b` (비전 LLM) | 전문 딥페이크 탐지 모델이 아닌 범용 비전 언어 모델, 이미지만 지원 |
+
+API 키 미설정 또는 호출 실패 시에는 룰 기반 응답으로 대체되며, 이 경우 화면에 참고용 추정치임을 안내합니다.
+
+**개발에 사용한 AI 도구**
+
+| 도구 | 용도 |
+| :--- | :--- |
+| Claude Code (Anthropic Claude Opus 5.5, Claude Sonnet 5) | 코드 작성 보조, 리팩터링, 빌드 오류 수정 |
+
+**사용한 오픈소스**
+
+| 라이브러리 | 버전 | 라이선스 |
+| :--- | :--- | :--- |
+| Next.js | 16.2.4 | MIT |
+| React / React DOM | 19.2.4 | MIT |
+| TypeScript | 5.9.3 | Apache-2.0 |
+| Tailwind CSS | 4.2.4 | MIT |
+| TanStack Query | 5.100.9 | MIT |
+| Axios | 1.16.0 | MIT |
+| Sonner | 2.0.7 | MIT |
+| ESLint | 9.39.4 | MIT |
+| Prettier | 3.8.3 | MIT |
+| Pretendard (폰트) | 1.3.9 | SIL Open Font License 1.1 |
+
+**외부 자문**
+
+- 외부 자문 없음
