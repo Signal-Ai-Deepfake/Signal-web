@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import Bot from "@/shared/asset/svg/Bot";
 import Chart from "@/shared/asset/svg/Chart";
 import Cpu from "@/shared/asset/svg/Cpu";
@@ -29,6 +30,8 @@ import SuspicionBanner from "@/shared/ui/SuspicionBanner";
 import UploadStepCard from "@/shared/ui/UploadStepCard";
 
 export default function PreviewPage() {
+  if (process.env.NODE_ENV === "production") notFound();
+
   return (
     <main className="flex min-h-screen flex-wrap items-start justify-center gap-6 bg-gray-100 p-10">
       <FeatureCard

@@ -1,5 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
+import { SITE_URL } from "@/shared/config/site";
 import ScrollTopOnReload from "@/shared/lib/ScrollTopOnReload";
 import MobileBottomNav from "@/widgets/MobileBottomNav";
 import Providers from "./providers";
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Signal",
     description: "AI 기반 딥페이크 피해 예방·탐지·대응 솔루션",
-    url: "https://signal-web-rho.vercel.app",
+    url: SITE_URL,
     siteName: "Signal",
     locale: "ko_KR",
     type: "website",
