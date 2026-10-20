@@ -109,6 +109,11 @@ export default function AnalysisPanel({
             </>
           )}
         </div>
+        {isProtected && (
+          <p className="text-caption break-keep text-gray-700">
+            ⚠️ 현재 보호 처리는 시연용 단계로, 실제 노이즈가 삽입되지 않은 원본 사본이 저장됩니다.
+          </p>
+        )}
         {detailHref && (
           <Link
             href={detailHref}
