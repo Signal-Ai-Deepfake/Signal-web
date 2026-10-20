@@ -133,6 +133,10 @@ export default function MonitoringPage() {
                 기준이 되는 이미지를 업로드하면, 웹에서 유사한 이미지가 발견될 때마다 확인할 수
                 있습니다.
               </p>
+              <p className="text-body-2 break-keep text-gray-700">
+                ⚠️ 현재 유포 모니터링은 시연용 단계로, 실제 웹 검색 없이 예시 탐지 결과가
+                표시됩니다.
+              </p>
             </div>
           </div>
 
@@ -187,7 +191,12 @@ export default function MonitoringPage() {
               </div>
 
               <div className="flex flex-col gap-4">
-                <p className="text-h3 px-1 font-semibold text-black">발견된 유사 이미지</p>
+                <div className="flex flex-col gap-1 px-1">
+                  <p className="text-h3 font-semibold text-black">발견된 유사 이미지</p>
+                  <p className="text-small text-gray-700">
+                    시연용 예시 결과로, 썸네일과 원본 링크는 실제로 열리지 않습니다.
+                  </p>
+                </div>
 
                 {isDetectionsPending && (
                   <p className="text-body-1 px-1 text-gray-700">불러오는 중...</p>
