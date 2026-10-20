@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 import type { AnalysisResult } from "@/entities/analysis/model";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Lock from "@/shared/asset/svg/Lock";
@@ -16,6 +17,8 @@ import { useAnalyzeFlow } from "./useAnalyzeFlow";
 
 export type { Status } from "./useAnalyzeFlow";
 export type { AnalysisResult };
+
+const DETAILS_EXPAND_MS = 300;
 
 const EMPTY_RESULT: AnalysisResult = {
   score: 0,
@@ -42,6 +45,23 @@ export default function AnalyzePage() {
     handleShare,
     handleSaveProtected,
   } = useAnalyzeFlow();
+  const detailsRef = useRef<HTMLDivElement>(null);
+
+  function handleToggleDetails() {
+    const opening = !showDetails;
+    toggleDetails();
+    if (!opening) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(
+      () => {
+        detailsRef.current?.scrollIntoView({
+          behavior: reduceMotion ? "instant" : "smooth",
+          block: "start",
+        });
+      },
+      reduceMotion ? 0 : DETAILS_EXPAND_MS,
+    );
+  }
 
   return (
     <>
@@ -96,7 +116,7 @@ export default function AnalyzePage() {
                 detailHref={assessmentId ? `/analyze/results/${assessmentId}` : null}
                 isProtected={isProtected}
                 showDetails={showDetails}
-                onToggleDetails={toggleDetails}
+                onToggleDetails={handleToggleDetails}
                 onProtect={handleProtect}
                 onShare={handleShare}
                 onSaveProtected={handleSaveProtected}
@@ -105,7 +125,9 @@ export default function AnalyzePage() {
           </div>
 
           {status === "result" && (
-            <ResultDetails show={showDetails} result={result ?? EMPTY_RESULT} />
+            <div ref={detailsRef} className="w-full scroll-mt-24">
+              <ResultDetails show={showDetails} result={result ?? EMPTY_RESULT} />
+            </div>
           )}
         </div>
       </main>
