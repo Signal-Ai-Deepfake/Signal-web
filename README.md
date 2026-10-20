@@ -47,8 +47,8 @@ cd Signal-web
 # 2. 패키지 의존성 설치 (Install dependencies)
 npm install
 
-# 3. 환경 변수 설정 (.env.local 생성)
-# NEXT_PUBLIC_API_BASE_URL=<백엔드 API 서버 주소>
+# 3. 환경 변수 설정 (.env.example을 복사한 뒤 NEXT_PUBLIC_API_BASE_URL에 백엔드 API 서버 주소 입력)
+cp .env.example .env.local
 
 # 4. 개발 서버 실행 (Run development server)
 npm run dev
