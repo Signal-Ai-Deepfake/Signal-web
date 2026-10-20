@@ -108,7 +108,9 @@ export function useAnalyzeFlow() {
       setProtectionId(protection.protectionId);
       setIsProtected(true);
       setShowDetails(true);
-      toast.success("보호 처리된 이미지를 준비했습니다.");
+      toast.success("보호 처리된 이미지를 준비했습니다.", {
+        description: "현재는 시연용 단계로, 실제 노이즈는 삽입되지 않았어요.",
+      });
     },
     onError: (error) => {
       showError(
