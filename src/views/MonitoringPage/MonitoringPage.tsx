@@ -194,7 +194,7 @@ export default function MonitoringPage() {
                 <div className="flex flex-col gap-1 px-1">
                   <p className="text-h3 font-semibold text-black">발견된 유사 이미지</p>
                   <p className="text-small text-gray-700">
-                    시연용 예시 결과로, 썸네일과 원본 링크는 실제로 열리지 않습니다.
+                    시연용 예시 결과로, 썸네일은 샘플 이미지이며 원본 링크는 제공되지 않습니다.
                   </p>
                 </div>
 

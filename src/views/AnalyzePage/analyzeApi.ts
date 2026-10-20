@@ -14,6 +14,7 @@ export interface ProtectionResponse {
   originalImageUrl?: string;
   protectedImageUrl?: string;
   visualDifference?: number;
+  simulated?: boolean;
 }
 
 export async function createProtection(

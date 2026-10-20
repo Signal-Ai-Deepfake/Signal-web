@@ -16,6 +16,7 @@ interface AnalysisPanelProps {
   result: AnalysisResult;
   detailHref: string | null;
   isProtected: boolean;
+  isSimulatedProtection: boolean;
   showDetails: boolean;
   onToggleDetails: () => void;
   onProtect: () => void;
@@ -30,6 +31,7 @@ export default function AnalysisPanel({
   result,
   detailHref,
   isProtected,
+  isSimulatedProtection,
   showDetails,
   onToggleDetails,
   onProtect,
@@ -111,7 +113,9 @@ export default function AnalysisPanel({
         </div>
         {isProtected && (
           <p className="text-caption break-keep text-gray-700">
-            ⚠️ 현재 보호 처리는 시연용 단계로, 실제 노이즈가 삽입되지 않은 원본 사본이 저장됩니다.
+            {isSimulatedProtection
+              ? "⚠️ 현재 보호 처리는 시연용 단계로, 실제 노이즈가 삽입되지 않은 원본 사본이 저장됩니다."
+              : "⚠️ 이미지에 노이즈를 넣고 위치 정보 등 메타데이터를 지웠어요. 특정 AI 모델을 겨냥한 적대적 보호는 아니라서 도용·합성을 완전히 막아 주지는 않아요."}
           </p>
         )}
         {detailHref && (
