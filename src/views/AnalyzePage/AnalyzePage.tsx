@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { AnalysisResult } from "@/entities/analysis/model";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Lock from "@/shared/asset/svg/Lock";
+import { animateScrollTo } from "@/shared/lib/animateScrollTo";
 import BackButton from "@/shared/ui/BackButton";
 import UploadGuideCard from "@/shared/ui/UploadGuideCard";
 import Footer from "@/widgets/Footer";
@@ -18,7 +19,7 @@ import { useAnalyzeFlow } from "./useAnalyzeFlow";
 export type { Status } from "./useAnalyzeFlow";
 export type { AnalysisResult };
 
-const DETAILS_EXPAND_MS = 300;
+const DETAILS_SCROLL_MS = 800;
 
 const EMPTY_RESULT: AnalysisResult = {
   score: 0,
@@ -46,20 +47,37 @@ export default function AnalyzePage() {
     handleSaveProtected,
   } = useAnalyzeFlow();
   const detailsRef = useRef<HTMLDivElement>(null);
+  const scrollFrameRef = useRef(0);
+
+  useEffect(() => {
+    const cancelScroll = () => cancelAnimationFrame(scrollFrameRef.current);
+    window.addEventListener("wheel", cancelScroll, { passive: true });
+    window.addEventListener("touchstart", cancelScroll, { passive: true });
+    return () => {
+      cancelScroll();
+      window.removeEventListener("wheel", cancelScroll);
+      window.removeEventListener("touchstart", cancelScroll);
+    };
+  }, []);
 
   function handleToggleDetails() {
     const opening = !showDetails;
     toggleDetails();
-    if (!opening) return;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setTimeout(
-      () => {
-        detailsRef.current?.scrollIntoView({
-          behavior: reduceMotion ? "instant" : "smooth",
-          block: "start",
-        });
+    const el = detailsRef.current;
+    if (!opening || !el) return;
+    const offset = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    const targetY = el.getBoundingClientRect().top + window.scrollY - offset;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      window.scrollTo({ top: targetY, behavior: "instant" });
+      return;
+    }
+    cancelAnimationFrame(scrollFrameRef.current);
+    animateScrollTo(
+      targetY,
+      (frame) => {
+        scrollFrameRef.current = frame;
       },
-      reduceMotion ? 0 : DETAILS_EXPAND_MS,
+      DETAILS_SCROLL_MS,
     );
   }
 
