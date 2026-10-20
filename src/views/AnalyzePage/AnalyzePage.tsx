@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import type { AnalysisResult } from "@/entities/analysis/model";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Lock from "@/shared/asset/svg/Lock";
-import { animateScrollTo } from "@/shared/lib/animateScrollTo";
+import { animateScrollTo, easeInOutSine } from "@/shared/lib/animateScrollTo";
 import BackButton from "@/shared/ui/BackButton";
 import UploadGuideCard from "@/shared/ui/UploadGuideCard";
 import Footer from "@/widgets/Footer";
@@ -19,7 +19,7 @@ import { useAnalyzeFlow } from "./useAnalyzeFlow";
 export type { Status } from "./useAnalyzeFlow";
 export type { AnalysisResult };
 
-const DETAILS_SCROLL_MS = 800;
+const DETAILS_SCROLL_MS = 1200;
 
 const EMPTY_RESULT: AnalysisResult = {
   score: 0,
@@ -78,6 +78,7 @@ export default function AnalyzePage() {
         scrollFrameRef.current = frame;
       },
       DETAILS_SCROLL_MS,
+      easeInOutSine,
     );
   }
 
