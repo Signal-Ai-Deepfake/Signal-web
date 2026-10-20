@@ -32,6 +32,7 @@ export default function AnalyzePage() {
     previewUrl,
     showDetails,
     isProtected,
+    isSimulatedProtection,
     result,
     assessmentId,
     toggleDetails,
@@ -95,6 +96,7 @@ export default function AnalyzePage() {
                 result={result ?? EMPTY_RESULT}
                 detailHref={assessmentId ? `/analyze/results/${assessmentId}` : null}
                 isProtected={isProtected}
+                isSimulatedProtection={isSimulatedProtection}
                 showDetails={showDetails}
                 onToggleDetails={toggleDetails}
                 onProtect={handleProtect}
