@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import ScrollTopOnReload from "@/shared/lib/ScrollTopOnReload";
 import MobileBottomNav from "@/widgets/MobileBottomNav";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ScrollTopOnReload />
         <Providers>{children}</Providers>
         <MobileBottomNav />
+        <Analytics />
       </body>
     </html>
   );
