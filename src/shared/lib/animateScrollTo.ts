@@ -8,6 +8,15 @@ export function easeInOutSine(t: number) {
   return -(Math.cos(Math.PI * t) - 1) / 2;
 }
 
+function jumpTo(top: number) {
+  const root = document.documentElement;
+  const previous = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  root.getClientRects();
+  window.scrollTo({ top, behavior: "instant" });
+  root.style.scrollBehavior = previous;
+}
+
 export function animateScrollTo(
   targetY: number,
   setFrame: (frame: number) => void,
@@ -20,7 +29,7 @@ export function animateScrollTo(
 
   const step = (now: number) => {
     const progress = Math.min((now - startTime) / duration, 1);
-    window.scrollTo({ top: startY + distance * easing(progress), behavior: "instant" });
+    jumpTo(startY + distance * easing(progress));
     setFrame(progress < 1 ? requestAnimationFrame(step) : 0);
   };
   setFrame(requestAnimationFrame(step));
