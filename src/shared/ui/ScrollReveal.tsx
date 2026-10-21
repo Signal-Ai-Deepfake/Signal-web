@@ -22,6 +22,7 @@ export default function ScrollReveal({
     const el = ref.current;
     if (!el) return;
 
+    const isMobile = !window.matchMedia("(min-width: 768px)").matches;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -29,7 +30,7 @@ export default function ScrollReveal({
           observer.disconnect();
         }
       },
-      { threshold: 0, rootMargin: "0px 0px -35% 0px" },
+      { threshold: 0, rootMargin: isMobile ? "0px 0px -8% 0px" : "0px 0px -35% 0px" },
     );
 
     observer.observe(el);
@@ -43,7 +44,7 @@ export default function ScrollReveal({
         transitionDelay: `${delay}ms`,
         transform: isVisible ? "translateY(0)" : `translateY(${distance}px)`,
       }}
-      className={`transition-all duration-[600ms] ease-out ${
+      className={`transition-all duration-[400ms] ease-out md:duration-[600ms] ${
         isVisible ? "opacity-100" : "opacity-0"
       } ${className}`}
     >

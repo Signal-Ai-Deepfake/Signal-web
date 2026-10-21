@@ -40,8 +40,8 @@ export default function MobileWhySignalList() {
           <SectionBadge>WHY SIGNAL</SectionBadge>
         </ScrollReveal>
         <div className="flex flex-col gap-3">
-          {whySignalItems.map(({ icon: Icon, title, description, tint }, index) => (
-            <ScrollReveal key={title} delay={80 + index * 80} distance={24}>
+          {whySignalItems.map(({ icon: Icon, title, description, tint }) => (
+            <ScrollReveal key={title} distance={24}>
               <div className={`flex items-center gap-4 rounded-2xl border p-4 ${tint}`}>
                 <div className="text-primary-500 flex size-10 shrink-0 items-center justify-center rounded-full bg-white">
                   <span className="[&>svg]:h-4 [&>svg]:w-4">
