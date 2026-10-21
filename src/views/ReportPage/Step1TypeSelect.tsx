@@ -19,24 +19,25 @@ interface Step1TypeSelectProps {
 
 export default function Step1TypeSelect({ damageType, onSelect, onNext }: Step1TypeSelectProps) {
   return (
-    <div className="flex w-full flex-col items-end gap-8">
+    <div className="flex w-full flex-col items-end gap-6 md:gap-8">
       <ReportSectionCard
         step="01"
         title="어떤 피해를 겪으셨나요?"
         description="현재 상황과 가장 가까운 항목 하나를 선택해 주세요."
       >
-        <div className="grid w-full grid-cols-2 gap-3">
+        <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
           {damageTypes.map(({ type, description }) => {
             const selected = damageType === type;
             return (
               <button
                 key={type}
                 type="button"
+                aria-pressed={selected}
                 onClick={() => onSelect(type)}
-                className={`flex items-start gap-3 rounded-[10px] border p-5 text-left transition-colors ${
+                className={`flex cursor-pointer items-start gap-3 rounded-[10px] border p-4 text-left transition-colors md:p-5 ${
                   selected
                     ? "bg-primary-50 border-primary-450 active:bg-primary-100"
-                    : "border-gray-300 bg-white hover:border-primary-300 active:bg-gray-100"
+                    : "hover:border-primary-300 border-gray-300 bg-white active:bg-gray-100"
                 }`}
               >
                 <span
@@ -58,7 +59,7 @@ export default function Step1TypeSelect({ damageType, onSelect, onNext }: Step1T
       <Button
         type="button"
         variant="primary"
-        className="gap-1"
+        className="w-full gap-1 md:w-auto"
         disabled={!damageType}
         onClick={onNext}
       >

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { createReport } from "@/entities/report/api";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
+import MobileReportStepper from "./MobileReportStepper";
 import ReportHero from "./ReportHero";
 import Step1TypeSelect from "./Step1TypeSelect";
 import type { DamageType } from "./Step1TypeSelect";
@@ -73,10 +74,11 @@ export default function ReportPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
-        <div className="flex w-full max-w-[960px] flex-col items-start gap-8">
-          <div className="w-full animate-[fade-in-up_0.4s_ease-out]">
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
+        <div className="flex w-full max-w-[960px] flex-col items-start gap-6 md:gap-8">
+          <div className="flex w-full animate-[fade-in-up_0.4s_ease-out] flex-col gap-6">
             <ReportHero />
+            <MobileReportStepper currentStep={step} />
           </div>
           <div key={step} className="w-full animate-[step-in_0.35s_ease-out]">
             {step === 1 && (
