@@ -23,6 +23,15 @@ export default function ReportHero() {
             기억나는 내용만 편안하게 입력해 주세요.
             <br className="hidden md:block" /> 기관에 전달하기 좋은 형태로 차분히 정리해 드립니다.
           </p>
+          <Link
+            href="/report/guide"
+            className="text-small md:text-body-2 text-primary-450 hover:text-primary-500 flex w-fit items-center gap-0.5 font-medium underline-offset-4 hover:underline"
+          >
+            신고 절차가 처음이라면 신고 가이드 먼저 보기
+            <span className="[&>svg]:h-4 [&>svg]:w-2">
+              <Arrow />
+            </span>
+          </Link>
         </div>
       </div>
       <div className="bg-primary-50 flex w-full items-start gap-2.5 rounded-lg px-4 py-3.5 md:gap-3.5 md:px-5 md:py-4.5">
