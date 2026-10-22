@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Arrow from "@/shared/asset/svg/Arrow";
 
 interface LegalTableOfContentsProps {
   items: { id: string; label: string }[];
@@ -50,7 +51,38 @@ export default function LegalTableOfContents({ items }: LegalTableOfContentsProp
   }, [items]);
 
   return (
-    <nav className="sticky top-24 flex w-60 shrink-0 flex-col gap-2 rounded-2xl border border-gray-200 p-6">
+    <>
+      <details className="group w-full rounded-2xl border border-gray-200 lg:hidden">
+        <summary className="text-body-2 flex cursor-pointer list-none items-center justify-between px-5 py-4 font-bold text-black [&::-webkit-details-marker]:hidden">
+          목차
+          <span className="text-gray-600 transition-transform duration-200 group-open:rotate-90 [&>svg]:h-5 [&>svg]:w-2.5">
+            <Arrow />
+          </span>
+        </summary>
+        <ul className="flex flex-col gap-1 border-t border-gray-200 px-3 py-3">
+          {items.map((item) => (
+            <li key={item.id}>
+              <a
+                href={`#${item.id}`}
+                className="text-small active:bg-primary-50 block rounded-lg px-2 py-2.5 text-gray-700"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+      <LegalDesktopNav items={items} activeId={activeId} />
+    </>
+  );
+}
+
+function LegalDesktopNav({
+  items,
+  activeId,
+}: LegalTableOfContentsProps & { activeId: string | undefined }) {
+  return (
+    <nav className="sticky top-24 hidden w-60 shrink-0 flex-col gap-2 rounded-2xl border border-gray-200 p-6 lg:flex">
       <p className="text-body-2 font-bold text-black">목차</p>
       <ul className="flex flex-col gap-1">
         {items.map((item) => {

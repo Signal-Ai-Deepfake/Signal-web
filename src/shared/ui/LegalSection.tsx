@@ -32,7 +32,7 @@ export default function LegalSection({
           observer.disconnect();
         }
       },
-      { threshold: 0.1, rootMargin: "0px 0px -80px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -80px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -42,11 +42,11 @@ export default function LegalSection({
     <section
       ref={ref}
       id={id}
-      className={`legal-section flex w-full scroll-mt-24 flex-col pb-9 transition-all duration-700 ease-out ${
+      className={`legal-section flex w-full scroll-mt-20 flex-col pb-7 transition-all duration-700 ease-out md:scroll-mt-24 md:pb-9 ${
         isVisible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-      } ${first ? "" : "pt-9"} ${last ? "" : "border-b border-gray-300"}`}
+      } ${first ? "" : "pt-7 md:pt-9"} ${last ? "" : "border-b border-gray-300"}`}
     >
-      <h2 className="text-h3 font-semibold text-black">{title}</h2>
+      <h2 className="text-large md:text-h3 font-semibold text-black">{title}</h2>
       <div className="mt-4 flex flex-col">{children}</div>
     </section>
   );

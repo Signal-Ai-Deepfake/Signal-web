@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import Arrow from "@/shared/asset/svg/Arrow";
+import BackButton from "@/shared/ui/BackButton";
 import Footer from "@/widgets/Footer";
 import LegalTableOfContents from "@/widgets/LegalTableOfContents";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -23,10 +24,11 @@ export default function LegalPageLayout({
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
-        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-8">
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
+        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
           <div className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <BackButton className="md:hidden" />
+            <div className="hidden flex-wrap items-center gap-x-4 gap-y-2 md:flex">
               <Link href="/" className="text-body-1 text-gray-700">
                 홈
               </Link>
@@ -35,13 +37,13 @@ export default function LegalPageLayout({
               </span>
               <span className="text-body-1 text-primary-500">{breadcrumbLabel}</span>
             </div>
-            <div className="flex flex-col gap-6">
-              <h1 className="text-h1 font-bold text-black">{title}</h1>
-              <p className="text-body-1 text-gray-700">{description}</p>
+            <div className="flex flex-col gap-2 md:gap-6">
+              <h1 className="text-h3 md:text-h1 font-bold text-black">{title}</h1>
+              <p className="text-small md:text-body-1 break-keep text-gray-700">{description}</p>
             </div>
           </div>
 
-          <div className="flex items-start gap-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
             <LegalTableOfContents items={tocItems} />
             <article className="flex min-w-0 flex-1 flex-col">{children}</article>
           </div>
