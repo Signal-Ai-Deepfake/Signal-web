@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import BotOutline from "@/shared/asset/svg/BotOutline";
 import Button from "@/shared/ui/Button";
+import DraftCardHeader from "./DraftCardHeader";
+import StepNavigation from "./StepNavigation";
 import type { DamageType } from "./Step1TypeSelect";
 import type { ReportDetails, ReportEvidence } from "./Step2Details";
 
@@ -86,48 +87,35 @@ export default function Step3Draft({
   }
 
   return (
-    <div className="flex w-full flex-col gap-8">
-      <div className="flex w-full flex-col gap-6 rounded-2xl border border-gray-300 p-8">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-2">
-            <span className="bg-primary-50 text-primary-500 text-caption w-fit rounded-full px-3 py-1">
-              기관 제출용 초안
-            </span>
-            <p className="text-h3 font-semibold text-black">신고 문서 초안을 확인해 주세요</p>
-            <p className="text-body-2 text-gray-800">아래 내용은 자유롭게 수정할 수 있습니다.</p>
-          </div>
-          <p className="text-caption text-primary-500 shrink-0">✓ 작성 완료</p>
-        </div>
-
-        <div className="bg-secondary-50 border-secondary-200 flex items-center gap-2 rounded-lg border p-4">
-          <span className="text-secondary-600 shrink-0 [&>svg]:h-8 [&>svg]:w-8">
-            <BotOutline />
-          </span>
-          <p className="text-body-2 text-secondary-600 font-medium">
-            AI가 입력 내용을 정리한 문서입니다. 실제 제출 전 날짜, URL, 피해 내용을 한 번 더 확인해
-            주세요.
-          </p>
-        </div>
+    <div className="flex w-full flex-col gap-6 md:gap-8">
+      <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-300 p-5 md:gap-6 md:p-8">
+        <DraftCardHeader
+          title="신고 문서 초안을 확인해 주세요"
+          description="아래 내용은 자유롭게 수정할 수 있습니다."
+          status="작성 완료"
+        />
 
         <div className="flex flex-col gap-2">
-          <label className="text-body-1 px-1 text-black">신고 내용</label>
-          <div className="max-h-[427px] w-full divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-300">
+          <label className="text-body-2 md:text-body-1 px-1 text-black">신고 내용</label>
+          <div className="w-full divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-300 md:max-h-[427px]">
             {sections.map((section, index) => (
-              <div key={section.title} className="flex flex-col gap-1.5 p-4">
-                <p className="text-body-1 font-semibold text-black">{section.title}</p>
+              <div key={section.title} className="flex flex-col gap-1 p-3 md:gap-1.5 md:p-4">
+                <p className="text-body-2 md:text-body-1 font-semibold text-black">
+                  {section.title}
+                </p>
                 {shortFieldTitles.has(section.title) ? (
                   <input
                     type="text"
                     value={section.body}
                     onChange={(event) => updateSectionBody(index, event.target.value)}
-                    className="text-body-1 focus:border-secondary-500 w-full rounded border border-transparent px-1 py-1 text-black outline-none focus:border-b"
+                    className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full rounded border border-transparent px-1 py-1 text-black outline-none focus:border-b"
                   />
                 ) : (
                   <textarea
                     value={section.body}
                     onChange={(event) => updateSectionBody(index, event.target.value)}
                     rows={rowsByTitle[section.title] ?? 3}
-                    className="text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-transparent px-1 py-1 whitespace-pre-wrap text-black outline-none focus:border-b"
+                    className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-transparent px-1 py-1 whitespace-pre-wrap text-black outline-none focus:border-b"
                   />
                 )}
               </div>
@@ -136,23 +124,17 @@ export default function Step3Draft({
         </div>
       </div>
 
-      <div className="flex w-full items-start justify-between">
-        <button
-          type="button"
-          onClick={onBack}
-          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 w-[124px] items-center justify-center rounded border transition-colors"
-        >
-          이전
-        </button>
+      <StepNavigation onBack={onBack}>
         <Button
           type="button"
           variant="primary"
+          className="w-full md:w-auto"
           disabled={submitting}
           onClick={() => onSubmit(sections)}
         >
           {submitting ? "생성 중..." : "신고 문서 생성하기"}
         </Button>
-      </div>
+      </StepNavigation>
     </div>
   );
 }

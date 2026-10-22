@@ -2,7 +2,12 @@ import Link from "next/link";
 
 import Logo from "@/shared/asset/svg/Logo";
 
-const serviceLinks = ["AI 이미지 분석", "얼굴 도용·딥페이크 탐지", "익명 상담 챗봇", "신고 지원"];
+const serviceLinks = [
+  { label: "AI 이미지 분석", href: "/analyze" },
+  { label: "얼굴 도용·딥페이크 탐지", href: "/detect" },
+  { label: "익명 상담 챗봇", href: "/chat" },
+  { label: "신고 지원", href: "/report" },
+];
 const legalLinks = [
   { label: "개인정보처리방침", href: "/privacy" },
   { label: "이용약관", href: "/terms" },
@@ -23,8 +28,13 @@ export default function Footer() {
             <p className="text-large font-medium text-black">서비스</p>
             <ul className="flex flex-col gap-2 md:gap-3">
               {serviceLinks.map((link) => (
-                <li key={link} className="text-small md:text-body-2 text-gray-650">
-                  {link}
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-small md:text-body-2 text-gray-650 hover:text-primary-500 transition-colors hover:underline"
+                  >
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
