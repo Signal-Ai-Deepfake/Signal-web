@@ -7,7 +7,7 @@ interface StepNavigationProps {
 
 export default function StepNavigation({ onBack, children }: StepNavigationProps) {
   return (
-    <div className="flex w-full items-center gap-3 md:justify-between">
+    <div className="flex w-full items-end gap-3 md:justify-between">
       <button
         type="button"
         onClick={onBack}
