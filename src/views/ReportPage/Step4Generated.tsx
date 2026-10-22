@@ -17,7 +17,11 @@ export default function Step4Generated({ sections, onBack, onFindAgency }: Step4
   return (
     <div className="flex w-full flex-col gap-6 md:gap-8">
       <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-300 p-5 md:gap-6 md:p-8">
-        <DraftCardHeader status="문서 생성 완료" />
+        <DraftCardHeader
+          title="신고 문서가 준비되었어요"
+          description="아래 내용을 바탕으로 적합한 기관에 신고를 진행해 주세요."
+          status="문서 생성 완료"
+        />
 
         <div className="flex flex-col gap-2">
           <label className="text-body-2 md:text-body-1 px-1 text-black">신고 내용</label>

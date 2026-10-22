@@ -1,6 +1,12 @@
 import BotOutline from "@/shared/asset/svg/BotOutline";
 
-export default function DraftCardHeader({ status }: { status: string }) {
+interface DraftCardHeaderProps {
+  title: string;
+  description: string;
+  status: string;
+}
+
+export default function DraftCardHeader({ title, description, status }: DraftCardHeaderProps) {
   return (
     <>
       <div className="flex items-start justify-between gap-3">
@@ -8,12 +14,8 @@ export default function DraftCardHeader({ status }: { status: string }) {
           <span className="bg-primary-50 text-primary-500 text-caption w-fit rounded-full px-3 py-1">
             기관 제출용 초안
           </span>
-          <p className="text-large md:text-h3 font-semibold break-keep text-black">
-            신고 문서 초안을 확인해 주세요
-          </p>
-          <p className="text-small md:text-body-2 text-gray-800">
-            아래 내용은 자유롭게 수정할 수 있습니다.
-          </p>
+          <p className="text-large md:text-h3 font-semibold break-keep text-black">{title}</p>
+          <p className="text-small md:text-body-2 break-keep text-gray-800">{description}</p>
         </div>
         <p className="text-caption text-primary-500 shrink-0">✓ {status}</p>
       </div>

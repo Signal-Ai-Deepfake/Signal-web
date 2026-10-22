@@ -89,7 +89,11 @@ export default function Step3Draft({
   return (
     <div className="flex w-full flex-col gap-6 md:gap-8">
       <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-300 p-5 md:gap-6 md:p-8">
-        <DraftCardHeader status="작성 완료" />
+        <DraftCardHeader
+          title="신고 문서 초안을 확인해 주세요"
+          description="아래 내용은 자유롭게 수정할 수 있습니다."
+          status="작성 완료"
+        />
 
         <div className="flex flex-col gap-2">
           <label className="text-body-2 md:text-body-1 px-1 text-black">신고 내용</label>
