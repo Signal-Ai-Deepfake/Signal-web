@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import ChevronLeft from "@/shared/asset/svg/ChevronLeft";
 import Logo from "@/shared/asset/svg/Logo";
 import Sparkle from "@/shared/asset/svg/Sparkle";
+import { useGoBack } from "@/shared/lib/useGoBack";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 
 export const authCardClass =
@@ -13,12 +13,7 @@ export const authCardClass =
 
 export default function AuthPageShell({ children }: { children: ReactNode }) {
   const hidden = useHideOnScroll();
-  const router = useRouter();
-
-  function goBack() {
-    if (window.history.length > 1) router.back();
-    else router.push("/");
-  }
+  const goBack = useGoBack();
 
   return (
     <div className="relative flex min-h-dvh w-full flex-col overflow-hidden bg-[linear-gradient(170deg,#ffffff_5%,var(--color-secondary-50)_40%,var(--color-secondary-100)_100%)] md:bg-[linear-gradient(110deg,#ffffff_49%,var(--color-secondary-50)_96%)]">
