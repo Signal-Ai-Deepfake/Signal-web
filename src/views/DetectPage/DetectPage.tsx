@@ -1,11 +1,12 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import AnalysisGuideCard from "@/shared/ui/AnalysisGuideCard";
 import Button from "@/shared/ui/Button";
 import PageHeading from "@/shared/ui/PageHeading";
+import { animateScrollTo } from "@/shared/lib/animateScrollTo";
 import { pollUntil } from "@/shared/lib/poll";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -51,6 +52,9 @@ const FAILURE_MESSAGE: Record<DetectionFailureReason, { title: string; descripti
     description: "잠시 후 다시 시도해 주세요.",
   },
 };
+
+const RESULT_SCROLL_DURATION = 1100;
+const RESULT_SCROLL_OFFSET = 24;
 
 const EVIDENCE_TYPE_LABEL: Record<string, string> = {
   BLINK_PATTERN_ANOMALY: "눈 깜빡임 패턴",
@@ -107,12 +111,50 @@ export default function DetectPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [result, setResult] = useState<DetectResult>(MOCK_RESULT);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (status !== "result" || !resultRef.current) return;
+
+    const maxY = document.documentElement.scrollHeight - window.innerHeight;
+    const targetY = Math.min(
+      Math.max(
+        resultRef.current.getBoundingClientRect().top + window.scrollY - RESULT_SCROLL_OFFSET,
+        0,
+      ),
+      maxY,
+    );
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      window.scrollTo({ top: targetY, behavior: "instant" });
+      return;
+    }
+
+    let frame = 0;
+    const cancelScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    };
+    animateScrollTo(
+      targetY,
+      (id) => {
+        frame = id;
+      },
+      RESULT_SCROLL_DURATION,
+    );
+    window.addEventListener("wheel", cancelScroll, { passive: true });
+    window.addEventListener("touchstart", cancelScroll, { passive: true });
+    return () => {
+      cancelScroll();
+      window.removeEventListener("wheel", cancelScroll);
+      window.removeEventListener("touchstart", cancelScroll);
+    };
+  }, [status]);
 
   function handleFileSelect(file: File) {
     setPreviewUrl(URL.createObjectURL(file));
@@ -196,7 +238,11 @@ export default function DetectPage() {
             </Button>
           )}
 
-          {status === "result" && <DetectResultSection result={result} previewUrl={previewUrl} />}
+          {status === "result" && (
+            <div ref={resultRef} className="w-full">
+              <DetectResultSection result={result} previewUrl={previewUrl} />
+            </div>
+          )}
         </div>
       </main>
       <Footer />
