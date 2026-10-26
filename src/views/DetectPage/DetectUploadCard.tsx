@@ -81,13 +81,13 @@ export default function DetectUploadCard({
             <span className="text-black [&>svg]:h-10 [&>svg]:w-10 md:[&>svg]:h-12 md:[&>svg]:w-12">
               <ImageArrowUp />
             </span>
-            <p className="text-body-2 md:text-body-1 font-semibold text-black">사진 또는 영상 업로드</p>
-            <p className="text-small md:text-body-2 text-gray-650">JPG , PNG, MP4 파일 지원</p>
+            <p className="text-body-2 md:text-body-1 font-semibold text-black">사진 업로드</p>
+            <p className="text-small md:text-body-2 text-gray-650">JPG, PNG 파일 지원</p>
           </div>
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*,video/*"
+            accept="image/*"
             onChange={handleFileChange}
             className="hidden"
           />

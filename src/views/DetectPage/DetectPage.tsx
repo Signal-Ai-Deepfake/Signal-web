@@ -169,7 +169,7 @@ export default function DetectPage() {
           <div className="flex w-full flex-col items-start gap-6 md:gap-12">
             <PageHeading
               title="얼굴 도용·딥페이크 탐지"
-              description="사진 또는 영상을 업로드하여 얼굴 도용 여부와 딥페이크 합성 여부를 확인할 수 있습니다."
+              description="사진을 업로드하여 얼굴 도용 여부와 딥페이크 합성 여부를 확인할 수 있습니다."
               breadcrumbs={[{ label: "얼굴 도용·딥페이크 탐지" }]}
             />
 

@@ -7,9 +7,9 @@ import Globe from "@/shared/asset/svg/Globe";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 
 const guideItems = [
-  "사진이나 영상 전체가 잘리지 않도록 업로드해 주세요.",
+  "사진 전체가 잘리지 않도록 업로드해 주세요.",
   "흐리거나 너무 어두운 파일은 정확도가 낮아질 수 있습니다.",
-  "얼굴이 선명하게 보이는 사진 또는 영상을 업로드해 주세요.",
+  "얼굴이 선명하게 보이는 사진을 업로드해 주세요.",
   "업로드한 사진은 분석 후 저장되지 않습니다.",
 ];
 
