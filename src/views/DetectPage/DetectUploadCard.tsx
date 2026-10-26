@@ -49,7 +49,7 @@ export default function DetectUploadCard({
   }
 
   return (
-    <div className="flex h-[458px] w-full flex-col gap-4 rounded-2xl border border-gray-300 p-8 lg:max-w-[640px]">
+    <div className="flex h-[360px] w-full flex-col gap-4 rounded-2xl border border-gray-300 p-5 md:h-[458px] md:p-8 lg:max-w-[640px]">
       {status !== "idle" && previewUrl ? (
         <>
           <div className="relative min-h-0 flex-1 animate-[fade-in_0.3s_ease-out] overflow-hidden rounded-xl">
@@ -78,11 +78,11 @@ export default function DetectUploadCard({
           }`}
         >
           <div className="flex flex-col items-center gap-2">
-            <span className="text-black [&>svg]:h-12 [&>svg]:w-12">
+            <span className="text-black [&>svg]:h-10 [&>svg]:w-10 md:[&>svg]:h-12 md:[&>svg]:w-12">
               <ImageArrowUp />
             </span>
-            <p className="text-body-1 font-semibold text-black">사진 또는 영상 업로드</p>
-            <p className="text-body-2 text-gray-650">JPG , PNG, MP4 파일 지원</p>
+            <p className="text-body-2 md:text-body-1 font-semibold text-black">사진 또는 영상 업로드</p>
+            <p className="text-small md:text-body-2 text-gray-650">JPG , PNG, MP4 파일 지원</p>
           </div>
           <input
             ref={fileInputRef}

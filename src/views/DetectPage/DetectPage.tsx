@@ -1,12 +1,11 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import Arrow from "@/shared/asset/svg/Arrow";
 import AnalysisGuideCard from "@/shared/ui/AnalysisGuideCard";
 import Button from "@/shared/ui/Button";
+import PageHeading from "@/shared/ui/PageHeading";
 import { pollUntil } from "@/shared/lib/poll";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -142,27 +141,14 @@ export default function DetectPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col items-end gap-6">
-          <div className="flex w-full flex-col items-start gap-12">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <Link href="/" className="text-body-1 text-gray-800">
-                  홈
-                </Link>
-                <span className="text-gray-800 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                  <Arrow />
-                </span>
-                <span className="text-body-1 text-primary-500">얼굴 도용·딥페이크 탐지</span>
-              </div>
-              <div className="flex flex-col gap-6">
-                <h1 className="text-h1 font-bold text-black">얼굴 도용·딥페이크 탐지</h1>
-                <p className="text-body-1 text-gray-800">
-                  사진 또는 영상을 업로드하여 얼굴 도용 여부와 딥페이크 합성 여부를 확인할 수
-                  있습니다.
-                </p>
-              </div>
-            </div>
+          <div className="flex w-full flex-col items-start gap-6 md:gap-12">
+            <PageHeading
+              title="얼굴 도용·딥페이크 탐지"
+              description="사진 또는 영상을 업로드하여 얼굴 도용 여부와 딥페이크 합성 여부를 확인할 수 있습니다."
+              breadcrumbs={[{ label: "얼굴 도용·딥페이크 탐지" }]}
+            />
 
             <div className="flex w-full flex-col items-stretch gap-6 lg:flex-row lg:gap-10">
               <DetectUploadCard
@@ -179,7 +165,7 @@ export default function DetectPage() {
             <Button
               type="button"
               variant="primary"
-              className="w-[253px]"
+              className="w-full md:w-[253px]"
               disabled={status !== "selected"}
               onClick={handleDetect}
             >
