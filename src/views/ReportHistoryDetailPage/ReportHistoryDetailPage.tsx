@@ -163,8 +163,9 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
     onSuccess: (result) => {
       queryClient.setQueryData(
         ["reports", reportId],
-        report ? { ...report, status: result.status, documentUrl: result.documentUrl } : report,
+        report ? { ...report, status: result.status } : report,
       );
+      queryClient.invalidateQueries({ queryKey: ["reports", reportId] });
       setFinalizeModalOpen(false);
       toast.success("신고 문서를 확정했습니다.");
     },
@@ -273,15 +274,22 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                   확인해 주세요.
                 </NoticeBanner>
 
-                {report.documentUrl && (
-                  <a
-                    href={resolveFileUrl(report.documentUrl)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-secondary-600 text-body-2 w-full max-w-[960px] underline"
-                  >
-                    생성된 신고 문서 파일 보기
-                  </a>
+                {report.documentSimulated ? (
+                  <p className="text-small md:text-body-2 w-full max-w-[960px] text-gray-700">
+                    신고 문서 파일(PDF) 생성은 준비 중입니다. 아래 내용을 확인해 기관에 제출해
+                    주세요.
+                  </p>
+                ) : (
+                  report.documentUrl && (
+                    <a
+                      href={resolveFileUrl(report.documentUrl)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-secondary-600 text-body-2 w-full max-w-[960px] underline"
+                    >
+                      생성된 신고 문서 파일 보기
+                    </a>
+                  )
                 )}
 
                 <div className="flex w-full max-w-[960px] flex-col gap-2">

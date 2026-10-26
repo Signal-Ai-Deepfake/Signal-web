@@ -41,6 +41,7 @@ export interface ReportResponse {
   targetAgencyType?: string;
   additionalNotes?: string;
   documentUrl?: string;
+  documentSimulated?: boolean;
   timeline: ReportTimelineEntry[];
   createdAt: string;
 }
