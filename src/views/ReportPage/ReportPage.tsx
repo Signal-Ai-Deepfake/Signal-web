@@ -15,7 +15,7 @@ import Step2Details from "./Step2Details";
 import type { ReportDetails, ReportEvidence } from "./Step2Details";
 import Step3Draft from "./Step3Draft";
 import Step4Generated from "./Step4Generated";
-import { createDraft, toReportRequest, type ReportDraft } from "./reportDraft";
+import { createDraft, toCreateRequest, toUpdateRequest, type ReportDraft } from "./reportDraft";
 
 const emptyDetails: ReportDetails = {
   incidentDate: "",
@@ -37,12 +37,11 @@ export default function ReportPage() {
 
   const saveReportMutation = useMutation({
     mutationFn: async (currentDraft: ReportDraft) => {
-      const payload = toReportRequest(currentDraft, evidence);
       if (reportId !== null) {
-        await updateReport(reportId, payload);
+        await updateReport(reportId, toUpdateRequest(currentDraft, evidence));
         return reportId;
       }
-      const created = await createReport(payload);
+      const created = await createReport(toCreateRequest(currentDraft, evidence));
       return created.reportId;
     },
     onSuccess: (savedId) => {

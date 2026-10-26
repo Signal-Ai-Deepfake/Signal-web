@@ -19,7 +19,9 @@ export interface CreateReportRequest {
   additionalNotes?: string;
 }
 
-export type UpdateReportRequest = CreateReportRequest;
+export type UpdateReportRequest = {
+  [Key in keyof CreateReportRequest]?: CreateReportRequest[Key] | null;
+};
 
 export interface ReportStatusResponse {
   reportId: number;

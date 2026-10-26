@@ -207,13 +207,14 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
 
   function saveEditing() {
     if (!draft) return;
+    const valueOrNull = (value: string) => value.trim() || null;
     updateMutation.mutate({
-      incidentDate: draft.incidentDate || undefined,
-      damageType: draft.damageType || undefined,
-      discoveryRoute: draft.discoveryRoute || undefined,
-      sourceUrls: draft.sourceUrl ? [draft.sourceUrl] : undefined,
-      description: draft.description || undefined,
-      additionalNotes: draft.additionalNotes || undefined,
+      incidentDate: valueOrNull(draft.incidentDate),
+      damageType: valueOrNull(draft.damageType),
+      discoveryRoute: valueOrNull(draft.discoveryRoute),
+      sourceUrls: draft.sourceUrl.trim() ? [draft.sourceUrl.trim()] : [],
+      description: valueOrNull(draft.description),
+      additionalNotes: valueOrNull(draft.additionalNotes),
     });
   }
 

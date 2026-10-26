@@ -1,4 +1,4 @@
-import type { CreateReportRequest } from "@/entities/report/api";
+import type { CreateReportRequest, UpdateReportRequest } from "@/entities/report/api";
 import type { DamageType } from "./Step1TypeSelect";
 import type { ReportDetails, ReportEvidence } from "./Step2Details";
 
@@ -44,7 +44,7 @@ function optional(value: string) {
   return trimmed ? trimmed : undefined;
 }
 
-export function toReportRequest(
+export function toCreateRequest(
   draft: ReportDraft,
   evidence: ReportEvidence | null,
 ): CreateReportRequest {
@@ -57,5 +57,21 @@ export function toReportRequest(
     additionalNotes: optional(draft.additionalNotes),
     sourceUrls: sourceUrl ? [sourceUrl] : undefined,
     evidenceIds: evidence ? [evidence.id] : undefined,
+  };
+}
+
+export function toUpdateRequest(
+  draft: ReportDraft,
+  evidence: ReportEvidence | null,
+): UpdateReportRequest {
+  const created = toCreateRequest(draft, evidence);
+  return {
+    incidentDate: created.incidentDate ?? null,
+    discoveryRoute: created.discoveryRoute ?? null,
+    damageType: created.damageType ?? null,
+    description: created.description ?? null,
+    additionalNotes: created.additionalNotes ?? null,
+    sourceUrls: created.sourceUrls ?? [],
+    evidenceIds: created.evidenceIds ?? [],
   };
 }
