@@ -14,6 +14,7 @@ import {
   getDeepfakeDetection,
   type DeepfakeDetectionResponse,
   type DeepfakeVerdict,
+  type DetectionFailureReason,
 } from "./detectApi";
 import DetectResultSection from "./DetectResultSection";
 import DetectUploadCard from "./DetectUploadCard";
@@ -30,6 +31,25 @@ const VERDICT_CAPTION: Record<DeepfakeVerdict, string> = {
   FAKE: "얼굴 영역에서 합성 흔적이 감지되었습니다.",
   SUSPICIOUS: "합성 여부가 의심되는 부분이 있습니다.",
   REAL: "얼굴 영역에서 합성 흔적이 발견되지 않았습니다.",
+};
+
+const FAILURE_MESSAGE: Record<DetectionFailureReason, { title: string; description: string }> = {
+  NO_FACE_DETECTED: {
+    title: "사진에서 얼굴을 찾지 못했어요.",
+    description: "얼굴이 정면으로 잘 보이는 사진으로 다시 시도해 주세요.",
+  },
+  VIDEO_NOT_SUPPORTED: {
+    title: "영상 탐지는 아직 지원하지 않아요.",
+    description: "영상 속 얼굴이 잘 보이는 장면을 캡처한 사진으로 시도해 주세요.",
+  },
+  AI_SERVER_ERROR: {
+    title: "AI 분석 서버에 일시적인 문제가 있어요.",
+    description: "잠시 후 다시 시도해 주세요.",
+  },
+  TIMEOUT: {
+    title: "분석 시간이 초과되었어요.",
+    description: "잠시 후 다시 시도해 주세요.",
+  },
 };
 
 const EVIDENCE_TYPE_LABEL: Record<string, string> = {
@@ -119,7 +139,10 @@ export default function DetectPage() {
     onSuccess: (data) => {
       if (data.status === "FAILED") {
         setStatus("selected");
-        toast.error("탐지에 실패했습니다. 다시 시도해 주세요.");
+        const failure = data.failureReason ? FAILURE_MESSAGE[data.failureReason] : undefined;
+        toast.error(failure?.title ?? "탐지에 실패했습니다.", {
+          description: failure?.description ?? "다시 시도해 주세요.",
+        });
         return;
       }
       setResult(mapDetection(data));
