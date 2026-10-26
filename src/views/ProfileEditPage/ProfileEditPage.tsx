@@ -130,13 +130,13 @@ export default function ProfileEditPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
-        <div className="flex w-full max-w-[960px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-8">
-          <div className="flex flex-col gap-6">
-            <h1 className="text-[32px] leading-[1.4] font-bold tracking-[-0.48px] text-black">
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
+        <div className="flex w-full max-w-[960px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
+          <div className="flex flex-col gap-2 md:gap-6">
+            <h1 className="text-h3 font-bold text-black md:text-[32px] md:leading-[1.4] md:tracking-[-0.48px]">
               내 프로필
             </h1>
-            <p className="text-body-2 text-gray-700">
+            <p className="text-small md:text-body-2 break-keep text-gray-700">
               회원 정보와 프로필을 확인하고 변경할 수 있습니다.
             </p>
           </div>
@@ -146,9 +146,9 @@ export default function ProfileEditPage() {
               <p className="text-body-2 text-gray-700">프로필 정보를 불러오는 중입니다...</p>
             </div>
           ) : (
-            <div className="flex w-full flex-col gap-8 rounded-2xl border border-gray-300 p-5 sm:p-8">
-              <div className="flex flex-wrap items-center gap-5 border-b border-gray-300 pb-7">
-                <span className="bg-primary-50 text-primary-500 flex size-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full text-[24px] font-semibold">
+            <div className="flex w-full flex-col gap-6 rounded-2xl border border-gray-300 p-5 sm:p-8 md:gap-8">
+              <div className="flex flex-wrap items-center gap-4 border-b border-gray-300 pb-6 md:gap-5 md:pb-7">
+                <span className="bg-primary-50 text-primary-500 flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full text-[24px] font-semibold md:size-[78px]">
                   {profileImageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -238,7 +238,7 @@ export default function ProfileEditPage() {
             </div>
           )}
 
-          <div className="flex w-full flex-col items-start gap-4 rounded-xl border border-gray-300 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex w-full flex-col items-start gap-4 rounded-xl border border-gray-300 p-5 sm:flex-row sm:items-center sm:justify-between md:px-6">
             <div className="flex flex-col gap-1">
               <p className="text-body-2 font-medium text-black">회원 탈퇴</p>
               <p className="text-small text-gray-700">

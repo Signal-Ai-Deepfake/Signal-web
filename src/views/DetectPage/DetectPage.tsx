@@ -1,13 +1,13 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import Arrow from "@/shared/asset/svg/Arrow";
 import AnalysisGuideCard from "@/shared/ui/AnalysisGuideCard";
 import Button from "@/shared/ui/Button";
+import PageHeading from "@/shared/ui/PageHeading";
 import { pollUntil } from "@/shared/lib/poll";
+import { scrollToElement } from "@/shared/lib/scrollToElement";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import {
@@ -15,6 +15,7 @@ import {
   getDeepfakeDetection,
   type DeepfakeDetectionResponse,
   type DeepfakeVerdict,
+  type DetectionFailureReason,
 } from "./detectApi";
 import DetectResultSection from "./DetectResultSection";
 import DetectUploadCard from "./DetectUploadCard";
@@ -31,6 +32,25 @@ const VERDICT_CAPTION: Record<DeepfakeVerdict, string> = {
   FAKE: "얼굴 영역에서 합성 흔적이 감지되었습니다.",
   SUSPICIOUS: "합성 여부가 의심되는 부분이 있습니다.",
   REAL: "얼굴 영역에서 합성 흔적이 발견되지 않았습니다.",
+};
+
+const FAILURE_MESSAGE: Record<DetectionFailureReason, { title: string; description: string }> = {
+  NO_FACE_DETECTED: {
+    title: "사진에서 얼굴을 찾지 못했어요.",
+    description: "얼굴이 정면으로 잘 보이는 사진으로 다시 시도해 주세요.",
+  },
+  VIDEO_NOT_SUPPORTED: {
+    title: "영상 탐지는 아직 지원하지 않아요.",
+    description: "영상 속 얼굴이 잘 보이는 장면을 캡처한 사진으로 시도해 주세요.",
+  },
+  AI_SERVER_ERROR: {
+    title: "AI 분석 서버에 일시적인 문제가 있어요.",
+    description: "잠시 후 다시 시도해 주세요.",
+  },
+  TIMEOUT: {
+    title: "분석 시간이 초과되었어요.",
+    description: "잠시 후 다시 시도해 주세요.",
+  },
 };
 
 const EVIDENCE_TYPE_LABEL: Record<string, string> = {
@@ -88,12 +108,18 @@ export default function DetectPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [result, setResult] = useState<DetectResult>(MOCK_RESULT);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (status !== "result" || !resultRef.current) return;
+    return scrollToElement(resultRef.current);
+  }, [status]);
 
   function handleFileSelect(file: File) {
     setPreviewUrl(URL.createObjectURL(file));
@@ -120,7 +146,10 @@ export default function DetectPage() {
     onSuccess: (data) => {
       if (data.status === "FAILED") {
         setStatus("selected");
-        toast.error("탐지에 실패했습니다. 다시 시도해 주세요.");
+        const failure = data.failureReason ? FAILURE_MESSAGE[data.failureReason] : undefined;
+        toast.error(failure?.title ?? "탐지에 실패했습니다.", {
+          description: failure?.description ?? "다시 시도해 주세요.",
+        });
         return;
       }
       setResult(mapDetection(data));
@@ -142,27 +171,14 @@ export default function DetectPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col items-end gap-6">
-          <div className="flex w-full flex-col items-start gap-12">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <Link href="/" className="text-body-1 text-gray-800">
-                  홈
-                </Link>
-                <span className="text-gray-800 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                  <Arrow />
-                </span>
-                <span className="text-body-1 text-primary-500">얼굴 도용·딥페이크 탐지</span>
-              </div>
-              <div className="flex flex-col gap-6">
-                <h1 className="text-h1 font-bold text-black">얼굴 도용·딥페이크 탐지</h1>
-                <p className="text-body-1 text-gray-800">
-                  사진 또는 영상을 업로드하여 얼굴 도용 여부와 딥페이크 합성 여부를 확인할 수
-                  있습니다.
-                </p>
-              </div>
-            </div>
+          <div className="flex w-full flex-col items-start gap-6 md:gap-12">
+            <PageHeading
+              title="얼굴 도용·딥페이크 탐지"
+              description="사진을 업로드하여 얼굴 도용 여부와 딥페이크 합성 여부를 확인할 수 있습니다."
+              breadcrumbs={[{ label: "얼굴 도용·딥페이크 탐지" }]}
+            />
 
             <div className="flex w-full flex-col items-stretch gap-6 lg:flex-row lg:gap-10">
               <DetectUploadCard
@@ -179,7 +195,7 @@ export default function DetectPage() {
             <Button
               type="button"
               variant="primary"
-              className="w-[253px]"
+              className="w-full md:w-[253px]"
               disabled={status !== "selected"}
               onClick={handleDetect}
             >
@@ -187,7 +203,11 @@ export default function DetectPage() {
             </Button>
           )}
 
-          {status === "result" && <DetectResultSection result={result} previewUrl={previewUrl} />}
+          {status === "result" && (
+            <div ref={resultRef} className="w-full">
+              <DetectResultSection result={result} previewUrl={previewUrl} />
+            </div>
+          )}
         </div>
       </main>
       <Footer />

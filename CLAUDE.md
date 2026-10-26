@@ -18,7 +18,11 @@
 - `npm run build` — 프로덕션 빌드
 - `npm run lint` — ESLint (flat config, `eslint-config-next` core-web-vitals + typescript)
 
-테스트 프레임워크는 아직 도입되지 않았습니다 (`npm test` 없음). CI 워크플로우(`.github/workflows`)도 아직 없습니다. 둘 중 하나라도 추가되면 이 섹션을 업데이트하세요.
+- `npx tsc --noEmit` — 타입 체크
+
+테스트 프레임워크는 아직 도입되지 않았습니다 (`npm test` 없음). 도입되면 이 섹션을 업데이트하세요.
+
+CI는 `.github/workflows/ci.yml`에 있으며, `main`/`develop` 대상 PR마다 `lint`, `typecheck`(`npx tsc --noEmit`), `build` 세 잡이 Node 20에서 `npm ci` 후 실행됩니다. PR을 올리기 전에 로컬에서 같은 세 명령을 통과시키세요.
 
 ## 아키텍처
 

@@ -1,60 +1,79 @@
 "use client";
 
-import BotOutline from "@/shared/asset/svg/BotOutline";
-import Button from "@/shared/ui/Button";
-import type { DraftSection } from "./Step3Draft";
+import Link from "next/link";
+import Button, { buttonStyle } from "@/shared/ui/Button";
+import DraftCardHeader from "./DraftCardHeader";
+import StepNavigation from "./StepNavigation";
+import type { ReportEvidence } from "./Step2Details";
+import {
+  REQUEST_TEXT,
+  evidenceText,
+  formatDraftDate,
+  overviewText,
+  type ReportDraft,
+} from "./reportDraft";
 
 interface Step4GeneratedProps {
-  sections: DraftSection[];
+  draft: ReportDraft;
+  evidence: ReportEvidence | null;
+  reportId: number;
   onBack: () => void;
   onFindAgency: () => void;
 }
 
-const urlTitles = new Set(["원본 URL"]);
+function toHref(url: string) {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
 
-export default function Step4Generated({ sections, onBack, onFindAgency }: Step4GeneratedProps) {
+export default function Step4Generated({
+  draft,
+  evidence,
+  reportId,
+  onBack,
+  onFindAgency,
+}: Step4GeneratedProps) {
+  const sourceUrl = draft.sourceUrl.trim();
+  const rows: { title: string; body: string }[] = [
+    { title: "피해 개요", body: overviewText(draft.damageType) },
+    { title: "피해 발생 시점", body: formatDraftDate(draft.incidentDate) },
+    { title: "피해 유형", body: draft.damageType.trim() || "미입력" },
+    { title: "피해 경로", body: draft.discoveryRoute.trim() || "미입력" },
+    { title: "원본 URL", body: sourceUrl || "미입력" },
+    { title: "피해 내용", body: draft.description.trim() || "미입력" },
+    ...(draft.additionalNotes.trim()
+      ? [{ title: "추가 전달 사항", body: draft.additionalNotes.trim() }]
+      : []),
+    { title: "증거 목록", body: evidenceText(evidence) },
+    { title: "요청 사항", body: REQUEST_TEXT },
+  ];
+
   return (
-    <div className="flex w-full flex-col gap-8">
-      <div className="flex w-full flex-col gap-6 rounded-2xl border border-gray-300 p-8">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-2">
-            <span className="bg-primary-50 text-primary-500 text-caption w-fit rounded-full px-3 py-1">
-              기관 제출용 초안
-            </span>
-            <p className="text-h3 font-semibold text-black">신고 문서 초안을 확인해 주세요</p>
-            <p className="text-body-2 text-gray-800">아래 내용은 자유롭게 수정할 수 있습니다.</p>
-          </div>
-          <p className="text-caption text-primary-500 shrink-0">✓ 문서 생성 완료</p>
-        </div>
-
-        <div className="bg-secondary-50 border-secondary-200 flex items-center gap-2 rounded-lg border p-4">
-          <span className="text-secondary-600 shrink-0 [&>svg]:h-8 [&>svg]:w-8">
-            <BotOutline />
-          </span>
-          <p className="text-body-2 text-secondary-600 font-medium">
-            AI가 입력 내용을 정리한 문서입니다. 실제 제출 전 날짜, URL, 피해 내용을 한 번 더 확인해
-            주세요.
-          </p>
-        </div>
+    <div className="flex w-full flex-col gap-6 md:gap-8">
+      <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-300 p-5 md:gap-6 md:p-8">
+        <DraftCardHeader
+          title="신고 문서가 준비되었어요"
+          description="내 신고 문서에서 내용을 확정하면 기관 제출용 문서로 보관됩니다."
+          status="문서 생성 완료"
+        />
 
         <div className="flex flex-col gap-2">
-          <label className="text-body-1 px-1 text-black">신고 내용</label>
-          <div className="max-h-[427px] w-full divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-300">
-            {sections.map((section) => (
-              <div key={section.title} className="flex flex-col gap-1.5 p-4">
-                <p className="text-body-1 font-semibold text-black">{section.title}</p>
-                {urlTitles.has(section.title) && section.body !== "미입력" ? (
+          <p className="text-body-2 md:text-body-1 px-1 text-black">신고 내용</p>
+          <div className="w-full divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-300 md:max-h-[427px]">
+            {rows.map((row) => (
+              <div key={row.title} className="flex flex-col gap-1 p-3 md:gap-1.5 md:p-4">
+                <p className="text-body-2 md:text-body-1 font-semibold text-black">{row.title}</p>
+                {row.title === "원본 URL" && sourceUrl ? (
                   <a
-                    href={section.body}
+                    href={toHref(sourceUrl)}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-body-1 text-secondary-600 w-full text-ellipsis underline"
+                    className="text-body-2 md:text-body-1 text-secondary-600 w-full break-all underline"
                   >
-                    {section.body}
+                    {sourceUrl}
                   </a>
                 ) : (
-                  <p className="text-body-1 w-full whitespace-pre-wrap text-black">
-                    {section.body}
+                  <p className="text-body-2 md:text-body-1 w-full break-words whitespace-pre-wrap text-black">
+                    {row.body}
                   </p>
                 )}
               </div>
@@ -63,18 +82,24 @@ export default function Step4Generated({ sections, onBack, onFindAgency }: Step4
         </div>
       </div>
 
-      <div className="flex w-full items-start justify-between">
-        <button
-          type="button"
-          onClick={onBack}
-          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 w-[124px] items-center justify-center rounded border transition-colors"
-        >
-          이전
-        </button>
-        <Button type="button" variant="primary" onClick={onFindAgency}>
-          적합한 신고 기관 확인하기
-        </Button>
-      </div>
+      <StepNavigation onBack={onBack}>
+        <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row">
+          <Link
+            href={`/mypage/reports/${reportId}`}
+            className={buttonStyle("outline", "w-full md:w-auto")}
+          >
+            내 신고 문서에서 확정하기
+          </Link>
+          <Button
+            type="button"
+            variant="primary"
+            className="w-full md:w-auto"
+            onClick={onFindAgency}
+          >
+            적합한 신고 기관 확인하기
+          </Button>
+        </div>
+      </StepNavigation>
     </div>
   );
 }

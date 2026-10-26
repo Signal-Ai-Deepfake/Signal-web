@@ -17,9 +17,9 @@ interface DetectResultSectionProps {
 
 export default function DetectResultSection({ result, previewUrl }: DetectResultSectionProps) {
   return (
-    <div className="flex w-full animate-[fade-in-up_0.4s_ease-out] flex-col gap-8 rounded-2xl border border-gray-300 px-8 py-6">
+    <div className="flex w-full animate-[fade-in-up_0.4s_ease-out] flex-col gap-6 rounded-2xl border border-gray-300 p-5 md:gap-8 md:px-8 md:py-6">
       <p className="text-body-1 font-semibold text-black">탐지 결과</p>
-      <div className="flex flex-col gap-8 lg:flex-row">
+      <div className="flex flex-col gap-4 md:gap-8 lg:flex-row">
         <VerdictCard
           title="얼굴 도용 여부"
           verdict={result.faceTheftVerdict}
@@ -41,7 +41,7 @@ export default function DetectResultSection({ result, previewUrl }: DetectResult
         <OverallRiskCard result={result} />
       </div>
 
-      <div className="flex flex-col gap-6 lg:flex-row">
+      <div className="flex flex-col gap-4 md:gap-6 lg:flex-row">
         <EvidenceHighlightCard highlights={result.evidenceHighlights} previewUrl={previewUrl} />
         <WebMatchCard matchCount={result.webMatchCount} unsupported />
       </div>

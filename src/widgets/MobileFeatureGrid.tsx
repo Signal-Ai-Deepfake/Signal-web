@@ -72,7 +72,7 @@ export default function MobileFeatureGrid() {
               "flex h-full flex-col gap-3 rounded-2xl border border-gray-300 bg-white p-5";
 
             return (
-              <ScrollReveal key={title} delay={80 + index * 80} distance={24}>
+              <ScrollReveal key={title} delay={(index % 2) * 60} distance={24}>
                 {href ? (
                   <Link href={href} className={`${cardStyle} transition-colors active:bg-gray-100`}>
                     {content}

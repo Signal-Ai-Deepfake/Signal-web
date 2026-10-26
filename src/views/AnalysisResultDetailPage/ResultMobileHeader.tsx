@@ -1,20 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import ChevronLeft from "@/shared/asset/svg/ChevronLeft";
 import Share from "@/shared/asset/svg/Share";
+import { useGoBack } from "@/shared/lib/useGoBack";
 
 interface ResultMobileHeaderProps {
   onShare?: () => void;
 }
 
 export default function ResultMobileHeader({ onShare }: ResultMobileHeaderProps) {
-  const router = useRouter();
-
-  function goBack() {
-    if (window.history.length > 1) router.back();
-    else router.push("/");
-  }
+  const goBack = useGoBack();
 
   return (
     <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur-[6px] md:hidden print:hidden">

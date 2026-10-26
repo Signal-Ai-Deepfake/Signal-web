@@ -1,7 +1,6 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -13,10 +12,10 @@ import {
   type ReportResponse,
   type UpdateReportRequest,
 } from "@/entities/report/api";
-import Arrow from "@/shared/asset/svg/Arrow";
 import Button from "@/shared/ui/Button";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
 import NoticeBanner from "@/shared/ui/NoticeBanner";
+import PageHeading from "@/shared/ui/PageHeading";
 import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -31,6 +30,7 @@ interface EditableFields {
   discoveryRoute: string;
   sourceUrl: string;
   description: string;
+  additionalNotes: string;
 }
 
 function formatDateLong(value: string) {
@@ -42,7 +42,7 @@ function formatDateLong(value: string) {
 function ReportContentView({ report }: { report: ReportResponse }) {
   const sourceUrl = report.sourceUrls?.[0];
   return (
-    <div className="text-body-1 text-gray-650 flex flex-col gap-6">
+    <div className="text-small md:text-body-1 text-gray-650 flex flex-col gap-4 break-words md:gap-6">
       <p>
         피해 개요
         <br />
@@ -71,7 +71,7 @@ function ReportContentView({ report }: { report: ReportResponse }) {
             href={sourceUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-secondary-600 underline"
+            className="text-secondary-600 break-all underline"
           >
             {sourceUrl}
           </a>
@@ -84,6 +84,13 @@ function ReportContentView({ report }: { report: ReportResponse }) {
         <br />
         {report.description || "미입력"}
       </p>
+      {report.additionalNotes && (
+        <p className="whitespace-pre-wrap">
+          추가 전달 사항
+          <br />
+          {report.additionalNotes}
+        </p>
+      )}
       <p>
         증거 자료
         <br />
@@ -156,8 +163,9 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
     onSuccess: (result) => {
       queryClient.setQueryData(
         ["reports", reportId],
-        report ? { ...report, status: result.status, documentUrl: result.documentUrl } : report,
+        report ? { ...report, status: result.status } : report,
       );
+      queryClient.invalidateQueries({ queryKey: ["reports", reportId] });
       setFinalizeModalOpen(false);
       toast.success("신고 문서를 확정했습니다.");
     },
@@ -189,6 +197,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
       discoveryRoute: report.discoveryRoute ?? "",
       sourceUrl: report.sourceUrls?.[0] ?? "",
       description: report.description ?? "",
+      additionalNotes: report.additionalNotes ?? "",
     });
     setIsEditing(true);
   }
@@ -199,12 +208,14 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
 
   function saveEditing() {
     if (!draft) return;
+    const valueOrNull = (value: string) => value.trim() || null;
     updateMutation.mutate({
-      incidentDate: draft.incidentDate || undefined,
-      damageType: draft.damageType || undefined,
-      discoveryRoute: draft.discoveryRoute || undefined,
-      sourceUrls: draft.sourceUrl ? [draft.sourceUrl] : undefined,
-      description: draft.description || undefined,
+      incidentDate: valueOrNull(draft.incidentDate),
+      damageType: valueOrNull(draft.damageType),
+      discoveryRoute: valueOrNull(draft.discoveryRoute),
+      sourceUrls: draft.sourceUrl.trim() ? [draft.sourceUrl.trim()] : [],
+      description: valueOrNull(draft.description),
+      additionalNotes: valueOrNull(draft.additionalNotes),
     });
   }
 
@@ -219,34 +230,23 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
-        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-8">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <Link href="/" className="text-body-1 text-gray-700">
-                홈
-              </Link>
-              <span className="text-gray-700 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                <Arrow />
-              </span>
-              <Link href="/mypage/reports" className="text-body-1 text-primary-500">
-                신고 문서 내역
-              </Link>
-              <span className="text-gray-700 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                <Arrow />
-              </span>
-              <span className="text-body-1 text-primary-500">신고 문서 내역 상세</span>
-            </div>
-            <div className="flex flex-col gap-6">
-              <h1 className="text-h1 font-bold text-black">신고 문서</h1>
-              {report && (
-                <p className="text-body-1 text-gray-700">
-                  {formatDateLong(report.createdAt)} 생성 ·{" "}
-                  {report.status === "FINALIZED" ? "제출 완료" : "기관 제출용 초안"}
-                </p>
-              )}
-            </div>
-          </div>
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
+        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
+          <PageHeading
+            title="신고 문서"
+            description={
+              report
+                ? `${formatDateLong(report.createdAt)} 생성 · ${
+                    report.status === "FINALIZED" ? "제출 완료" : "기관 제출용 초안"
+                  }`
+                : undefined
+            }
+            breadcrumbs={[
+              { label: "신고 문서 내역", href: "/mypage/reports" },
+              { label: "신고 문서 내역 상세" },
+            ]}
+            backHref="/mypage/reports"
+          />
 
           {isPending && <p className="text-body-1 text-gray-700">불러오는 중...</p>}
 
@@ -274,23 +274,30 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                   확인해 주세요.
                 </NoticeBanner>
 
-                {report.documentUrl && (
-                  <a
-                    href={resolveFileUrl(report.documentUrl)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-secondary-600 text-body-2 w-full max-w-[960px] underline"
-                  >
-                    생성된 신고 문서 파일 보기
-                  </a>
+                {report.documentSimulated ? (
+                  <p className="text-small md:text-body-2 w-full max-w-[960px] text-gray-700">
+                    신고 문서 파일(PDF) 생성은 준비 중입니다. 아래 내용을 확인해 기관에 제출해
+                    주세요.
+                  </p>
+                ) : (
+                  report.documentUrl && (
+                    <a
+                      href={resolveFileUrl(report.documentUrl)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-secondary-600 text-body-2 w-full max-w-[960px] underline"
+                    >
+                      생성된 신고 문서 파일 보기
+                    </a>
+                  )
                 )}
 
                 <div className="flex w-full max-w-[960px] flex-col gap-2">
-                  <p className="text-body-1 text-black">신고 내용</p>
+                  <p className="text-body-2 md:text-body-1 text-black">신고 내용</p>
                   {isEditing && draft ? (
                     <div className="flex flex-col divide-y divide-gray-200 rounded-lg border border-gray-300">
-                      <div className="flex flex-col gap-1.5 p-4">
-                        <label className="text-body-1 font-semibold text-black">
+                      <div className="flex flex-col gap-1.5 p-3 md:p-4">
+                        <label className="text-body-2 md:text-body-1 font-semibold text-black">
                           피해 발생 시점
                         </label>
                         <input
@@ -299,56 +306,77 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                           onChange={(event) =>
                             setDraft({ ...draft, incidentDate: event.target.value })
                           }
-                          className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
+                          className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
                         />
                       </div>
-                      <div className="flex flex-col gap-1.5 p-4">
-                        <label className="text-body-1 font-semibold text-black">피해 유형</label>
+                      <div className="flex flex-col gap-1.5 p-3 md:p-4">
+                        <label className="text-body-2 md:text-body-1 font-semibold text-black">
+                          피해 유형
+                        </label>
                         <input
                           type="text"
                           value={draft.damageType}
                           onChange={(event) =>
                             setDraft({ ...draft, damageType: event.target.value })
                           }
-                          className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
+                          className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
                         />
                       </div>
-                      <div className="flex flex-col gap-1.5 p-4">
-                        <label className="text-body-1 font-semibold text-black">피해 경로</label>
+                      <div className="flex flex-col gap-1.5 p-3 md:p-4">
+                        <label className="text-body-2 md:text-body-1 font-semibold text-black">
+                          피해 경로
+                        </label>
                         <input
                           type="text"
                           value={draft.discoveryRoute}
                           onChange={(event) =>
                             setDraft({ ...draft, discoveryRoute: event.target.value })
                           }
-                          className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
+                          className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
                         />
                       </div>
-                      <div className="flex flex-col gap-1.5 p-4">
-                        <label className="text-body-1 font-semibold text-black">원본 URL</label>
+                      <div className="flex flex-col gap-1.5 p-3 md:p-4">
+                        <label className="text-body-2 md:text-body-1 font-semibold text-black">
+                          원본 URL
+                        </label>
                         <input
                           type="url"
                           value={draft.sourceUrl}
                           onChange={(event) =>
                             setDraft({ ...draft, sourceUrl: event.target.value })
                           }
-                          className="text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
+                          className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full rounded border border-gray-300 px-3 py-2 text-black outline-none"
                         />
                       </div>
-                      <div className="flex flex-col gap-1.5 p-4">
-                        <label className="text-body-1 font-semibold text-black">피해 내용</label>
+                      <div className="flex flex-col gap-1.5 p-3 md:p-4">
+                        <label className="text-body-2 md:text-body-1 font-semibold text-black">
+                          피해 내용
+                        </label>
                         <textarea
                           value={draft.description}
                           onChange={(event) =>
                             setDraft({ ...draft, description: event.target.value })
                           }
                           rows={6}
-                          className="text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-gray-300 p-3 whitespace-pre-wrap text-black outline-none"
+                          className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-gray-300 p-3 whitespace-pre-wrap text-black outline-none"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5 p-3 md:p-4">
+                        <label className="text-body-2 md:text-body-1 font-semibold text-black">
+                          추가 전달 사항
+                        </label>
+                        <textarea
+                          value={draft.additionalNotes}
+                          onChange={(event) =>
+                            setDraft({ ...draft, additionalNotes: event.target.value })
+                          }
+                          rows={3}
+                          className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-gray-300 p-3 whitespace-pre-wrap text-black outline-none"
                         />
                       </div>
                     </div>
                   ) : (
-                    <div className="h-[427px] w-full overflow-y-auto rounded-lg border border-gray-300 bg-gray-100 p-[17px]">
+                    <div className="w-full overflow-y-auto rounded-lg border border-gray-300 bg-gray-100 p-4 md:h-[427px] md:p-[17px]">
                       <ReportContentView report={report} />
                     </div>
                   )}

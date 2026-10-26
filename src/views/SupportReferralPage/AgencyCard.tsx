@@ -31,35 +31,37 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
   }
 
   return (
-    <div className="flex w-full flex-col gap-8 rounded-2xl border border-gray-300 bg-white p-8 lg:flex-row lg:justify-between">
+    <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-300 bg-white p-5 md:gap-8 md:p-8 lg:flex-row lg:justify-between">
       <div className="flex flex-col gap-3">
-        <p className="text-h3 font-semibold text-black">{name}</p>
+        <p className="text-large md:text-h3 font-semibold break-keep text-black">{name}</p>
         <div className="flex flex-col gap-2 pt-1">
           {availableHours && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-start gap-2 md:items-center">
               <span className="shrink-0 text-gray-700 [&>svg]:h-5 [&>svg]:w-5">
                 <Clock />
               </span>
-              <span className="text-large shrink-0 text-gray-700">운영시간</span>
-              <span className="text-small text-gray-700">{availableHours}</span>
+              <span className="text-small md:text-large shrink-0 text-gray-700">운영시간</span>
+              <span className="text-small break-keep text-gray-700">{availableHours}</span>
             </div>
           )}
           {supportedActions && supportedActions.length > 0 && (
-            <div className="flex items-center gap-2">
-              <span className="shrink-0 text-gray-700 [&>svg]:h-6 [&>svg]:w-6">
+            <div className="flex items-start gap-2 md:items-center">
+              <span className="shrink-0 text-gray-700 [&>svg]:h-5 [&>svg]:w-5 md:[&>svg]:h-6 md:[&>svg]:w-6">
                 <HandHeart />
               </span>
-              <span className="text-large shrink-0 text-gray-700">지원 항목</span>
-              <span className="text-small text-gray-700">{supportedActions.join(" · ")}</span>
+              <span className="text-small md:text-large shrink-0 text-gray-700">지원 항목</span>
+              <span className="text-small break-keep text-gray-700">
+                {supportedActions.join(" · ")}
+              </span>
             </div>
           )}
         </div>
       </div>
-      <div className="flex w-full flex-col gap-3 border-t border-gray-300 pt-6 lg:w-[381px] lg:shrink-0 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
+      <div className="flex w-full flex-col gap-3 border-t border-gray-300 pt-5 md:pt-6 lg:w-[381px] lg:shrink-0 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
         {phone && (
           <div className="flex flex-col gap-1">
             <p className="text-caption text-gray-700">상담 전화</p>
-            <p className="text-h3 text-primary-450 font-bold break-keep">{phone}</p>
+            <p className="md:text-h3 text-primary-450 text-xl font-bold break-keep">{phone}</p>
           </div>
         )}
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -67,7 +69,7 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
             <a
               href={`tel:${extractDialNumber(phone)}`}
               onClick={() => recordConnection("PHONE")}
-              className="border-primary-500 text-primary-500 text-large hover:bg-primary-50 flex flex-1 items-center justify-center gap-2 rounded border px-6 py-3 transition-colors"
+              className="border-primary-500 text-primary-500 text-body-2 md:text-large hover:bg-primary-50 flex flex-1 items-center justify-center gap-2 rounded border px-6 py-3 transition-colors"
             >
               <span className="[&>svg]:h-5 [&>svg]:w-5">
                 <Phone />
@@ -81,7 +83,7 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
               target="_blank"
               rel="noreferrer"
               onClick={() => recordConnection("WEB")}
-              className="bg-primary-500 text-large hover:bg-primary-400 flex flex-1 items-center justify-center rounded px-6 py-3 text-white transition-colors"
+              className="bg-primary-500 text-body-2 md:text-large hover:bg-primary-400 flex flex-1 items-center justify-center rounded px-6 py-3 text-white transition-colors"
             >
               온라인 상담 이동
             </a>

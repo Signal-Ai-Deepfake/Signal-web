@@ -5,6 +5,7 @@ import Logo from "@/shared/asset/svg/Logo";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 import LinkButton from "@/shared/ui/LinkButton";
 import HeaderNav from "@/widgets/HeaderNav";
+import MobileNavMenu from "@/widgets/MobileNavMenu";
 
 export default function Header({ className = "" }: { className?: string }) {
   const hidden = useHideOnScroll();
@@ -28,9 +29,14 @@ export default function Header({ className = "" }: { className?: string }) {
           >
             로그인
           </LinkButton>
-          <LinkButton href="/signup" variant="primary" className="h-10 whitespace-nowrap md:h-12">
+          <LinkButton
+            href="/signup"
+            variant="primary"
+            className="hidden h-10 whitespace-nowrap min-[400px]:inline-flex md:h-12"
+          >
             회원가입
           </LinkButton>
+          <MobileNavMenu />
         </div>
       </div>
     </header>
