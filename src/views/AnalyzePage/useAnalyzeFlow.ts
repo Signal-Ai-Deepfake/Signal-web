@@ -37,12 +37,12 @@ export function useAnalyzeFlow() {
 
   function showError(title: string, error: unknown, guestFallback: string) {
     const message = error instanceof Error ? error.message : undefined;
-    if (getAccessToken()) {
+    if (getAccessToken() || !isInternalMessage(message)) {
       toast.error(title, { description: message });
       return;
     }
     toast.error(title, {
-      description: isInternalMessage(message) ? guestFallback : message,
+      description: guestFallback,
       action: { label: "로그인", onClick: () => router.push("/login") },
     });
   }

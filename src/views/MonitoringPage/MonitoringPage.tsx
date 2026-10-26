@@ -1,7 +1,6 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
 import { useRef, useState } from "react";
 import type { ChangeEvent, DragEvent } from "react";
 import { toast } from "sonner";
@@ -10,9 +9,9 @@ import {
   deleteMonitoring,
   getMonitoringDetections,
 } from "@/entities/monitoring/api";
-import Arrow from "@/shared/asset/svg/Arrow";
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import ImageIcon from "@/shared/asset/svg/Image";
+import PageHeading from "@/shared/ui/PageHeading";
 import {
   clearStoredMonitoringId,
   getStoredMonitoringId,
@@ -115,29 +114,17 @@ export default function MonitoringPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
-        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-8">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-4">
-              <Link href="/" className="text-body-1 text-gray-700">
-                홈
-              </Link>
-              <span className="text-gray-700 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                <Arrow />
-              </span>
-              <span className="text-body-1 text-primary-500">유포 모니터링</span>
-            </div>
-            <div className="flex flex-col gap-6">
-              <h1 className="text-h1 font-bold text-black">유포 모니터링</h1>
-              <p className="text-body-1 text-gray-700">
-                기준이 되는 이미지를 업로드하면, 웹에서 유사한 이미지가 발견될 때마다 확인할 수
-                있습니다.
-              </p>
-              <p className="text-body-2 break-keep text-gray-700">
-                ⚠️ 현재 유포 모니터링은 시연용 단계로, 실제 웹 검색 없이 예시 탐지 결과가
-                표시됩니다.
-              </p>
-            </div>
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
+        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
+          <div className="flex flex-col gap-3 md:gap-4">
+            <PageHeading
+              title="유포 모니터링"
+              description="기준이 되는 이미지를 업로드하면, 웹에서 유사한 이미지가 발견될 때마다 확인할 수 있습니다."
+              breadcrumbs={[{ label: "유포 모니터링" }]}
+            />
+            <p className="text-small md:text-body-2 break-keep text-gray-700">
+              ⚠️ 현재 유포 모니터링은 시연용 단계로, 실제 웹 검색 없이 예시 탐지 결과가 표시됩니다.
+            </p>
           </div>
 
           {monitoringId === null ? (
@@ -145,16 +132,18 @@ export default function MonitoringPage() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`flex w-full flex-col items-center gap-6 rounded-2xl border-2 border-dashed px-3 py-16 transition-colors ${
+              className={`flex w-full flex-col items-center gap-6 rounded-2xl border-2 border-dashed px-3 py-10 transition-colors md:py-16 ${
                 isDragging ? "border-primary-500 bg-primary-50" : "border-gray-300"
               }`}
             >
               <div className="flex flex-col items-center gap-2">
-                <span className="text-black [&>svg]:h-12 [&>svg]:w-12">
+                <span className="text-black [&>svg]:h-10 [&>svg]:w-10 md:[&>svg]:h-12 md:[&>svg]:w-12">
                   <ImageArrowUp />
                 </span>
-                <p className="text-body-1 font-semibold text-black">기준 이미지 업로드</p>
-                <p className="text-body-2 text-gray-650">JPG, PNG 파일 지원</p>
+                <p className="text-body-2 md:text-body-1 font-semibold text-black">
+                  기준 이미지 업로드
+                </p>
+                <p className="text-small md:text-body-2 text-gray-650">JPG, PNG 파일 지원</p>
               </div>
               <input
                 ref={fileInputRef}
@@ -175,16 +164,16 @@ export default function MonitoringPage() {
             </div>
           ) : (
             <>
-              <div className="bg-primary-50 flex items-center justify-between rounded-2xl p-6">
+              <div className="bg-primary-50 flex items-center justify-between gap-4 rounded-2xl p-5 md:p-6">
                 <div className="flex flex-col gap-1">
                   <p className="text-small text-gray-700">현재 상태</p>
-                  <p className="text-h3 font-semibold text-black">모니터링 중</p>
+                  <p className="text-large md:text-h3 font-semibold text-black">모니터링 중</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStopModalOpen(true)}
                   disabled={deleteMutation.isPending}
-                  className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 items-center justify-center rounded border px-6 transition-colors disabled:opacity-50"
+                  className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-11 shrink-0 items-center justify-center rounded border px-4 transition-colors disabled:opacity-50 md:h-12 md:px-6"
                 >
                   {deleteMutation.isPending ? "중지하는 중..." : "모니터링 중지"}
                 </button>
@@ -192,7 +181,9 @@ export default function MonitoringPage() {
 
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1 px-1">
-                  <p className="text-h3 font-semibold text-black">발견된 유사 이미지</p>
+                  <p className="text-large md:text-h3 font-semibold text-black">
+                    발견된 유사 이미지
+                  </p>
                   <p className="text-small text-gray-700">
                     시연용 예시 결과로, 썸네일은 샘플 이미지이며 원본 링크는 제공되지 않습니다.
                   </p>
@@ -213,11 +204,11 @@ export default function MonitoringPage() {
                 )}
 
                 {detections.length > 0 && (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3">
                     {detections.map((detection) => (
                       <div
                         key={detection.detectionId}
-                        className="flex flex-col gap-3 rounded-2xl border border-gray-300 p-4"
+                        className="flex min-w-0 flex-col gap-3 rounded-2xl border border-gray-300 p-3 md:p-4"
                       >
                         <div className="flex aspect-square size-full items-center justify-center overflow-hidden rounded-lg bg-gray-100">
                           {detection.thumbnailUrl ? (
@@ -235,7 +226,7 @@ export default function MonitoringPage() {
                         </div>
                         <div className="flex flex-col gap-1">
                           {typeof detection.similarity === "number" && (
-                            <p className="text-body-1 font-semibold text-black">
+                            <p className="text-body-2 md:text-body-1 font-semibold text-black">
                               유사도 {Math.round(detection.similarity * 100)}%
                             </p>
                           )}
@@ -247,7 +238,7 @@ export default function MonitoringPage() {
                               href={detection.sourceUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-secondary-600 text-small underline"
+                              className="text-secondary-600 text-small break-all underline"
                             >
                               원본 보기
                             </a>
