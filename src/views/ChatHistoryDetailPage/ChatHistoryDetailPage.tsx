@@ -1,16 +1,15 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import Arrow from "@/shared/asset/svg/Arrow";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import BotOutline from "@/shared/asset/svg/BotOutline";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
 import LinkButton from "@/shared/ui/LinkButton";
 import NoticeBanner from "@/shared/ui/NoticeBanner";
+import PageHeading from "@/shared/ui/PageHeading";
 import { deleteChatSession, getChatSessionMessages, getMyChatSessions } from "@/entities/chat/api";
 import type { ChatMessage } from "@/entities/chat/model";
 import Footer from "@/widgets/Footer";
@@ -103,35 +102,21 @@ export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
-        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-8">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <Link href="/" className="text-body-1 text-gray-700">
-                홈
-              </Link>
-              <span className="text-gray-700 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                <Arrow />
-              </span>
-              <Link href="/mypage/chats" className="text-body-1 text-primary-500">
-                대화 내역
-              </Link>
-              <span className="text-gray-700 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                <Arrow />
-              </span>
-              <span className="text-body-1 text-primary-500">대화 내역 상세</span>
-            </div>
-            <div className="flex flex-col gap-6">
-              <h1 className="text-h1 font-bold text-black">익명 상담 챗봇</h1>
-              {session && (
-                <p className="text-body-1 text-gray-700">{formatDateLong(session.createdAt)}</p>
-              )}
-            </div>
-          </div>
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
+        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
+          <PageHeading
+            title="익명 상담 챗봇"
+            description={session ? formatDateLong(session.createdAt) : undefined}
+            breadcrumbs={[
+              { label: "대화 내역", href: "/mypage/chats" },
+              { label: "대화 내역 상세" },
+            ]}
+            backHref="/mypage/chats"
+          />
 
           <div className="flex w-full flex-col items-stretch gap-6 lg:flex-row">
             <div className="border-primary-50 flex w-full flex-col overflow-hidden rounded-2xl border bg-white">
-              <div className="border-primary-50 flex items-center gap-3 border-b px-[26px] py-[22px]">
+              <div className="border-primary-50 flex items-center gap-3 border-b px-4 py-4 md:px-[26px] md:py-[22px]">
                 <span className="bg-secondary-50 text-secondary-500 flex size-11 shrink-0 items-center justify-center rounded-full p-1.5 [&>svg]:h-6 [&>svg]:w-6">
                   <BotOutline />
                 </span>
@@ -139,14 +124,14 @@ export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps
                   <p className="text-body-2 font-medium text-black">AI 상담사</p>
                 </div>
               </div>
-              <div className="flex flex-col gap-[18px] overflow-y-auto px-7 py-8">
+              <div className="flex flex-col gap-4 overflow-y-auto px-4 py-5 md:gap-[18px] md:px-7 md:py-8">
                 {messages.map((message) => (
                   <ChatDetailBubble key={message.id} message={message} />
                 ))}
               </div>
             </div>
 
-            <aside className="flex w-full flex-col gap-[18px] lg:w-[392px]">
+            <aside className="flex w-full flex-col gap-3 md:gap-[18px] lg:w-[392px] lg:shrink-0">
               <NoticeBanner>AI 상담 요약 정보는 아직 제공되지 않는 기능입니다.</NoticeBanner>
 
               {session && (
@@ -160,7 +145,7 @@ export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps
               <button
                 type="button"
                 onClick={handleDelete}
-                className="cursor-pointer text-[15px] leading-6 text-red-500 underline"
+                className="cursor-pointer self-start text-[15px] leading-6 text-red-500 underline lg:self-center"
               >
                 대화 내역 삭제
               </button>
@@ -170,7 +155,7 @@ export default function ChatHistoryDetailPage({ id }: ChatHistoryDetailPageProps
           <LinkButton
             href="/support-referral"
             variant="primary"
-            className="flex items-center gap-1 self-end"
+            className="flex w-full items-center gap-1 md:w-auto md:self-end"
           >
             전문 기관 연결하기
             <span className="[&>svg]:h-6 [&>svg]:w-6">
