@@ -24,6 +24,7 @@ export function useAnalyzeFlow() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [isProtected, setIsProtected] = useState(false);
+  const [isSimulatedProtection, setIsSimulatedProtection] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [assessmentId, setAssessmentId] = useState<number | null>(null);
   const [protectionId, setProtectionId] = useState<number | null>(null);
@@ -36,12 +37,12 @@ export function useAnalyzeFlow() {
 
   function showError(title: string, error: unknown, guestFallback: string) {
     const message = error instanceof Error ? error.message : undefined;
-    if (getAccessToken()) {
+    if (getAccessToken() || !isInternalMessage(message)) {
       toast.error(title, { description: message });
       return;
     }
     toast.error(title, {
-      description: isInternalMessage(message) ? guestFallback : message,
+      description: guestFallback,
       action: { label: "로그인", onClick: () => router.push("/login") },
     });
   }
@@ -51,6 +52,7 @@ export function useAnalyzeFlow() {
     setSelectedFile(file);
     setShowDetails(false);
     setIsProtected(false);
+    setIsSimulatedProtection(false);
     setResult(null);
     setAssessmentId(null);
     setProtectionId(null);
@@ -63,6 +65,7 @@ export function useAnalyzeFlow() {
     setSelectedFile(null);
     setShowDetails(false);
     setIsProtected(false);
+    setIsSimulatedProtection(false);
     setResult(null);
     setAssessmentId(null);
     setProtectionId(null);
@@ -106,10 +109,14 @@ export function useAnalyzeFlow() {
         return;
       }
       setProtectionId(protection.protectionId);
+      const simulated = protection.simulated === true;
       setIsProtected(true);
+      setIsSimulatedProtection(simulated);
       setShowDetails(true);
       toast.success("보호 처리된 이미지를 준비했습니다.", {
-        description: "현재는 시연용 단계로, 실제 노이즈는 삽입되지 않았어요.",
+        description: simulated
+          ? "현재는 시연용 단계로, 실제 노이즈는 삽입되지 않았어요."
+          : "이미지에 노이즈를 삽입했어요. 도용·합성을 완전히 막아 주지는 않아요.",
       });
     },
     onError: (error) => {
@@ -164,6 +171,7 @@ export function useAnalyzeFlow() {
     previewUrl,
     showDetails,
     isProtected,
+    isSimulatedProtection,
     result,
     assessmentId,
     toggleDetails: () => setShowDetails((prev) => !prev),

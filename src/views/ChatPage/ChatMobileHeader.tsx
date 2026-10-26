@@ -5,6 +5,7 @@ import Link from "next/link";
 import ChevronLeft from "@/shared/asset/svg/ChevronLeft";
 import LockLine from "@/shared/asset/svg/LockLine";
 import Menu from "@/shared/asset/svg/Menu";
+import { useGoBack } from "@/shared/lib/useGoBack";
 
 interface ChatMobileHeaderProps {
   saveConsent: boolean;
@@ -26,6 +27,7 @@ export default function ChatMobileHeader({
 }: ChatMobileHeaderProps) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const goBack = useGoBack();
 
   useEffect(() => {
     if (!open) return;
@@ -52,13 +54,14 @@ export default function ChatMobileHeader({
     <div ref={menuRef} className="relative z-20 w-full shrink-0 md:hidden">
       <header className="flex items-center justify-between border-b border-gray-300 bg-white/90 px-5 py-4 backdrop-blur-sm">
         <div className="flex items-center gap-4">
-          <Link
-            href="/"
+          <button
+            type="button"
+            onClick={goBack}
             aria-label="뒤로 가기"
-            className="text-primary-500 [&>svg]:h-5 [&>svg]:w-3"
+            className="text-primary-500 cursor-pointer [&>svg]:h-5 [&>svg]:w-3"
           >
             <ChevronLeft />
-          </Link>
+          </button>
           <h1 className="text-body-1 font-bold text-black">익명 상담 챗봇</h1>
         </div>
         <button

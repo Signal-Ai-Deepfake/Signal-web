@@ -1,158 +1,144 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import BotOutline from "@/shared/asset/svg/BotOutline";
+import type { ReactNode } from "react";
 import Button from "@/shared/ui/Button";
-import type { DamageType } from "./Step1TypeSelect";
-import type { ReportDetails, ReportEvidence } from "./Step2Details";
+import DraftCardHeader from "./DraftCardHeader";
+import StepNavigation from "./StepNavigation";
+import type { ReportEvidence } from "./Step2Details";
+import { REQUEST_TEXT, evidenceText, overviewText, type ReportDraft } from "./reportDraft";
 
 interface Step3DraftProps {
-  damageType: DamageType;
-  details: ReportDetails;
+  draft: ReportDraft;
   evidence: ReportEvidence | null;
+  onChange: (draft: ReportDraft) => void;
   onBack: () => void;
-  onSubmit: (sections: DraftSection[]) => void;
+  onSubmit: () => void;
   submitting?: boolean;
+  submitLabel: string;
 }
 
-function formatDate(value: string) {
-  if (!value) return "미입력";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+const fieldClass =
+  "text-body-2 md:text-body-1 focus:border-secondary-500 w-full rounded border border-transparent px-1 py-1 text-black outline-none focus:border-b";
+
+function DraftRow({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1 p-3 md:gap-1.5 md:p-4">
+      <p className="text-body-2 md:text-body-1 font-semibold text-black">{title}</p>
+      {children}
+    </div>
+  );
 }
 
-export interface DraftSection {
-  title: string;
-  body: string;
-}
-
-const shortFieldTitles = new Set([
-  "피해 발생 시점",
-  "피해 유형",
-  "피해 경로",
-  "원본 URL",
-  "증거 목록",
-]);
-
-const rowsByTitle: Record<string, number> = {
-  "피해 개요": 2,
-  "피해 내용": 6,
-  "추가 전달 사항": 3,
-  "요청 사항": 2,
-};
-
-function buildDraftSections(
-  damageType: DamageType,
-  details: ReportDetails,
-  evidence: ReportEvidence | null,
-): DraftSection[] {
-  const sections: DraftSection[] = [
-    { title: "피해 개요", body: `${damageType} 피해가 발생한 것으로 보여 신고합니다.` },
-    { title: "피해 발생 시점", body: formatDate(details.incidentDate) },
-    { title: "피해 유형", body: damageType },
-    { title: "피해 경로", body: details.platform || "미입력" },
-    { title: "원본 URL", body: details.url || "미입력" },
-    { title: "피해 내용", body: details.description || "미입력" },
-  ];
-  if (details.additionalNotes.trim()) {
-    sections.push({ title: "추가 전달 사항", body: details.additionalNotes });
-  }
-  sections.push({ title: "증거 목록", body: evidence?.name ?? "첨부된 자료 없음" });
-  sections.push({
-    title: "요청 사항",
-    body: "해당 게시물의 삭제, 추가 확산 방지 및 필요한 조치를 요청합니다.",
-  });
-
-  return sections;
+function FixedText({ children }: { children: ReactNode }) {
+  return <p className="text-body-2 md:text-body-1 text-gray-650 px-1 py-1">{children}</p>;
 }
 
 export default function Step3Draft({
-  damageType,
-  details,
+  draft,
   evidence,
+  onChange,
   onBack,
   onSubmit,
   submitting = false,
+  submitLabel,
 }: Step3DraftProps) {
-  const initialSections = useMemo(
-    () => buildDraftSections(damageType, details, evidence),
-    [damageType, details, evidence],
-  );
-  const [sections, setSections] = useState<DraftSection[]>(initialSections);
-
-  function updateSectionBody(index: number, body: string) {
-    setSections((prev) => prev.map((section, i) => (i === index ? { ...section, body } : section)));
+  function update(field: keyof ReportDraft, value: string) {
+    onChange({ ...draft, [field]: value });
   }
 
   return (
-    <div className="flex w-full flex-col gap-8">
-      <div className="flex w-full flex-col gap-6 rounded-2xl border border-gray-300 p-8">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-2">
-            <span className="bg-primary-50 text-primary-500 text-caption w-fit rounded-full px-3 py-1">
-              기관 제출용 초안
-            </span>
-            <p className="text-h3 font-semibold text-black">신고 문서 초안을 확인해 주세요</p>
-            <p className="text-body-2 text-gray-800">아래 내용은 자유롭게 수정할 수 있습니다.</p>
-          </div>
-          <p className="text-caption text-primary-500 shrink-0">✓ 작성 완료</p>
-        </div>
-
-        <div className="bg-secondary-50 border-secondary-200 flex items-center gap-2 rounded-lg border p-4">
-          <span className="text-secondary-600 shrink-0 [&>svg]:h-8 [&>svg]:w-8">
-            <BotOutline />
-          </span>
-          <p className="text-body-2 text-secondary-600 font-medium">
-            AI가 입력 내용을 정리한 문서입니다. 실제 제출 전 날짜, URL, 피해 내용을 한 번 더 확인해
-            주세요.
-          </p>
-        </div>
+    <div className="flex w-full flex-col gap-6 md:gap-8">
+      <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-300 p-5 md:gap-6 md:p-8">
+        <DraftCardHeader
+          title="신고 문서 초안을 확인해 주세요"
+          description="회색 항목은 자동으로 작성되며, 나머지 내용은 자유롭게 수정할 수 있습니다."
+          status="작성 완료"
+        />
 
         <div className="flex flex-col gap-2">
-          <label className="text-body-1 px-1 text-black">신고 내용</label>
-          <div className="max-h-[427px] w-full divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-300">
-            {sections.map((section, index) => (
-              <div key={section.title} className="flex flex-col gap-1.5 p-4">
-                <p className="text-body-1 font-semibold text-black">{section.title}</p>
-                {shortFieldTitles.has(section.title) ? (
-                  <input
-                    type="text"
-                    value={section.body}
-                    onChange={(event) => updateSectionBody(index, event.target.value)}
-                    className="text-body-1 focus:border-secondary-500 w-full rounded border border-transparent px-1 py-1 text-black outline-none focus:border-b"
-                  />
-                ) : (
-                  <textarea
-                    value={section.body}
-                    onChange={(event) => updateSectionBody(index, event.target.value)}
-                    rows={rowsByTitle[section.title] ?? 3}
-                    className="text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-transparent px-1 py-1 whitespace-pre-wrap text-black outline-none focus:border-b"
-                  />
-                )}
-              </div>
-            ))}
+          <p className="text-body-2 md:text-body-1 px-1 text-black">신고 내용</p>
+          <div className="w-full divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-300 md:max-h-[427px]">
+            <DraftRow title="피해 개요">
+              <FixedText>{overviewText(draft.damageType)}</FixedText>
+            </DraftRow>
+            <DraftRow title="피해 발생 시점">
+              <input
+                type="date"
+                aria-label="피해 발생 시점"
+                value={draft.incidentDate}
+                onChange={(event) => update("incidentDate", event.target.value)}
+                className={fieldClass}
+              />
+            </DraftRow>
+            <DraftRow title="피해 유형">
+              <input
+                type="text"
+                aria-label="피해 유형"
+                value={draft.damageType}
+                onChange={(event) => update("damageType", event.target.value)}
+                className={fieldClass}
+              />
+            </DraftRow>
+            <DraftRow title="피해 경로">
+              <input
+                type="text"
+                aria-label="피해 경로"
+                placeholder="미입력"
+                value={draft.discoveryRoute}
+                onChange={(event) => update("discoveryRoute", event.target.value)}
+                className={`${fieldClass} placeholder:text-gray-600`}
+              />
+            </DraftRow>
+            <DraftRow title="원본 URL">
+              <input
+                type="url"
+                aria-label="원본 URL"
+                placeholder="미입력"
+                value={draft.sourceUrl}
+                onChange={(event) => update("sourceUrl", event.target.value)}
+                className={`${fieldClass} placeholder:text-gray-600`}
+              />
+            </DraftRow>
+            <DraftRow title="피해 내용">
+              <textarea
+                aria-label="피해 내용"
+                value={draft.description}
+                onChange={(event) => update("description", event.target.value)}
+                rows={6}
+                className={`${fieldClass} resize-none whitespace-pre-wrap`}
+              />
+            </DraftRow>
+            <DraftRow title="추가 전달 사항">
+              <textarea
+                aria-label="추가 전달 사항"
+                placeholder="추가로 전달할 내용이 있다면 적어 주세요."
+                value={draft.additionalNotes}
+                onChange={(event) => update("additionalNotes", event.target.value)}
+                rows={3}
+                className={`${fieldClass} resize-none whitespace-pre-wrap placeholder:text-gray-600`}
+              />
+            </DraftRow>
+            <DraftRow title="증거 목록">
+              <FixedText>{evidenceText(evidence)}</FixedText>
+            </DraftRow>
+            <DraftRow title="요청 사항">
+              <FixedText>{REQUEST_TEXT}</FixedText>
+            </DraftRow>
           </div>
         </div>
       </div>
 
-      <div className="flex w-full items-start justify-between">
-        <button
-          type="button"
-          onClick={onBack}
-          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 w-[124px] items-center justify-center rounded border transition-colors"
-        >
-          이전
-        </button>
+      <StepNavigation onBack={onBack}>
         <Button
           type="button"
           variant="primary"
-          disabled={submitting}
-          onClick={() => onSubmit(sections)}
+          className="w-full md:w-auto"
+          disabled={submitting || !draft.description.trim()}
+          onClick={onSubmit}
         >
-          {submitting ? "생성 중..." : "신고 문서 생성하기"}
+          {submitting ? "저장 중..." : submitLabel}
         </Button>
-      </div>
+      </StepNavigation>
     </div>
   );
 }

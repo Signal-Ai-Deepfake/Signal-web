@@ -3,6 +3,11 @@ import { guestHeaders } from "@/shared/api/guestHeaders";
 
 export type ProcessingStatus = "PROCESSING" | "COMPLETED" | "FAILED";
 export type DeepfakeVerdict = "REAL" | "FAKE" | "SUSPICIOUS";
+export type DetectionFailureReason =
+  | "NO_FACE_DETECTED"
+  | "VIDEO_NOT_SUPPORTED"
+  | "AI_SERVER_ERROR"
+  | "TIMEOUT";
 
 export interface RegionResponse {
   x: number;
@@ -33,6 +38,7 @@ export interface DeepfakeDetectionResponse {
   highlightedResultUrl?: string;
   /** true면 실제 AI 분석이 아니라 서버가 자동으로 대체한 참고용 추정치(폴백)입니다. */
   fallbackUsed?: boolean;
+  failureReason?: DetectionFailureReason | null;
 }
 
 export async function createDeepfakeDetection(

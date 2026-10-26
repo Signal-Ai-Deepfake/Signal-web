@@ -5,7 +5,7 @@ import Arrow from "@/shared/asset/svg/Arrow";
 import { animateScrollTo } from "@/shared/lib/animateScrollTo";
 
 const SHOW_AFTER = 400;
-const SCROLL_DURATION = 900;
+const SCROLL_DURATION = 1300;
 
 export default function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);

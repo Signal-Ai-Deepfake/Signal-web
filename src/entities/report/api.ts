@@ -16,9 +16,12 @@ export interface CreateReportRequest {
   sourceUrls?: string[];
   evidenceIds?: number[];
   targetAgencyType?: string;
+  additionalNotes?: string;
 }
 
-export type UpdateReportRequest = CreateReportRequest;
+export type UpdateReportRequest = {
+  [Key in keyof CreateReportRequest]?: CreateReportRequest[Key] | null;
+};
 
 export interface ReportStatusResponse {
   reportId: number;
@@ -36,7 +39,9 @@ export interface ReportResponse {
   sourceUrls?: string[];
   evidenceIds?: number[];
   targetAgencyType?: string;
+  additionalNotes?: string;
   documentUrl?: string;
+  documentSimulated?: boolean;
   timeline: ReportTimelineEntry[];
   createdAt: string;
 }

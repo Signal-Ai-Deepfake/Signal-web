@@ -8,6 +8,7 @@ const PUBLIC_PATHS = [
   "/chat",
   "/monitoring",
   "/report",
+  "/report/guide",
   "/support-referral",
   "/login",
   "/signup",

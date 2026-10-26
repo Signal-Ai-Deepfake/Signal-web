@@ -63,10 +63,10 @@ export default function PrivacyPolicyPage() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-primary-50">
-                <th className="text-small w-40 px-4 py-3.5 text-left font-bold text-primary-500">
+                <th className="text-small text-primary-500 w-24 px-3 py-3.5 text-left font-bold md:w-40 md:px-4">
                   구분
                 </th>
-                <th className="text-small px-4 py-3.5 text-left font-bold text-primary-500">
+                <th className="text-small text-primary-500 px-3 py-3.5 text-left font-bold md:px-4">
                   처리 항목
                 </th>
               </tr>
@@ -75,12 +75,16 @@ export default function PrivacyPolicyPage() {
               {collectedDataRows.map((row, index) => (
                 <tr
                   key={row.label}
-                  className={index === collectedDataRows.length - 1 ? "" : "border-b border-gray-300"}
+                  className={
+                    index === collectedDataRows.length - 1 ? "" : "border-b border-gray-300"
+                  }
                 >
-                  <th className="text-caption bg-gray-100 w-40 px-4 py-3.5 text-left font-bold text-black">
+                  <th className="text-caption w-24 bg-gray-100 px-3 py-3.5 text-left font-bold break-keep text-black md:w-40 md:px-4">
                     {row.label}
                   </th>
-                  <td className="text-caption px-4 py-3.5 text-black">{row.value}</td>
+                  <td className="text-caption px-3 py-3.5 break-keep text-black md:px-4">
+                    {row.value}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -145,7 +149,10 @@ export default function PrivacyPolicyPage() {
 
       <LegalSection id="consultation-data" title="8. 상담 및 분석 데이터 처리">
         {consultationDataItems.map((item, index) => (
-          <div key={item.heading} className={`flex flex-col gap-1 ${index === 0 ? "mt-2" : "mt-6"}`}>
+          <div
+            key={item.heading}
+            className={`flex flex-col gap-1 ${index === 0 ? "mt-2" : "mt-6"}`}
+          >
             <h3 className="text-body-2 font-bold text-black">{item.heading}</h3>
             <p className="text-body-2 text-gray-700">{item.description}</p>
           </div>
