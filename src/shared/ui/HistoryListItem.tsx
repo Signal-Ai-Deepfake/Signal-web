@@ -16,11 +16,17 @@ const badgeStyle: Record<HistoryBadgeTone, string> = {
   secondary: "bg-secondary-50 text-secondary-500",
 };
 
-export default function HistoryListItem({ href, badge, badgeTone, title, meta }: HistoryListItemProps) {
+export default function HistoryListItem({
+  href,
+  badge,
+  badgeTone,
+  title,
+  meta,
+}: HistoryListItemProps) {
   return (
     <Link
       href={href}
-      className="flex w-full items-center justify-between rounded-2xl border border-gray-300 bg-white p-[25px] transition-colors hover:border-primary-300"
+      className="hover:border-primary-300 flex w-full items-center justify-between gap-3 rounded-2xl border border-gray-300 bg-white p-4 transition-colors md:p-[25px]"
     >
       <div className="flex flex-col items-start gap-[7px]">
         <span className={`text-caption w-fit rounded-full px-3 py-1 ${badgeStyle[badgeTone]}`}>
@@ -29,7 +35,7 @@ export default function HistoryListItem({ href, badge, badgeTone, title, meta }:
         <p className="text-body-2 px-1 font-medium text-black">{title}</p>
         <p className="text-small px-1 text-gray-700">{meta}</p>
       </div>
-      <span className="text-black shrink-0">
+      <span className="shrink-0 text-black max-md:[&>svg]:h-5 max-md:[&>svg]:w-2.5">
         <Arrow />
       </span>
     </Link>
