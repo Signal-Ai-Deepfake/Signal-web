@@ -1,12 +1,13 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import AnalysisGuideCard from "@/shared/ui/AnalysisGuideCard";
 import Button from "@/shared/ui/Button";
 import PageHeading from "@/shared/ui/PageHeading";
 import { pollUntil } from "@/shared/lib/poll";
+import { scrollToElement } from "@/shared/lib/scrollToElement";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import {
@@ -107,12 +108,18 @@ export default function DetectPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [result, setResult] = useState<DetectResult>(MOCK_RESULT);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (status !== "result" || !resultRef.current) return;
+    return scrollToElement(resultRef.current);
+  }, [status]);
 
   function handleFileSelect(file: File) {
     setPreviewUrl(URL.createObjectURL(file));
@@ -196,7 +203,11 @@ export default function DetectPage() {
             </Button>
           )}
 
-          {status === "result" && <DetectResultSection result={result} previewUrl={previewUrl} />}
+          {status === "result" && (
+            <div ref={resultRef} className="w-full">
+              <DetectResultSection result={result} previewUrl={previewUrl} />
+            </div>
+          )}
         </div>
       </main>
       <Footer />
