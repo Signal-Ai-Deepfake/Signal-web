@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import type { AnalysisResult } from "@/entities/analysis/model";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Lock from "@/shared/asset/svg/Lock";
+import { scrollToElement } from "@/shared/lib/scrollToElement";
 import BackButton from "@/shared/ui/BackButton";
 import UploadGuideCard from "@/shared/ui/UploadGuideCard";
 import Footer from "@/widgets/Footer";
@@ -48,13 +49,9 @@ export default function AnalyzePage() {
   const scrollToDetailsRef = useRef(false);
 
   useEffect(() => {
-    if (!showDetails || !scrollToDetailsRef.current) return;
+    if (!showDetails || !scrollToDetailsRef.current || !detailsRef.current) return;
     scrollToDetailsRef.current = false;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    detailsRef.current?.scrollIntoView({
-      behavior: reduceMotion ? "instant" : "smooth",
-      block: "start",
-    });
+    return scrollToElement(detailsRef.current);
   }, [showDetails]);
 
   function handleToggleDetails() {
@@ -78,8 +75,8 @@ export default function AnalyzePage() {
             <span className="text-body-1 text-primary-500">사진 위험도 분석 및 보호</span>
           </div>
           <div className="flex flex-col gap-2 md:gap-6">
-            <h1 className="text-h3 font-bold text-black md:text-h1">사진 위험도 분석 및 보호</h1>
-            <p className="text-small text-gray-800 md:text-body-1">
+            <h1 className="text-h3 md:text-h1 font-bold text-black">사진 위험도 분석 및 보호</h1>
+            <p className="text-small md:text-body-1 text-gray-800">
               SNS 업로드 전 사진의 위험 요소를 AI가 분석하고 안전하게 보호할 수 있도록 도와드립니다.
             </p>
           </div>
@@ -125,7 +122,7 @@ export default function AnalyzePage() {
           </div>
 
           {status === "result" && (
-            <div ref={detailsRef} className="w-full scroll-mt-24">
+            <div ref={detailsRef} className="w-full">
               <ResultDetails show={showDetails} result={result ?? EMPTY_RESULT} />
             </div>
           )}
