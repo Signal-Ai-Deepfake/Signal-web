@@ -9,48 +9,49 @@ import Message from "@/shared/asset/svg/Message";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 import FeatureCard from "@/shared/ui/FeatureCard";
 
-const navItems = [
-  {
-    label: "AI 분석",
-    items: [
-      {
-        icon: ScanFace,
-        title: "얼굴 도용·딥페이크 탐지",
-        description: "얼굴 도용 및 딥페이크 여부를 확인해요.",
-        href: "/detect",
-      },
-      {
-        icon: Image,
-        title: "AI 이미지 분석",
-        description: "사진의 위험도를 분석해요.",
-        href: "/analyze",
-      },
-      {
-        icon: Globe,
-        title: "유포 모니터링",
-        description: "웹에서 유사 이미지를 지속적으로 확인해요.",
-        href: "/monitoring",
-      },
-    ],
-  },
-  {
-    label: "신고 지원",
-    items: [
-      {
-        icon: Message,
-        title: "익명 상담 챗봇",
-        description: "AI 상담 챗봇이 24시간 상담해요.",
-        href: "/chat",
-      },
-      {
-        icon: FileText,
-        title: "신고 지원",
-        description: "신고 문서 작성과 기관 연계를 도와드려요.",
-        href: "/report",
-      },
-    ],
-  },
-];
+export const analysisNavGroup = {
+  label: "AI 분석",
+  items: [
+    {
+      icon: ScanFace,
+      title: "얼굴 도용·딥페이크 탐지",
+      description: "얼굴 도용 및 딥페이크 여부를 확인해요.",
+      href: "/detect",
+    },
+    {
+      icon: Image,
+      title: "AI 이미지 분석",
+      description: "사진의 위험도를 분석해요.",
+      href: "/analyze",
+    },
+    {
+      icon: Globe,
+      title: "유포 모니터링",
+      description: "웹에서 유사 이미지를 지속적으로 확인해요.",
+      href: "/monitoring",
+    },
+  ],
+};
+
+export const supportNavGroup = {
+  label: "신고 지원",
+  items: [
+    {
+      icon: Message,
+      title: "익명 상담 챗봇",
+      description: "AI 상담 챗봇이 24시간 상담해요.",
+      href: "/chat",
+    },
+    {
+      icon: FileText,
+      title: "신고 지원",
+      description: "신고 문서 작성과 기관 연계를 도와드려요.",
+      href: "/report",
+    },
+  ],
+};
+
+export const headerNavItems = [analysisNavGroup, supportNavGroup];
 
 export default function HeaderNav() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -81,7 +82,7 @@ export default function HeaderNav() {
 
   return (
     <nav ref={navRef} className="hidden items-center gap-8 md:flex">
-      {navItems.map((nav, index) => (
+      {headerNavItems.map((nav, index) => (
         <div
           key={nav.label}
           className="relative"
