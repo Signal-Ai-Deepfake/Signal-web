@@ -30,6 +30,7 @@ interface EditableFields {
   discoveryRoute: string;
   sourceUrl: string;
   description: string;
+  additionalNotes: string;
 }
 
 function formatDateLong(value: string) {
@@ -83,6 +84,13 @@ function ReportContentView({ report }: { report: ReportResponse }) {
         <br />
         {report.description || "미입력"}
       </p>
+      {report.additionalNotes && (
+        <p className="whitespace-pre-wrap">
+          추가 전달 사항
+          <br />
+          {report.additionalNotes}
+        </p>
+      )}
       <p>
         증거 자료
         <br />
@@ -188,6 +196,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
       discoveryRoute: report.discoveryRoute ?? "",
       sourceUrl: report.sourceUrls?.[0] ?? "",
       description: report.description ?? "",
+      additionalNotes: report.additionalNotes ?? "",
     });
     setIsEditing(true);
   }
@@ -204,6 +213,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
       discoveryRoute: draft.discoveryRoute || undefined,
       sourceUrls: draft.sourceUrl ? [draft.sourceUrl] : undefined,
       description: draft.description || undefined,
+      additionalNotes: draft.additionalNotes || undefined,
     });
   }
 
@@ -339,6 +349,19 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                             setDraft({ ...draft, description: event.target.value })
                           }
                           rows={6}
+                          className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-gray-300 p-3 whitespace-pre-wrap text-black outline-none"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5 p-3 md:p-4">
+                        <label className="text-body-2 md:text-body-1 font-semibold text-black">
+                          추가 전달 사항
+                        </label>
+                        <textarea
+                          value={draft.additionalNotes}
+                          onChange={(event) =>
+                            setDraft({ ...draft, additionalNotes: event.target.value })
+                          }
+                          rows={3}
                           className="text-body-2 md:text-body-1 focus:border-secondary-500 w-full resize-none rounded border border-gray-300 p-3 whitespace-pre-wrap text-black outline-none"
                         />
                       </div>

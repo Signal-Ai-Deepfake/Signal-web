@@ -16,6 +16,7 @@ export interface CreateReportRequest {
   sourceUrls?: string[];
   evidenceIds?: number[];
   targetAgencyType?: string;
+  additionalNotes?: string;
 }
 
 export type UpdateReportRequest = CreateReportRequest;
@@ -36,6 +37,7 @@ export interface ReportResponse {
   sourceUrls?: string[];
   evidenceIds?: number[];
   targetAgencyType?: string;
+  additionalNotes?: string;
   documentUrl?: string;
   timeline: ReportTimelineEntry[];
   createdAt: string;

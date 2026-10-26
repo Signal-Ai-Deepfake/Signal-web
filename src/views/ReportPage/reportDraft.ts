@@ -48,17 +48,13 @@ export function toReportRequest(
   draft: ReportDraft,
   evidence: ReportEvidence | null,
 ): CreateReportRequest {
-  const description = optional(draft.description);
-  const notes = optional(draft.additionalNotes);
   const sourceUrl = optional(draft.sourceUrl);
-
   return {
     incidentDate: optional(draft.incidentDate),
     discoveryRoute: optional(draft.discoveryRoute),
     damageType: optional(draft.damageType),
-    description: notes
-      ? [description, `[추가 전달 사항]\n${notes}`].filter(Boolean).join("\n\n")
-      : description,
+    description: optional(draft.description),
+    additionalNotes: optional(draft.additionalNotes),
     sourceUrls: sourceUrl ? [sourceUrl] : undefined,
     evidenceIds: evidence ? [evidence.id] : undefined,
   };
