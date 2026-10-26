@@ -1,10 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { useState } from "react";
 import { getAgencies } from "@/entities/agency/api";
-import Arrow from "@/shared/asset/svg/Arrow";
+import PageHeading from "@/shared/ui/PageHeading";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import AgencyCard from "./AgencyCard";
@@ -30,40 +29,26 @@ export default function SupportReferralPage() {
   return (
     <>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-white px-5 py-10 pb-[120px]">
-        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-8">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <Link href="/" className="text-body-1 text-gray-700">
-                홈
-              </Link>
-              <span className="text-gray-700 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                <Arrow />
-              </span>
-              <Link href="/chat" className="text-body-1 text-primary-500">
-                익명 상담 챗봇
-              </Link>
-              <span className="text-gray-700 [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                <Arrow />
-              </span>
-              <span className="text-body-1 text-primary-500">실제 기관 연결</span>
-            </div>
-            <div className="flex flex-col gap-6">
-              <h1 className="text-h1 font-bold text-black">실제 기관 연결</h1>
-              <p className="text-body-1 text-gray-700">
-                현재 피해 상황을 선택하면 관련 지원 기관을 바로 연결해 드립니다.
-              </p>
-            </div>
-          </div>
+      <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
+        <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
+          <PageHeading
+            title="실제 기관 연결"
+            description="현재 피해 상황을 선택하면 관련 지원 기관을 바로 연결해 드립니다."
+            breadcrumbs={[{ label: "익명 상담 챗봇", href: "/chat" }, { label: "실제 기관 연결" }]}
+          />
 
-          <div className="bg-primary-50 flex flex-col items-start justify-between gap-6 rounded-2xl p-6 sm:flex-row">
+          <div className="bg-primary-50 flex flex-col items-start justify-between gap-5 rounded-2xl p-5 sm:flex-row md:gap-6 md:p-6">
             <div className="flex flex-col gap-1">
               <p className="text-small text-gray-700">현재 피해 상황</p>
-              <p className="text-h3 font-semibold text-black">{selected.label}</p>
-              <p className="text-large text-gray-700">{selected.description}</p>
+              <p className="text-large md:text-h3 font-semibold text-black">{selected.label}</p>
+              <p className="text-small md:text-large break-keep text-gray-700">
+                {selected.description}
+              </p>
             </div>
             <div className="flex w-full flex-col gap-2 sm:w-[280px]">
-              <label className="text-large px-1 font-medium text-black">상황 변경</label>
+              <label className="text-small md:text-large px-1 font-medium text-black">
+                상황 변경
+              </label>
               <SituationSelect
                 categories={situationCategories}
                 selectedType={selectedType}
@@ -75,7 +60,7 @@ export default function SupportReferralPage() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <p className="text-h3 px-1 font-semibold text-black">지원 기관</p>
+            <p className="text-large md:text-h3 px-1 font-semibold text-black">지원 기관</p>
 
             {isPending && <p className="text-body-1 px-1 text-gray-700">불러오는 중...</p>}
 
