@@ -9,7 +9,7 @@ interface OverallRiskCardProps {
 
 export default function OverallRiskCard({ result }: OverallRiskCardProps) {
   return (
-    <div className="flex w-full flex-col items-center gap-4 rounded-lg border border-gray-300 p-6 lg:w-[424px]">
+    <div className="flex w-full flex-col items-center gap-4 rounded-lg border border-gray-300 p-5 md:p-6 lg:w-[424px]">
       <div className="flex items-center gap-1">
         <p className="text-body-1 font-semibold text-black">종합 위험도</p>
         <span className="text-gray-600 [&>svg]:h-5 [&>svg]:w-5">
@@ -23,7 +23,7 @@ export default function OverallRiskCard({ result }: OverallRiskCardProps) {
           <p className="text-h3 font-semibold text-gray-500">/100</p>
         </div>
       </div>
-      <p className="text-body-2 text-gray-800 text-center">{result.overallCaption}</p>
+      <p className="text-body-2 text-center text-gray-800">{result.overallCaption}</p>
       <div className="h-px w-full bg-gray-200" />
       <div className="bg-secondary-50 border-secondary-200 flex w-full items-center gap-2 rounded-lg border p-4">
         <span className="text-secondary-600 shrink-0 [&>svg]:h-8 [&>svg]:w-8">

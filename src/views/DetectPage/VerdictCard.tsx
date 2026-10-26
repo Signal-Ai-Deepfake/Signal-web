@@ -38,13 +38,13 @@ export default function VerdictCard({
 
   if (unsupported) {
     return (
-      <div className="flex w-full flex-col gap-5 rounded-lg border border-gray-300 p-6 lg:w-[364px]">
+      <div className="flex w-full flex-col gap-5 rounded-lg border border-gray-300 p-5 md:p-6 lg:w-[364px]">
         <p className="text-body-1 font-semibold text-black">{title}</p>
-        <div className="bg-gray-100 flex h-[60px] w-full items-center gap-3 rounded-lg px-5">
-          <span className="text-gray-500 shrink-0 [&>svg]:h-8 [&>svg]:w-8">
+        <div className="flex h-[60px] w-full items-center gap-3 rounded-lg bg-gray-100 px-5">
+          <span className="shrink-0 text-gray-500 [&>svg]:h-8 [&>svg]:w-8">
             <Warning />
           </span>
-          <p className="text-body-1 text-gray-500 font-bold">준비 중인 기능입니다</p>
+          <p className="text-body-1 font-bold text-gray-500">준비 중인 기능입니다</p>
         </div>
         <p className="text-body-2 text-gray-650 text-center">{caption}</p>
       </div>
@@ -52,7 +52,7 @@ export default function VerdictCard({
   }
 
   return (
-    <div className="flex w-full flex-col gap-5 rounded-lg border border-gray-300 p-6 lg:w-[364px]">
+    <div className="flex w-full flex-col gap-5 rounded-lg border border-gray-300 p-5 md:p-6 lg:w-[364px]">
       <p className="text-body-1 font-semibold text-black">{title}</p>
       {suspicion ? (
         <SuspicionBanner status={scoreToSuspicionStatus(score)} />
@@ -66,7 +66,7 @@ export default function VerdictCard({
       )}
       <div className="flex flex-col gap-3">
         <p className="text-body-1 text-gray-800">{scoreLabel}</p>
-        <p className={`text-h1 font-bold ${style.text}`}>
+        <p className={`text-h2 md:text-h1 font-bold ${style.text}`}>
           {score}
           <span className="text-h3 font-semibold text-gray-500">{scoreSuffix}</span>
         </p>
