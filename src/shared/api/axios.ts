@@ -7,7 +7,8 @@ import {
   setAuthTokens,
 } from "@/shared/lib/authToken";
 import { defineMessages } from "@/shared/i18n/defineMessages";
-import { translate } from "@/shared/i18n/currentLocale";
+import { htmlLang } from "@/shared/i18n/config";
+import { currentLocale, translate } from "@/shared/i18n/currentLocale";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -61,6 +62,7 @@ api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = getAccessToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
+    config.headers["Accept-Language"] = htmlLang[currentLocale()];
   }
   return config;
 });
