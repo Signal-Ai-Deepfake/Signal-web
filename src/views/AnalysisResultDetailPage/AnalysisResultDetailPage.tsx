@@ -7,6 +7,7 @@ import { getAssessment } from "@/entities/analysis/api";
 import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Share from "@/shared/asset/svg/Share";
+import BackButton from "@/shared/ui/BackButton";
 import { useIsLoggedIn } from "@/shared/lib/useIsLoggedIn";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -106,6 +107,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
               </span>
               <span className="text-body-1 text-primary-500">{t.title}</span>
             </div>
+            <BackButton href="/analyze" className="self-start print:hidden" />
             <div className="flex items-center justify-between gap-4">
               <h1 className="text-h2 lg:text-h1 font-bold text-black">{t.title}</h1>
               {result && (

@@ -11,8 +11,9 @@ import { pollUntil } from "@/shared/lib/poll";
 import { createProtection, downloadProtection, getProtection } from "./analyzeApi";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { analyzeMessages } from "./messages";
+import { loadAnalyzeSession, saveAnalyzeSession, type Status } from "./analyzeSession";
 
-export type Status = "idle" | "selected" | "analyzing" | "error" | "result";
+export type { Status };
 
 function isInternalMessage(message?: string) {
   return !message || message.includes("X-Anonymous-Id") || message === "인증이 필요합니다.";
@@ -23,22 +24,43 @@ export function useAnalyzeFlow() {
   const { locale } = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [status, setStatus] = useState<Status>("idle");
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [showDetails, setShowDetails] = useState(false);
-  const [isProtected, setIsProtected] = useState(false);
-  const [isSimulatedProtection, setIsSimulatedProtection] = useState(false);
-  const [assessment, setAssessment] = useState<RiskAssessmentResponse | null>(null);
+  const [initial] = useState(loadAnalyzeSession);
+  const [status, setStatus] = useState<Status>(initial.status);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initial.previewUrl);
+  const [selectedFile, setSelectedFile] = useState<File | null>(initial.selectedFile);
+  const [showDetails, setShowDetails] = useState(initial.showDetails);
+  const [isProtected, setIsProtected] = useState(initial.isProtected);
+  const [isSimulatedProtection, setIsSimulatedProtection] = useState(
+    initial.isSimulatedProtection,
+  );
+  const [assessment, setAssessment] = useState<RiskAssessmentResponse | null>(initial.assessment);
   const result: AnalysisResult | null = assessment ? mapAssessment(assessment, locale) : null;
-  const [assessmentId, setAssessmentId] = useState<number | null>(null);
-  const [protectionId, setProtectionId] = useState<number | null>(null);
+  const [assessmentId, setAssessmentId] = useState<number | null>(initial.assessmentId);
+  const [protectionId, setProtectionId] = useState<number | null>(initial.protectionId);
 
   useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
+    saveAnalyzeSession({
+      status,
+      previewUrl,
+      selectedFile,
+      showDetails,
+      isProtected,
+      isSimulatedProtection,
+      assessment,
+      assessmentId,
+      protectionId,
+    });
+  }, [
+    status,
+    previewUrl,
+    selectedFile,
+    showDetails,
+    isProtected,
+    isSimulatedProtection,
+    assessment,
+    assessmentId,
+    protectionId,
+  ]);
 
   function showError(title: string, error: unknown, guestFallback: string) {
     const message = error instanceof Error ? error.message : undefined;
@@ -53,6 +75,7 @@ export function useAnalyzeFlow() {
   }
 
   function handleFileSelect(file: File) {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(URL.createObjectURL(file));
     setSelectedFile(file);
     setShowDetails(false);
