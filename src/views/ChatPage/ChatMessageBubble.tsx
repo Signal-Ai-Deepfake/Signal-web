@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
@@ -6,6 +8,8 @@ import BotOutline from "@/shared/asset/svg/BotOutline";
 import ChatMarkdown, { parseChatMarkdown } from "./ChatMarkdown";
 import TypingText from "./TypingText";
 import type { ChatMessage } from "./types";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { chatMessages } from "./messages";
 
 interface ChatMessageBubbleProps {
   message: ChatMessage;
@@ -19,6 +23,7 @@ function formatTime(timestamp?: number) {
 }
 
 export default function ChatMessageBubble({ message, pending, onTyping }: ChatMessageBubbleProps) {
+  const t = useT(chatMessages);
   const time = formatTime(message.createdAt);
   const timeLabel = time && (
     <p className="text-caption text-gray-800 opacity-60 md:hidden">{time}</p>
@@ -59,7 +64,7 @@ export default function ChatMessageBubble({ message, pending, onTyping }: ChatMe
           {pending ? (
             <span
               role="status"
-              aria-label="답변 작성 중"
+              aria-label={t.typing}
               className="flex h-6 items-center gap-1.5 px-1"
             >
               <span className="bg-secondary-500 size-2 animate-bounce rounded-full [animation-delay:-0.3s]" />

@@ -6,6 +6,9 @@ import ChevronLeft from "@/shared/asset/svg/ChevronLeft";
 import LockLine from "@/shared/asset/svg/LockLine";
 import Menu from "@/shared/asset/svg/Menu";
 import { useGoBack } from "@/shared/lib/useGoBack";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { chatMessages } from "./messages";
+import { uiMessages } from "@/shared/ui/messages";
 
 interface ChatMobileHeaderProps {
   saveConsent: boolean;
@@ -28,6 +31,8 @@ export default function ChatMobileHeader({
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const goBack = useGoBack();
+  const t = useT(chatMessages);
+  const ui = useT(uiMessages);
 
   useEffect(() => {
     if (!open) return;
@@ -57,17 +62,17 @@ export default function ChatMobileHeader({
           <button
             type="button"
             onClick={goBack}
-            aria-label="뒤로 가기"
+            aria-label={ui.back}
             className="text-primary-500 cursor-pointer [&>svg]:h-5 [&>svg]:w-3"
           >
             <ChevronLeft />
           </button>
-          <h1 className="text-body-1 font-bold text-black">익명 상담 챗봇</h1>
+          <h1 className="text-body-1 font-bold text-black">{t.title}</h1>
         </div>
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
-          aria-label={open ? "상담 메뉴 닫기" : "상담 메뉴 열기"}
+          aria-label={open ? t.mobile.closeMenu : t.mobile.openMenu}
           aria-expanded={open}
           className="text-primary-500 active:bg-primary-50 flex size-9 cursor-pointer items-center justify-center rounded-lg [&>svg]:size-5"
         >
@@ -79,16 +84,14 @@ export default function ChatMobileHeader({
           <LockLine />
         </span>
         <p className="text-caption break-keep">
-          {saveConsent
-            ? "상담 내용은 익명으로 보호되며, 동의에 따라 내 대화 내역에 저장됩니다."
-            : "상담 내용은 익명으로 보호되며, 동의 없이는 저장되지 않습니다."}
+          {saveConsent ? t.mobile.savedBanner : t.mobile.unsavedBanner}
         </p>
       </div>
 
       {open && (
         <button
           type="button"
-          aria-label="상담 메뉴 닫기"
+          aria-label={t.mobile.closeMenu}
           onClick={() => setOpen(false)}
           className="fixed inset-0 -z-10 animate-[fade-in_0.2s_ease-out] cursor-default bg-black/40"
         />
@@ -102,7 +105,7 @@ export default function ChatMobileHeader({
               onClick={() => run(onNewChat)}
               className={`${itemClass} text-black`}
             >
-              새 채팅
+              {t.mobile.newChat}
             </button>
             {isLoggedIn && (
               <Link
@@ -110,7 +113,7 @@ export default function ChatMobileHeader({
                 onClick={() => setOpen(false)}
                 className={`${itemClass} text-black`}
               >
-                내 대화 내역
+                {t.mobile.myChats}
               </Link>
             )}
             <Link
@@ -118,7 +121,7 @@ export default function ChatMobileHeader({
               onClick={() => setOpen(false)}
               className={`${itemClass} text-black`}
             >
-              전문 기관 연결하기
+              {t.referral}
             </Link>
             <div className="my-1 h-px bg-gray-300" />
             <button
@@ -126,7 +129,7 @@ export default function ChatMobileHeader({
               onClick={() => run(onEnd)}
               className={`${itemClass} font-semibold text-red-500`}
             >
-              상담 종료
+              {t.mobile.endChat}
             </button>
           </nav>
         </div>

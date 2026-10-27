@@ -1,3 +1,5 @@
+import { translate } from "@/shared/i18n/currentLocale";
+import { chatMessages } from "./messages";
 interface Inline {
   text: string;
   bold: boolean;
@@ -135,7 +137,7 @@ function InlineText({ line }: { line: Inline[] }) {
           <a
             key={index}
             href={`tel:${inline.text.replace(/-/g, "")}`}
-            aria-label={`${inline.text}로 전화 걸기`}
+            aria-label={translate(chatMessages).call(inline.text)}
             className="text-primary-500 font-bold underline underline-offset-2"
           >
             {inline.text}
