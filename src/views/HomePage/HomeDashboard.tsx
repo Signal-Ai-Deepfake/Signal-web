@@ -12,8 +12,11 @@ import LinkButton from "@/shared/ui/LinkButton";
 import TypingHeadline from "@/shared/ui/TypingHeadline";
 import QuickFeaturesSection from "./QuickFeaturesSection";
 import RecentResultsSection from "./RecentResultsSection";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { homeMessages } from "./messages";
 
 export default function HomeDashboard() {
+  const t = useT(homeMessages);
   const { data: profile } = useMyProfile();
   const { data: assessments } = useQuery({
     queryKey: ["riskAssessments"],
@@ -41,21 +44,18 @@ export default function HomeDashboard() {
           <div className="relative mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-12 px-5 py-8 md:py-20 xl:flex-row xl:items-center xl:justify-between xl:gap-16 xl:py-32">
             <div className="flex w-full flex-col items-start gap-3 md:w-fit md:items-center md:gap-6 md:text-center xl:items-start xl:text-left">
               <h1 className="md:text-h1 animate-[fade-in_0.8s_ease-out_both] text-[28px] leading-[1.3] font-bold break-keep text-black motion-reduce:animate-none xl:whitespace-nowrap">
-                안녕하세요, {profile?.name ?? "사용자"}님
+                {t.greeting(profile?.name ?? t.defaultName)}
               </h1>
               <TypingHeadline
                 as="p"
                 speed={45}
                 startDelay={600}
                 className="text-body-2 md:text-body-1 break-keep text-gray-800 xl:whitespace-nowrap"
-                lines={[
-                  [{ text: "걱정은 줄이고, 안전은 더하고." }],
-                  [{ text: "AI가 사진 속 위험 요소를 먼저 확인해 드립니다." }],
-                ]}
+                lines={t.tagline.map((text) => [{ text }])}
               />
               <div className="w-full pt-3 md:w-auto md:pt-0">
                 <LinkButton href="/analyze" variant="primary" className="w-full gap-1 md:w-auto">
-                  내 디지털 일상 점검하기
+                  {t.cta}
                   <span className="[&>svg]:h-6 [&>svg]:w-6">
                     <ArrowUp />
                   </span>
@@ -67,7 +67,7 @@ export default function HomeDashboard() {
                 percent={72}
                 riskPercent={24}
                 level="안전"
-                message="현재 이미지는 안전합니다."
+                message={t.sampleMessage}
               />
             </div>
             <div className="hidden xl:block [&_*]:animate-none">
@@ -75,7 +75,7 @@ export default function HomeDashboard() {
                 percent={72}
                 riskPercent={24}
                 level="안전"
-                message="현재 이미지는 안전합니다."
+                message={t.sampleMessage}
               />
             </div>
           </div>
