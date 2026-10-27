@@ -21,16 +21,15 @@ import Button from "@/shared/ui/Button";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
+import { formatDateLong } from "@/shared/i18n/format";
+import { monitoringMessages } from "./messages";
 
 const PAGE_SIZE = 9;
 
-function formatDateLong(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-}
-
 export default function MonitoringPage() {
+  const t = useT(monitoringMessages);
+  const { locale } = useLocale();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -54,10 +53,10 @@ export default function MonitoringPage() {
       setStoredMonitoringId(data.monitoringId);
       setMonitoringId(data.monitoringId);
       setPage(0);
-      toast.success("유포 모니터링을 시작했습니다.");
+      toast.success(t.started);
     },
     onError: (error) => {
-      toast.error("모니터링을 시작하지 못했습니다.", {
+      toast.error(t.startFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -71,11 +70,11 @@ export default function MonitoringPage() {
       setPage(0);
       setStopModalOpen(false);
       queryClient.removeQueries({ queryKey: ["monitoringDetections"] });
-      toast.success("모니터링을 중지했습니다.");
+      toast.success(t.stopped);
     },
     onError: (error) => {
       setStopModalOpen(false);
-      toast.error("모니터링 중지에 실패했습니다.", {
+      toast.error(t.stopFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -118,13 +117,11 @@ export default function MonitoringPage() {
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
           <div className="flex flex-col gap-3 md:gap-4">
             <PageHeading
-              title="유포 모니터링"
-              description="기준이 되는 이미지를 업로드하면, 웹에서 유사한 이미지가 발견될 때마다 확인할 수 있습니다."
-              breadcrumbs={[{ label: "유포 모니터링" }]}
+              title={t.title}
+              description={t.description}
+              breadcrumbs={[{ label: t.title }]}
             />
-            <p className="text-small md:text-body-2 break-keep text-gray-700">
-              ⚠️ 현재 유포 모니터링은 시연용 단계로, 실제 웹 검색 없이 예시 탐지 결과가 표시됩니다.
-            </p>
+            <p className="text-small md:text-body-2 break-keep text-gray-700">{t.demoNotice}</p>
           </div>
 
           {monitoringId === null ? (
@@ -141,9 +138,9 @@ export default function MonitoringPage() {
                   <ImageArrowUp />
                 </span>
                 <p className="text-body-2 md:text-body-1 font-semibold text-black">
-                  기준 이미지 업로드
+                  {t.uploadTitle}
                 </p>
-                <p className="text-small md:text-body-2 text-gray-650">JPG, PNG 파일 지원</p>
+                <p className="text-small md:text-body-2 text-gray-650">{t.fileTypes}</p>
               </div>
               <input
                 ref={fileInputRef}
@@ -159,15 +156,15 @@ export default function MonitoringPage() {
                 disabled={createMutation.isPending}
                 onClick={() => fileInputRef.current?.click()}
               >
-                {createMutation.isPending ? "시작하는 중..." : "모니터링 시작"}
+                {createMutation.isPending ? t.starting : t.start}
               </Button>
             </div>
           ) : (
             <>
               <div className="bg-primary-50 flex items-center justify-between gap-4 rounded-2xl p-5 md:p-6">
                 <div className="flex flex-col gap-1">
-                  <p className="text-small text-gray-700">현재 상태</p>
-                  <p className="text-large md:text-h3 font-semibold text-black">모니터링 중</p>
+                  <p className="text-small text-gray-700">{t.status}</p>
+                  <p className="text-large md:text-h3 font-semibold text-black">{t.monitoring}</p>
                 </div>
                 <button
                   type="button"
@@ -175,32 +172,26 @@ export default function MonitoringPage() {
                   disabled={deleteMutation.isPending}
                   className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-11 shrink-0 items-center justify-center rounded border px-4 transition-colors disabled:opacity-50 md:h-12 md:px-6"
                 >
-                  {deleteMutation.isPending ? "중지하는 중..." : "모니터링 중지"}
+                  {deleteMutation.isPending ? t.stopping : t.stop}
                 </button>
               </div>
 
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1 px-1">
-                  <p className="text-large md:text-h3 font-semibold text-black">
-                    발견된 유사 이미지
-                  </p>
-                  <p className="text-small text-gray-700">
-                    시연용 예시 결과로, 썸네일은 샘플 이미지이며 원본 링크는 제공되지 않습니다.
-                  </p>
+                  <p className="text-large md:text-h3 font-semibold text-black">{t.resultsTitle}</p>
+                  <p className="text-small text-gray-700">{t.resultsDemo}</p>
                 </div>
 
                 {isDetectionsPending && (
-                  <p className="text-body-1 px-1 text-gray-700">불러오는 중...</p>
+                  <p className="text-body-1 px-1 text-gray-700">{t.loading}</p>
                 )}
 
                 {isDetectionsError && (
-                  <p className="text-body-1 px-1 text-red-500">탐지 결과를 불러오지 못했습니다.</p>
+                  <p className="text-body-1 px-1 text-red-500">{t.loadFailed}</p>
                 )}
 
                 {detectionPage && detections.length === 0 && (
-                  <p className="text-body-1 px-1 text-gray-700">
-                    아직 발견된 유사 이미지가 없습니다.
-                  </p>
+                  <p className="text-body-1 px-1 text-gray-700">{t.empty}</p>
                 )}
 
                 {detections.length > 0 && (
@@ -227,11 +218,11 @@ export default function MonitoringPage() {
                         <div className="flex flex-col gap-1">
                           {typeof detection.similarity === "number" && (
                             <p className="text-body-2 md:text-body-1 font-semibold text-black">
-                              유사도 {Math.round(detection.similarity * 100)}%
+                              {t.similarity(Math.round(detection.similarity * 100))}
                             </p>
                           )}
                           <p className="text-small text-gray-700">
-                            {formatDateLong(detection.detectedAt)}
+                            {formatDateLong(detection.detectedAt, locale)}
                           </p>
                           {detection.sourceUrl && (
                             <a
@@ -240,7 +231,7 @@ export default function MonitoringPage() {
                               rel="noreferrer"
                               className="text-secondary-600 text-small break-all underline"
                             >
-                              원본 보기
+                              {t.viewSource}
                             </a>
                           )}
                         </div>
@@ -257,7 +248,7 @@ export default function MonitoringPage() {
                       disabled={page === 0}
                       className="text-body-2 text-primary-500 disabled:cursor-not-allowed disabled:text-gray-400"
                     >
-                      이전
+                      {t.prev}
                     </button>
                     <span className="text-body-2 text-gray-700">
                       {page + 1} / {totalPages}
@@ -268,7 +259,7 @@ export default function MonitoringPage() {
                       disabled={page >= totalPages - 1}
                       className="text-body-2 text-primary-500 disabled:cursor-not-allowed disabled:text-gray-400"
                     >
-                      다음
+                      {t.next}
                     </button>
                   </div>
                 )}
@@ -280,10 +271,10 @@ export default function MonitoringPage() {
       <Footer />
       <ConfirmModal
         open={stopModalOpen}
-        title="모니터링을 중지할까요?"
-        description="중지하면 더 이상 유사 이미지 탐지 결과를 받아볼 수 없습니다."
-        confirmLabel="중지"
-        cancelLabel="취소"
+        title={t.stopTitle}
+        description={t.stopDescription}
+        confirmLabel={t.stopConfirm}
+        cancelLabel={t.cancel}
         onConfirm={() => deleteMutation.mutate()}
         onCancel={() => setStopModalOpen(false)}
       />
