@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createRiskAssessment, type RiskAssessmentResponse } from "@/entities/analysis/api";
 import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
+import { ApiError } from "@/shared/api/axios";
 import { getAccessToken } from "@/shared/lib/authToken";
 import { pollUntil } from "@/shared/lib/poll";
 import { createProtection, downloadProtection, getProtection } from "./analyzeApi";
@@ -15,8 +16,12 @@ import { loadAnalyzeSession, saveAnalyzeSession, type Status } from "./analyzeSe
 
 export type { Status };
 
-function isInternalMessage(message?: string) {
-  return !message || message.includes("X-Anonymous-Id") || message === "인증이 필요합니다.";
+function needsLogin(error: unknown) {
+  if (!(error instanceof Error) || !error.message) return true;
+  return (
+    error instanceof ApiError &&
+    (error.code === "UNAUTHORIZED" || error.code === "ANONYMOUS_ID_REQUIRED")
+  );
 }
 
 export function useAnalyzeFlow() {
@@ -64,7 +69,7 @@ export function useAnalyzeFlow() {
 
   function showError(title: string, error: unknown, guestFallback: string) {
     const message = error instanceof Error ? error.message : undefined;
-    if (getAccessToken() || !isInternalMessage(message)) {
+    if (getAccessToken() || !needsLogin(error)) {
       toast.error(title, { description: message });
       return;
     }

@@ -6,9 +6,19 @@ import {
   getRefreshToken,
   setAuthTokens,
 } from "@/shared/lib/authToken";
-import { defineMessages } from "@/shared/i18n/defineMessages";
 import { htmlLang } from "@/shared/i18n/config";
-import { currentLocale, translate } from "@/shared/i18n/currentLocale";
+import { currentLocale } from "@/shared/i18n/currentLocale";
+import { type ApiErrorCode, errorMessages, isApiErrorCode } from "./errorMessages";
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly code?: ApiErrorCode,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -31,15 +41,6 @@ interface ReissueResponse {
   refreshToken: string;
   accessTokenExpiresIn: number;
 }
-
-const axiosMessages = defineMessages(
-  { unknownError: "알 수 없는 오류" },
-  {
-    en: { unknownError: "Unknown error" },
-    ja: { unknownError: "不明なエラー" },
-    zh: { unknownError: "未知错误" },
-  },
-);
 
 let reissuePromise: Promise<string | null> | null = null;
 
@@ -69,7 +70,7 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (res) => res,
-  async (error: AxiosError<{ message?: string }>) => {
+  async (error: AxiosError<{ message?: string; code?: string }>) => {
     const original = error.config as RetryableConfig | undefined;
     const isAuthEndpoint = original?.url?.includes("/api/v1/auth/");
 
@@ -91,8 +92,17 @@ api.interceptors.response.use(
       }
     }
 
-    const message =
-      error.response?.data?.message ?? error.message ?? translate(axiosMessages).unknownError;
-    return Promise.reject(new Error(message));
+    const locale = currentLocale();
+    const t = errorMessages[locale];
+    const data = error.response?.data;
+    const code = isApiErrorCode(data?.code) ? data.code : undefined;
+    const serverMessage = locale === "ko" ? data?.message : undefined;
+    const fallback = error.response
+      ? t.unknown
+      : error.code === AxiosError.ECONNABORTED
+        ? t.timeout
+        : t.network;
+    const message = serverMessage ?? (code ? t.codes[code] : undefined) ?? fallback;
+    return Promise.reject(new ApiError(message, code));
   },
 );
