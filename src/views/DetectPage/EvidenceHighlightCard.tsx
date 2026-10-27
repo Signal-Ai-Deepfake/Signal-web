@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import type { DetectResult } from "./types";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { detectMessages } from "./messages";
 
 interface EvidenceHighlightCardProps {
   highlights: DetectResult["evidenceHighlights"];
@@ -12,12 +14,13 @@ export default function EvidenceHighlightCard({
   highlights,
   previewUrl,
 }: EvidenceHighlightCardProps) {
+  const { result } = useT(detectMessages);
   const [activeIndex, setActiveIndex] = useState(0);
   const active = highlights[activeIndex];
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-4 rounded-lg border border-gray-300 p-5 md:px-8 md:py-6 lg:w-[800px]">
-      <p className="text-body-1 font-semibold text-black">AI 판단 근거 하이라이트</p>
+      <p className="text-body-1 font-semibold text-black">{result.evidenceTitle}</p>
       <div className="flex w-full overflow-x-auto [scrollbar-width:none]">
         {highlights.map((highlight, index) => {
           const isActive = index === activeIndex;

@@ -1,17 +1,22 @@
+"use client";
+
 import BotOutline from "@/shared/asset/svg/BotOutline";
 import Warning from "@/shared/asset/svg/Warning";
 import RiskScoreGauge from "@/shared/ui/RiskScoreGauge";
 import type { DetectResult } from "./types";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { detectMessages } from "./messages";
 
 interface OverallRiskCardProps {
   result: DetectResult;
 }
 
 export default function OverallRiskCard({ result }: OverallRiskCardProps) {
+  const t = useT(detectMessages).result;
   return (
     <div className="flex w-full flex-col items-center gap-4 rounded-lg border border-gray-300 p-5 md:p-6 lg:w-[424px]">
       <div className="flex items-center gap-1">
-        <p className="text-body-1 font-semibold text-black">종합 위험도</p>
+        <p className="text-body-1 font-semibold text-black">{t.overall}</p>
         <span className="text-gray-600 [&>svg]:h-5 [&>svg]:w-5">
           <Warning />
         </span>
@@ -31,7 +36,7 @@ export default function OverallRiskCard({ result }: OverallRiskCardProps) {
         </span>
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-1">
-            <p className="text-secondary-600 text-body-2 font-medium">모델 판단 신뢰도</p>
+            <p className="text-secondary-600 text-body-2 font-medium">{t.confidence}</p>
             <span className="text-secondary-600 [&>svg]:h-[18px] [&>svg]:w-[18px]">
               <Warning />
             </span>
