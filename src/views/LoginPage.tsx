@@ -87,11 +87,11 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="flex flex-col gap-5">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2">
               <Checkbox checked={keepLoggedIn} onChange={setKeepLoggedIn} label={t.keepLoggedIn} />
               <Link
                 href="/forgot-password"
-                className="text-small md:text-body-2 cursor-pointer whitespace-nowrap text-gray-600"
+                className="text-small md:text-body-2 ml-auto cursor-pointer whitespace-nowrap text-gray-600"
               >
                 {t.forgotPassword}
               </Link>
