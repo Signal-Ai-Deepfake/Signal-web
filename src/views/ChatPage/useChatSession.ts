@@ -98,7 +98,6 @@ export function useChatSession(canSave: boolean) {
           content: response.reply,
           createdAt: Date.now(),
           typing: true,
-          actions: resolveReplyActions(response.reply, t),
         },
       ]);
       try {
@@ -124,9 +123,11 @@ export function useChatSession(canSave: boolean) {
   }
 
   return {
-    messages: messages.map((message, index) =>
-      index === 0 && message.role === "bot" ? { ...message, content: t.greeting } : message,
-    ),
+    messages: messages.map((message, index) => {
+      if (message.role !== "bot") return message;
+      if (index === 0) return { ...message, content: t.greeting };
+      return { ...message, actions: resolveReplyActions(message.content, t) };
+    }),
     summary,
     isSending,
     hasStarted: messages.length > INITIAL_MESSAGE_COUNT,

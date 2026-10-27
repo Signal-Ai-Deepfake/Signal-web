@@ -21,7 +21,6 @@ import { MOCK_RESULT } from "./mockResult";
 import type { DetectResult, DetectStatus } from "./types";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { detectMessages } from "./messages";
-import { translate } from "@/shared/i18n/currentLocale";
 
 function formatEvidenceType(type: string, labels: Record<string, string>): string {
   if (labels[type]) return labels[type];
@@ -33,8 +32,10 @@ function formatEvidenceType(type: string, labels: Record<string, string>): strin
     .join(" ");
 }
 
-function mapDetection(data: DeepfakeDetectionResponse): DetectResult {
-  const t = translate(detectMessages);
+function mapDetection(
+  data: DeepfakeDetectionResponse,
+  t: (typeof detectMessages)[keyof typeof detectMessages],
+): DetectResult {
   const verdict = data.verdict ?? "SUSPICIOUS";
   const confidencePercent = Math.round((data.confidence ?? 0) * 100);
   const overallScore = data.riskScore ?? confidencePercent;
@@ -70,7 +71,8 @@ export default function DetectPage() {
   const [status, setStatus] = useState<DetectStatus>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [result, setResult] = useState<DetectResult>(MOCK_RESULT);
+  const [detection, setDetection] = useState<DeepfakeDetectionResponse | null>(null);
+  const result: DetectResult = detection ? mapDetection(detection, t) : MOCK_RESULT;
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -115,7 +117,7 @@ export default function DetectPage() {
         });
         return;
       }
-      setResult(mapDetection(data));
+      setDetection(data);
       setStatus("result");
     },
     onError: (error) => {

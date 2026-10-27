@@ -1,4 +1,4 @@
-import { translate } from "@/shared/i18n/currentLocale";
+import { useT } from "@/shared/i18n/I18nProvider";
 import { chatMessages } from "./messages";
 interface Inline {
   text: string;
@@ -130,6 +130,7 @@ function limitBlocks(blocks: Block[], limit: number): Block[] {
 }
 
 function InlineText({ line }: { line: Inline[] }) {
+  const t = useT(chatMessages);
   return (
     <>
       {line.map((inline, index) =>
@@ -137,7 +138,7 @@ function InlineText({ line }: { line: Inline[] }) {
           <a
             key={index}
             href={`tel:${inline.text.replace(/-/g, "")}`}
-            aria-label={translate(chatMessages).call(inline.text)}
+            aria-label={t.call(inline.text)}
             className="text-primary-500 font-bold underline underline-offset-2"
           >
             {inline.text}

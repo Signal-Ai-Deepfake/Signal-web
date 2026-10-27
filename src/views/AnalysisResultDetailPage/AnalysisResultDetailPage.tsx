@@ -16,7 +16,7 @@ import ResultMobileHeader from "./ResultMobileHeader";
 import ResultSummaryCard from "./ResultSummaryCard";
 import RiskFactorList from "./RiskFactorList";
 import RiskLevelCard from "./RiskLevelCard";
-import { useT } from "@/shared/i18n/I18nProvider";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { resultMessages } from "./messages";
 import { translate } from "@/shared/i18n/currentLocale";
 import { uiMessages } from "@/shared/ui/messages";
@@ -65,6 +65,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
   const isLoggedIn = useIsLoggedIn();
   const t = useT(resultMessages);
   const ui = useT(uiMessages);
+  const { locale } = useLocale();
 
   const {
     data: assessment,
@@ -77,7 +78,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
     enabled: Number.isFinite(assessmentId),
   });
 
-  const result = assessment ? mapAssessment(assessment) : null;
+  const result = assessment ? mapAssessment(assessment, locale) : null;
 
   return (
     <>

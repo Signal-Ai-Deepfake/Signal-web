@@ -4,12 +4,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { createRiskAssessment } from "@/entities/analysis/api";
+import { createRiskAssessment, type RiskAssessmentResponse } from "@/entities/analysis/api";
 import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
 import { getAccessToken } from "@/shared/lib/authToken";
 import { pollUntil } from "@/shared/lib/poll";
 import { createProtection, downloadProtection, getProtection } from "./analyzeApi";
-import { useT } from "@/shared/i18n/I18nProvider";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { analyzeMessages } from "./messages";
 
 export type Status = "idle" | "selected" | "analyzing" | "error" | "result";
@@ -20,6 +20,7 @@ function isInternalMessage(message?: string) {
 
 export function useAnalyzeFlow() {
   const t = useT(analyzeMessages);
+  const { locale } = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [status, setStatus] = useState<Status>("idle");
@@ -28,7 +29,8 @@ export function useAnalyzeFlow() {
   const [showDetails, setShowDetails] = useState(false);
   const [isProtected, setIsProtected] = useState(false);
   const [isSimulatedProtection, setIsSimulatedProtection] = useState(false);
-  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [assessment, setAssessment] = useState<RiskAssessmentResponse | null>(null);
+  const result: AnalysisResult | null = assessment ? mapAssessment(assessment, locale) : null;
   const [assessmentId, setAssessmentId] = useState<number | null>(null);
   const [protectionId, setProtectionId] = useState<number | null>(null);
 
@@ -56,7 +58,7 @@ export function useAnalyzeFlow() {
     setShowDetails(false);
     setIsProtected(false);
     setIsSimulatedProtection(false);
-    setResult(null);
+    setAssessment(null);
     setAssessmentId(null);
     setProtectionId(null);
     setStatus("selected");
@@ -69,7 +71,7 @@ export function useAnalyzeFlow() {
     setShowDetails(false);
     setIsProtected(false);
     setIsSimulatedProtection(false);
-    setResult(null);
+    setAssessment(null);
     setAssessmentId(null);
     setProtectionId(null);
     setStatus("idle");
@@ -88,7 +90,7 @@ export function useAnalyzeFlow() {
       queryClient.setQueryData(["riskAssessments", data.assessmentId], data);
       queryClient.invalidateQueries({ queryKey: ["riskAssessments"], exact: true });
       setAssessmentId(data.assessmentId);
-      setResult(mapAssessment(data));
+      setAssessment(data);
       setStatus("result");
     },
     onError: (error) => {

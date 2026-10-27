@@ -8,7 +8,7 @@ import ImageSearch from "@/shared/asset/svg/ImageSearch";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 import type { RiskFactor } from "@/shared/ui/RiskFactorCard";
 import { defineMessages } from "@/shared/i18n/defineMessages";
-import { translate } from "@/shared/i18n/currentLocale";
+import type { Locale } from "@/shared/i18n/config";
 
 export type DisplayRiskLevel = "안전" | "위험" | "주의";
 
@@ -157,9 +157,9 @@ function resolveFactorIcon(type: string, label: string): ComponentType {
   return matched?.[1] ?? ScanFace;
 }
 
-export function mapAssessment(data: RiskAssessmentResponse): AnalysisResult {
-  const t = translate(assessmentMessages);
-  const labels = translate(factorLabelMessages);
+export function mapAssessment(data: RiskAssessmentResponse, locale: Locale): AnalysisResult {
+  const t = assessmentMessages[locale];
+  const labels = factorLabelMessages[locale];
   return {
     score: data.overallScore,
     level: RISK_LEVEL_LABEL[data.overallRiskLevel],
