@@ -149,7 +149,7 @@ export const widgetMessages = defineMessages(
     },
     legal: {
       toc: "목차",
-      koreanOnly: "",
+      translationNotice: "",
     },
     scrollToTop: "맨 위로",
   },
@@ -307,7 +307,8 @@ export const widgetMessages = defineMessages(
       },
       legal: {
         toc: "Contents",
-        koreanOnly: "This document is provided in Korean only.",
+        translationNotice:
+          "This translation is provided for reference. If it differs from the Korean version, the Korean version prevails.",
       },
       scrollToTop: "Back to top",
     },
@@ -454,7 +455,8 @@ export const widgetMessages = defineMessages(
       },
       legal: {
         toc: "目次",
-        koreanOnly: "この文書は韓国語でのみ提供されています。",
+        translationNotice:
+          "この翻訳は参考用です。韓国語版と内容が異なる場合は、韓国語版が優先されます。",
       },
       scrollToTop: "トップへ戻る",
     },
@@ -566,7 +568,7 @@ export const widgetMessages = defineMessages(
       },
       legal: {
         toc: "目录",
-        koreanOnly: "本文件仅提供韩语版本。",
+        translationNotice: "本译文仅供参考。如与韩语版本内容不一致，以韩语版本为准。",
       },
       scrollToTop: "回到顶部",
     },

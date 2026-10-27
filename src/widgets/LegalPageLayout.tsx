@@ -50,9 +50,9 @@ export default function LegalPageLayout({
             </div>
           </div>
 
-          {t.legal.koreanOnly && (
+          {t.legal.translationNotice && (
             <p className="bg-primary-50 text-primary-500 text-small rounded-lg px-4 py-3 font-medium">
-              {t.legal.koreanOnly}
+              {t.legal.translationNotice}
             </p>
           )}
 
