@@ -19,6 +19,9 @@ import PageHeading from "@/shared/ui/PageHeading";
 import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
+import { formatDateLong } from "@/shared/i18n/format";
+import { mypageMessages } from "@/views/mypageMessages";
 
 interface ReportHistoryDetailPageProps {
   id: string;
@@ -33,38 +36,34 @@ interface EditableFields {
   additionalNotes: string;
 }
 
-function formatDateLong(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-}
-
 function ReportContentView({ report }: { report: ReportResponse }) {
+  const { reports: t } = useT(mypageMessages);
+  const { locale } = useLocale();
   const sourceUrl = report.sourceUrls?.[0];
   return (
     <div className="text-small md:text-body-1 text-gray-650 flex flex-col gap-4 break-words md:gap-6">
       <p>
-        피해 개요
+        {t.overview}
         <br />
-        {report.damageType ?? "신고"} 피해가 발생한 것으로 보여 신고합니다.
+        {t.overviewText(report.damageType ?? t.itemFallback)}
       </p>
       <p>
-        피해 발생 시점
+        {t.incidentDate}
         <br />
-        {report.incidentDate ? formatDateLong(report.incidentDate) : "미입력"}
+        {report.incidentDate ? formatDateLong(report.incidentDate, locale) : t.empty2}
       </p>
       <p>
-        피해 유형
+        {t.damageType}
         <br />
-        {report.damageType || "미입력"}
+        {report.damageType || t.empty2}
       </p>
       <p>
-        피해 경로
+        {t.route}
         <br />
-        {report.discoveryRoute || "미입력"}
+        {report.discoveryRoute || t.empty2}
       </p>
       <p>
-        원본 URL
+        {t.url}
         <br />
         {sourceUrl ? (
           <a
@@ -76,32 +75,32 @@ function ReportContentView({ report }: { report: ReportResponse }) {
             {sourceUrl}
           </a>
         ) : (
-          "미입력"
+          t.empty2
         )}
       </p>
       <p className="whitespace-pre-wrap">
-        피해 내용
+        {t.details}
         <br />
-        {report.description || "미입력"}
+        {report.description || t.empty2}
       </p>
       {report.additionalNotes && (
         <p className="whitespace-pre-wrap">
-          추가 전달 사항
+          {t.notes}
           <br />
           {report.additionalNotes}
         </p>
       )}
       <p>
-        증거 자료
+        {t.evidence}
         <br />
         {report.evidenceIds && report.evidenceIds.length > 0
-          ? `첨부 파일 ${report.evidenceIds.length}건`
-          : "첨부된 자료 없음"}
+          ? t.evidenceCount(report.evidenceIds.length)
+          : t.noEvidence}
       </p>
       <p>
-        요청 사항
+        {t.request}
         <br />
-        해당 게시물의 삭제, 추가 확산 방지 및 필요한 조치를 요청합니다.
+        {t.requestText}
       </p>
     </div>
   );
@@ -109,6 +108,8 @@ function ReportContentView({ report }: { report: ReportResponse }) {
 
 export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageProps) {
   const reportId = Number(id);
+  const { reports: t, loading, cancel } = useT(mypageMessages);
+  const { locale } = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
@@ -132,10 +133,10 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
     onSuccess: (updated) => {
       queryClient.setQueryData(["reports", reportId], updated);
       setIsEditing(false);
-      toast.success("변경사항이 저장되었습니다.");
+      toast.success(t.saved);
     },
     onError: (mutationError) => {
-      toast.error("변경사항 저장에 실패했습니다.", {
+      toast.error(t.saveFailed, {
         description: mutationError instanceof Error ? mutationError.message : undefined,
       });
     },
@@ -147,12 +148,12 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
       queryClient.removeQueries({ queryKey: ["reports", reportId] });
       queryClient.invalidateQueries({ queryKey: ["reports"] });
       setDeleteModalOpen(false);
-      toast.success("신고 문서를 삭제했습니다.");
+      toast.success(t.deleted);
       router.push("/mypage/reports");
     },
     onError: (mutationError) => {
       setDeleteModalOpen(false);
-      toast.error("신고 문서 삭제에 실패했습니다.", {
+      toast.error(t.deleteFailed, {
         description: mutationError instanceof Error ? mutationError.message : undefined,
       });
     },
@@ -167,11 +168,11 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
       );
       queryClient.invalidateQueries({ queryKey: ["reports", reportId] });
       setFinalizeModalOpen(false);
-      toast.success("신고 문서를 확정했습니다.");
+      toast.success(t.finalizedToast);
     },
     onError: (mutationError) => {
       setFinalizeModalOpen(false);
-      toast.error("신고 문서 확정에 실패했습니다.", {
+      toast.error(t.finalizeFailed, {
         description: mutationError instanceof Error ? mutationError.message : undefined,
       });
     },
@@ -182,7 +183,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
       <>
         <SiteHeader />
         <main className="flex w-full flex-col items-center bg-white px-5 py-20">
-          <p className="text-body-1 text-gray-700">잘못된 신고 문서 주소입니다.</p>
+          <p className="text-body-1 text-gray-700">{t.invalidId}</p>
         </main>
         <Footer />
       </>
@@ -233,26 +234,23 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
       <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
           <PageHeading
-            title="신고 문서"
+            title={t.detailTitle}
             description={
               report
-                ? `${formatDateLong(report.createdAt)} 생성 · ${
-                    report.status === "FINALIZED" ? "제출 완료" : "기관 제출용 초안"
+                ? `${t.created(formatDateLong(report.createdAt, locale))} · ${
+                    report.status === "FINALIZED" ? t.finalized : t.draftStatus
                   }`
                 : undefined
             }
-            breadcrumbs={[
-              { label: "신고 문서 내역", href: "/mypage/reports" },
-              { label: "신고 문서 내역 상세" },
-            ]}
+            breadcrumbs={[{ label: t.title, href: "/mypage/reports" }, { label: t.detailCrumb }]}
             backHref="/mypage/reports"
           />
 
-          {isPending && <p className="text-body-1 text-gray-700">불러오는 중...</p>}
+          {isPending && <p className="text-body-1 text-gray-700">{loading}</p>}
 
           {isError && (
             <p className="text-body-1 text-red-500">
-              신고 문서를 불러오지 못했습니다.
+              {t.detailLoadFailed}
               {error instanceof Error ? ` (${error.message})` : ""}
             </p>
           )}
@@ -261,23 +259,15 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
             <>
               <div className="flex w-full flex-col items-center gap-6 rounded-2xl border border-gray-300 p-5 sm:p-8">
                 <div className="flex w-full max-w-[960px] flex-col gap-1">
-                  <p className="text-h3 font-semibold text-black">신고 문서 내용을 확인해 주세요</p>
-                  {isEditing && (
-                    <p className="text-body-2 text-gray-700">
-                      아래 내용은 자유롭게 수정할 수 있습니다.
-                    </p>
-                  )}
+                  <p className="text-h3 font-semibold text-black">{t.reviewTitle}</p>
+                  {isEditing && <p className="text-body-2 text-gray-700">{t.reviewDescription}</p>}
                 </div>
 
-                <NoticeBanner className="w-full max-w-[960px]">
-                  AI가 입력 내용을 정리한 문서입니다. 실제 제출 전 날짜, URL, 피해 내용을 한 번 더
-                  확인해 주세요.
-                </NoticeBanner>
+                <NoticeBanner className="w-full max-w-[960px]">{t.aiNotice}</NoticeBanner>
 
                 {report.documentSimulated ? (
                   <p className="text-small md:text-body-2 w-full max-w-[960px] text-gray-700">
-                    신고 문서 파일(PDF) 생성은 준비 중입니다. 아래 내용을 확인해 기관에 제출해
-                    주세요.
+                    {t.fileSimulated}
                   </p>
                 ) : (
                   report.documentUrl && (
@@ -287,18 +277,18 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                       rel="noreferrer"
                       className="text-secondary-600 text-body-2 w-full max-w-[960px] underline"
                     >
-                      생성된 신고 문서 파일 보기
+                      {t.viewFile}
                     </a>
                   )
                 )}
 
                 <div className="flex w-full max-w-[960px] flex-col gap-2">
-                  <p className="text-body-2 md:text-body-1 text-black">신고 내용</p>
+                  <p className="text-body-2 md:text-body-1 text-black">{t.content}</p>
                   {isEditing && draft ? (
                     <div className="flex flex-col divide-y divide-gray-200 rounded-lg border border-gray-300">
                       <div className="flex flex-col gap-1.5 p-3 md:p-4">
                         <label className="text-body-2 md:text-body-1 font-semibold text-black">
-                          피해 발생 시점
+                          {t.incidentDate}
                         </label>
                         <input
                           type="date"
@@ -311,7 +301,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                       </div>
                       <div className="flex flex-col gap-1.5 p-3 md:p-4">
                         <label className="text-body-2 md:text-body-1 font-semibold text-black">
-                          피해 유형
+                          {t.damageType}
                         </label>
                         <input
                           type="text"
@@ -324,7 +314,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                       </div>
                       <div className="flex flex-col gap-1.5 p-3 md:p-4">
                         <label className="text-body-2 md:text-body-1 font-semibold text-black">
-                          피해 경로
+                          {t.route}
                         </label>
                         <input
                           type="text"
@@ -337,7 +327,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                       </div>
                       <div className="flex flex-col gap-1.5 p-3 md:p-4">
                         <label className="text-body-2 md:text-body-1 font-semibold text-black">
-                          원본 URL
+                          {t.url}
                         </label>
                         <input
                           type="url"
@@ -350,7 +340,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                       </div>
                       <div className="flex flex-col gap-1.5 p-3 md:p-4">
                         <label className="text-body-2 md:text-body-1 font-semibold text-black">
-                          피해 내용
+                          {t.details}
                         </label>
                         <textarea
                           value={draft.description}
@@ -363,7 +353,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                       </div>
                       <div className="flex flex-col gap-1.5 p-3 md:p-4">
                         <label className="text-body-2 md:text-body-1 font-semibold text-black">
-                          추가 전달 사항
+                          {t.notes}
                         </label>
                         <textarea
                           value={draft.additionalNotes}
@@ -390,7 +380,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                   disabled={deleteMutation.isPending}
                   className="cursor-pointer self-start text-[15px] leading-6 text-red-500 underline disabled:opacity-50"
                 >
-                  신고 문서 삭제
+                  {t.delete}
                 </button>
                 <div className="flex flex-col-reverse gap-2 sm:flex-row">
                   {isEditing ? (
@@ -400,7 +390,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                         onClick={cancelEditing}
                         className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 items-center justify-center rounded border px-6 transition-colors"
                       >
-                        취소
+                        {cancel}
                       </button>
                       <Button
                         type="button"
@@ -408,7 +398,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                         disabled={updateMutation.isPending}
                         onClick={saveEditing}
                       >
-                        {updateMutation.isPending ? "저장 중..." : "변경사항 저장"}
+                        {updateMutation.isPending ? t.saving : t.save}
                       </Button>
                     </>
                   ) : (
@@ -418,7 +408,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                         onClick={startEditing}
                         className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 items-center justify-center rounded border px-6 transition-colors"
                       >
-                        내용수정
+                        {t.edit}
                       </button>
                       {report.status === "DRAFT" && (
                         <button
@@ -427,11 +417,11 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                           disabled={finalizeMutation.isPending}
                           className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 items-center justify-center rounded border px-6 transition-colors disabled:opacity-50"
                         >
-                          {finalizeMutation.isPending ? "확정하는 중..." : "신고 문서 확정하기"}
+                          {finalizeMutation.isPending ? t.finalizing : t.finalize}
                         </button>
                       )}
                       <Button type="button" variant="primary" onClick={handleFindAgency}>
-                        적합한 신고 기관 확인하기
+                        {t.findAgency}
                       </Button>
                     </>
                   )}
@@ -444,19 +434,19 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
       <Footer />
       <ConfirmModal
         open={deleteModalOpen}
-        title="신고 문서를 삭제할까요?"
-        description="삭제한 신고 문서는 복구할 수 없습니다."
-        confirmLabel="삭제"
-        cancelLabel="취소"
+        title={t.deleteTitle}
+        description={t.deleteDescription}
+        confirmLabel={t.deleteConfirm}
+        cancelLabel={cancel}
         onConfirm={() => deleteMutation.mutate()}
         onCancel={() => setDeleteModalOpen(false)}
       />
       <ConfirmModal
         open={finalizeModalOpen}
-        title="신고 문서를 확정할까요?"
-        description="확정하면 더 이상 초안 수정 이력이 아닌 제출용 문서로 표시됩니다."
-        confirmLabel="확정"
-        cancelLabel="취소"
+        title={t.finalizeTitle}
+        description={t.finalizeDescription}
+        confirmLabel={t.finalizeConfirm}
+        cancelLabel={cancel}
         onConfirm={() => finalizeMutation.mutate()}
         onCancel={() => setFinalizeModalOpen(false)}
       />

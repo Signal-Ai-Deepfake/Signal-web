@@ -21,6 +21,8 @@ import { clearAuthTokens } from "@/shared/lib/authToken";
 import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { profileMessages } from "./messages";
 
 interface ProfileDraft {
   name: string;
@@ -28,14 +30,11 @@ interface ProfileDraft {
   gender: AuthGender;
 }
 
-const genderOptions: { value: AuthGender; label: string }[] = [
-  { value: "MALE", label: "남" },
-  { value: "FEMALE", label: "여" },
-  { value: "NONE", label: "선택 안함" },
-];
+const genderOptions: AuthGender[] = ["MALE", "FEMALE", "NONE"];
 
 export default function ProfileEditPage() {
   const router = useRouter();
+  const t = useT(profileMessages);
   const queryClient = useQueryClient();
   const { data: profile, isLoading } = useMyProfile();
 
@@ -57,10 +56,10 @@ export default function ProfileEditPage() {
     mutationFn: uploadProfileImage,
     onSuccess: (data) => {
       setProfileImageUrl(data.profileImageUrl);
-      toast.success("프로필 사진을 변경했습니다.");
+      toast.success(t.photoChanged);
     },
     onError: (error) => {
-      toast.error("프로필 사진 변경에 실패했습니다.", {
+      toast.error(t.photoFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -70,10 +69,10 @@ export default function ProfileEditPage() {
     mutationFn: updateMyProfile,
     onSuccess: (data) => {
       queryClient.setQueryData(MY_PROFILE_QUERY_KEY, data);
-      toast.success("변경사항이 저장되었습니다.");
+      toast.success(t.saved);
     },
     onError: (error) => {
-      toast.error("변경사항 저장에 실패했습니다.", {
+      toast.error(t.saveFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -83,11 +82,11 @@ export default function ProfileEditPage() {
     mutationFn: deleteMyAccount,
     onSuccess: () => {
       clearAuthTokens();
-      toast.success("탈퇴가 완료되었습니다.");
+      toast.success(t.withdrawn);
       router.push("/");
     },
     onError: (error) => {
-      toast.error("회원 탈퇴에 실패했습니다.", {
+      toast.error(t.withdrawFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -104,7 +103,7 @@ export default function ProfileEditPage() {
 
   function handleSave() {
     if (!draft || !canSave) {
-      toast.error("이름과 나이를 확인해 주세요.");
+      toast.error(t.checkNameAge);
       return;
     }
     updateProfileMutation.mutate({ name: draft.name, age: ageNumber, gender: draft.gender });
@@ -134,16 +133,14 @@ export default function ProfileEditPage() {
         <div className="flex w-full max-w-[960px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
           <div className="flex flex-col gap-2 md:gap-6">
             <h1 className="text-h3 font-bold text-black md:text-[32px] md:leading-[1.4] md:tracking-[-0.48px]">
-              내 프로필
+              {t.title}
             </h1>
-            <p className="text-small md:text-body-2 break-keep text-gray-700">
-              회원 정보와 프로필을 확인하고 변경할 수 있습니다.
-            </p>
+            <p className="text-small md:text-body-2 break-keep text-gray-700">{t.description}</p>
           </div>
 
           {isLoading || !draft || !profile ? (
             <div className="flex w-full flex-col items-center gap-8 rounded-2xl border border-gray-300 p-5 sm:p-8">
-              <p className="text-body-2 text-gray-700">프로필 정보를 불러오는 중입니다...</p>
+              <p className="text-body-2 text-gray-700">{t.loading}</p>
             </div>
           ) : (
             <div className="flex w-full flex-col gap-6 rounded-2xl border border-gray-300 p-5 sm:p-8 md:gap-8">
@@ -161,8 +158,8 @@ export default function ProfileEditPage() {
                   )}
                 </span>
                 <div className="flex flex-col gap-1">
-                  <p className="text-body-2 font-medium text-black">프로필 사진</p>
-                  <p className="text-caption text-gray-700">JPG, PNG · 최대 5MB</p>
+                  <p className="text-body-2 font-medium text-black">{t.photo}</p>
+                  <p className="text-caption text-gray-700">{t.photoHint}</p>
                   <input
                     ref={photoInputRef}
                     type="file"
@@ -176,40 +173,40 @@ export default function ProfileEditPage() {
                     disabled={uploadPhotoMutation.isPending}
                     className="bg-primary-50 text-primary-500 text-body-2 mt-1 w-fit cursor-pointer rounded px-3 py-1.5 font-medium disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {uploadPhotoMutation.isPending ? "업로드 중..." : "사진 변경"}
+                    {uploadPhotoMutation.isPending ? t.uploading : t.changePhoto}
                   </button>
                 </div>
               </div>
 
               <div className="flex flex-col">
                 <Input
-                  label="이름"
+                  label={t.name}
                   value={draft.name}
                   onChange={(event) =>
                     setDraft((prev) => (prev ? { ...prev, name: event.target.value } : prev))
                   }
                 />
                 <Input
-                  label="나이"
+                  label={t.age}
                   type="number"
                   min={1}
                   value={draft.age}
                   onChange={(event) =>
                     setDraft((prev) => (prev ? { ...prev, age: event.target.value } : prev))
                   }
-                  error={!isAgeValid ? "나이를 올바르게 입력해 주세요." : undefined}
+                  error={!isAgeValid ? t.ageInvalid : undefined}
                 />
-                <Input label="이메일" type="email" value={profile.email} disabled />
+                <Input label={t.email} type="email" value={profile.email} disabled />
                 <div className="flex flex-col gap-2">
-                  <p className="text-body-1 px-1 text-black">성별</p>
+                  <p className="text-body-1 px-1 text-black">{t.genderLabel}</p>
                   <div className="flex flex-wrap items-center gap-6 sm:gap-10">
                     {genderOptions.map((option) => (
                       <GenderOption
-                        key={option.value}
-                        label={option.label}
-                        selected={draft.gender === option.value}
+                        key={option}
+                        label={t.gender[option]}
+                        selected={draft.gender === option}
                         onSelect={() =>
-                          setDraft((prev) => (prev ? { ...prev, gender: option.value } : prev))
+                          setDraft((prev) => (prev ? { ...prev, gender: option } : prev))
                         }
                       />
                     ))}
@@ -223,7 +220,7 @@ export default function ProfileEditPage() {
                   onClick={handleCancel}
                   className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-[50px] cursor-pointer items-center justify-center rounded border px-6 transition-colors"
                 >
-                  취소
+                  {t.cancel}
                 </button>
                 <Button
                   type="button"
@@ -232,7 +229,7 @@ export default function ProfileEditPage() {
                   disabled={!canSave || updateProfileMutation.isPending}
                   className="h-[50px]"
                 >
-                  {updateProfileMutation.isPending ? "저장 중..." : "변경사항 저장"}
+                  {updateProfileMutation.isPending ? t.saving : t.save}
                 </Button>
               </div>
             </div>
@@ -240,17 +237,15 @@ export default function ProfileEditPage() {
 
           <div className="flex w-full flex-col items-start gap-4 rounded-xl border border-gray-300 p-5 sm:flex-row sm:items-center sm:justify-between md:px-6">
             <div className="flex flex-col gap-1">
-              <p className="text-body-2 font-medium text-black">회원 탈퇴</p>
-              <p className="text-small text-gray-700">
-                탈퇴하면 저장된 정보와 이용 내역이 삭제됩니다.
-              </p>
+              <p className="text-body-2 font-medium text-black">{t.withdrawTitle}</p>
+              <p className="text-small text-gray-700">{t.withdrawDescription}</p>
             </div>
             <button
               type="button"
               onClick={() => setWithdrawModalOpen(true)}
               className="text-small w-full shrink-0 cursor-pointer rounded-md border border-red-500 px-3.5 py-2.5 text-red-500 sm:w-auto"
             >
-              회원 탈퇴
+              {t.withdrawTitle}
             </button>
           </div>
         </div>
@@ -258,10 +253,10 @@ export default function ProfileEditPage() {
       <Footer />
       <ConfirmModal
         open={withdrawModalOpen}
-        title="정말 탈퇴하시겠습니까?"
-        description="탈퇴하면 저장된 정보와 이용 내역이 모두 삭제되며 되돌릴 수 없습니다."
-        confirmLabel="탈퇴하기"
-        cancelLabel="취소"
+        title={t.withdrawConfirmTitle}
+        description={t.withdrawConfirmDescription}
+        confirmLabel={t.withdrawConfirm}
+        cancelLabel={t.cancel}
         onConfirm={handleWithdrawConfirm}
         onCancel={() => setWithdrawModalOpen(false)}
       />
