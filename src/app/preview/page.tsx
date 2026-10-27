@@ -1,3 +1,5 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import Bot from "@/shared/asset/svg/Bot";
 import Chart from "@/shared/asset/svg/Chart";
