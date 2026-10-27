@@ -1,3 +1,5 @@
+"use client";
+
 import Eye from "@/shared/asset/svg/Eye";
 import EyeOff from "@/shared/asset/svg/EyeOff";
 import LockOutline from "@/shared/asset/svg/LockOutline";
@@ -5,6 +7,8 @@ import Mail from "@/shared/asset/svg/Mail";
 import Button from "@/shared/ui/Button";
 import Input from "@/shared/ui/Input";
 import StepHeader from "@/shared/ui/StepHeader";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 interface StepNewPasswordProps {
   email: string;
@@ -37,12 +41,13 @@ export default function StepNewPassword({
   onBack,
   onNext,
 }: StepNewPasswordProps) {
+  const t = useT(authMessages);
   return (
     <>
-      <StepHeader title="새 비밀번호 설정" onBack={onBack} />
+      <StepHeader title={t.reset.newPasswordTitle} onBack={onBack} />
       <div className="flex w-full flex-col gap-3">
         <Input
-          label="이메일"
+          label={t.email}
           icon={Mail}
           value={email}
           disabled
@@ -50,53 +55,49 @@ export default function StepNewPassword({
             <button
               type="button"
               onClick={onChangeEmail}
-              className="text-small cursor-pointer text-gray-600 shrink-0"
+              className="text-small shrink-0 cursor-pointer text-gray-600"
             >
-              변경
+              {t.change}
             </button>
           }
         />
         <Input
-          label="새 비밀번호"
+          label={t.reset.newPassword}
           icon={LockOutline}
           type={showNewPassword ? "text" : "password"}
-          placeholder="새 비밀번호를 입력해 주세요."
+          placeholder={t.reset.newPasswordPlaceholder}
           value={newPassword}
           onChange={(event) => onNewPasswordChange(event.target.value)}
-          error={
-            newPassword.length > 0 && newPassword.length < 8
-              ? "비밀번호는 8자 이상이어야 합니다."
-              : undefined
-          }
+          error={newPassword.length > 0 && newPassword.length < 8 ? t.passwordTooShort : undefined}
           rightSlot={
             <button
               type="button"
               onClick={onToggleNewPassword}
-              className="cursor-pointer text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5"
-              aria-label={showNewPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
+              className="shrink-0 cursor-pointer text-gray-600 [&>svg]:h-5 [&>svg]:w-5"
+              aria-label={showNewPassword ? t.hidePassword : t.showPassword}
             >
               {showNewPassword ? <Eye /> : <EyeOff />}
             </button>
           }
         />
         <Input
-          label="새 비밀번호 확인"
+          label={t.reset.newPasswordConfirm}
           icon={LockOutline}
           type={showNewPasswordConfirm ? "text" : "password"}
-          placeholder="새 비밀번호를 다시 입력해 주세요."
+          placeholder={t.reset.newPasswordConfirmPlaceholder}
           value={newPasswordConfirm}
           onChange={(event) => onNewPasswordConfirmChange(event.target.value)}
           error={
             newPasswordConfirm.length > 0 && newPasswordConfirm !== newPassword
-              ? "비밀번호가 일치하지 않습니다."
+              ? t.passwordMismatch
               : undefined
           }
           rightSlot={
             <button
               type="button"
               onClick={onToggleNewPasswordConfirm}
-              className="cursor-pointer text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5"
-              aria-label={showNewPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 표시"}
+              className="shrink-0 cursor-pointer text-gray-600 [&>svg]:h-5 [&>svg]:w-5"
+              aria-label={showNewPasswordConfirm ? t.hidePassword : t.showPassword}
             >
               {showNewPasswordConfirm ? <Eye /> : <EyeOff />}
             </button>
@@ -109,7 +110,7 @@ export default function StepNewPassword({
           disabled={!canProceed}
           onClick={onNext}
         >
-          다음
+          {t.next}
         </Button>
       </div>
     </>

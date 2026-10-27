@@ -16,9 +16,12 @@ import Input from "@/shared/ui/Input";
 import AuthPageShell, { authCardClass } from "@/widgets/AuthPageShell";
 import { login } from "@/entities/user/api";
 import { setAuthTokens } from "@/shared/lib/authToken";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { loginMessages } from "@/views/loginMessages";
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useT(loginMessages);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,11 +31,11 @@ export default function LoginPage() {
     mutationFn: login,
     onSuccess: (data) => {
       setAuthTokens(data.accessToken, data.refreshToken);
-      toast.success("로그인되었습니다.");
+      toast.success(t.success);
       router.push("/");
     },
     onError: (error) => {
-      toast.error("로그인에 실패했습니다.", {
+      toast.error(t.failed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -51,23 +54,23 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="flex w-full flex-col">
           <div className="flex flex-col gap-3">
             <div className="flex flex-col items-center gap-2 text-center">
-              <h1 className="text-h3 font-bold text-black md:mt-8">로그인</h1>
-              <p className="text-body-2 text-gray-800">Signal 계정으로 로그인 하세요.</p>
+              <h1 className="text-h3 font-bold text-black md:mt-8">{t.title}</h1>
+              <p className="text-body-2 text-gray-800">{t.subtitle}</p>
             </div>
             <div className="flex flex-col gap-1">
               <Input
-                label="이메일"
+                label={t.email}
                 icon={Mail}
                 type="email"
-                placeholder="이메일 주소를 입력해 주세요."
+                placeholder={t.emailPlaceholder}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
               <Input
-                label="비밀번호"
+                label={t.password}
                 icon={LockOutline}
                 type={showPassword ? "text" : "password"}
-                placeholder="비밀번호를 입력해 주세요."
+                placeholder={t.passwordPlaceholder}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 rightSlot={
@@ -75,7 +78,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
                     className="shrink-0 cursor-pointer text-gray-600 [&>svg]:h-5 [&>svg]:w-5"
-                    aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
+                    aria-label={showPassword ? t.hidePassword : t.showPassword}
                   >
                     {showPassword ? <Eye /> : <EyeOff />}
                   </button>
@@ -85,29 +88,25 @@ export default function LoginPage() {
           </div>
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between gap-3">
-              <Checkbox
-                checked={keepLoggedIn}
-                onChange={setKeepLoggedIn}
-                label="로그인 상태 유지"
-              />
+              <Checkbox checked={keepLoggedIn} onChange={setKeepLoggedIn} label={t.keepLoggedIn} />
               <Link
                 href="/forgot-password"
                 className="text-small md:text-body-2 cursor-pointer whitespace-nowrap text-gray-600"
               >
-                비밀번호를 잊으셨나요?
+                {t.forgotPassword}
               </Link>
             </div>
             <Button type="submit" variant="primary" className="w-full" disabled={!canSubmit}>
-              {loginMutation.isPending ? "로그인 중..." : "로그인 하기"}
+              {loginMutation.isPending ? t.submitting : t.submit}
             </Button>
           </div>
         </form>
         <div className="flex flex-col items-center gap-5 md:mb-8">
           <div className="h-px w-full bg-gray-300" />
           <p className="text-body-2">
-            <span className="text-gray-650">계정이 없으신가요? </span>
+            <span className="text-gray-650">{t.noAccount}</span>
             <Link href="/signup" className="text-secondary-500 cursor-pointer underline">
-              회원가입
+              {t.signup}
             </Link>
           </p>
         </div>

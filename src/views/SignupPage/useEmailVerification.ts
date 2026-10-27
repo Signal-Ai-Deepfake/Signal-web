@@ -4,10 +4,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { sendVerification, verifyCode as verifyCodeRequest } from "@/entities/user/api";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 const CODE_DURATION_SECONDS = 300;
 
 export function useEmailVerification() {
+  const t = useT(authMessages);
   const [email, setEmail] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
   const [verificationToken, setVerificationToken] = useState("");
@@ -28,10 +31,10 @@ export function useEmailVerification() {
     onSuccess: () => {
       setCodeSent(true);
       setSecondsLeft(CODE_DURATION_SECONDS);
-      toast.success("인증번호를 보냈습니다.");
+      toast.success(t.codeSent);
     },
     onError: (error) => {
-      toast.error("인증번호 전송에 실패했습니다.", {
+      toast.error(t.codeSendFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -42,10 +45,10 @@ export function useEmailVerification() {
     onSuccess: (token) => {
       setVerificationToken(token);
       setEmailVerified(true);
-      toast.success("이메일 인증이 완료되었습니다.");
+      toast.success(t.verified);
     },
     onError: (error) => {
-      toast.error("인증번호가 올바르지 않습니다.", {
+      toast.error(t.codeInvalid, {
         description: error instanceof Error ? error.message : undefined,
       });
     },

@@ -14,6 +14,8 @@ import {
 import StepComplete from "./StepComplete";
 import StepEmailCode from "./StepEmailCode";
 import StepNewPassword from "./StepNewPassword";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 const CODE_DURATION_SECONDS = 300;
 
@@ -26,6 +28,7 @@ const STAGE_ORDER: Record<Stage, number> = {
 };
 
 export default function ForgotPasswordPage() {
+  const t = useT(authMessages);
   const router = useRouter();
   const [stage, setStage] = useState<Stage>("email-code");
 
@@ -53,10 +56,10 @@ export default function ForgotPasswordPage() {
     onSuccess: () => {
       setCodeSent(true);
       setSecondsLeft(CODE_DURATION_SECONDS);
-      toast.success("인증번호를 보냈습니다.");
+      toast.success(t.codeSent);
     },
     onError: (error) => {
-      toast.error("인증번호 전송에 실패했습니다.", {
+      toast.error(t.codeSendFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -67,10 +70,10 @@ export default function ForgotPasswordPage() {
     onSuccess: (token) => {
       setVerificationToken(token);
       setStage("new-password");
-      toast.success("이메일 인증이 완료되었습니다.");
+      toast.success(t.verified);
     },
     onError: (error) => {
-      toast.error("인증번호가 올바르지 않습니다.", {
+      toast.error(t.codeInvalid, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -80,10 +83,10 @@ export default function ForgotPasswordPage() {
     mutationFn: () => resetPassword({ email, verificationToken, newPassword, newPasswordConfirm }),
     onSuccess: () => {
       setStage("complete");
-      toast.success("비밀번호가 변경되었습니다.");
+      toast.success(t.reset.changed);
     },
     onError: (error) => {
-      toast.error("비밀번호 변경에 실패했습니다.", {
+      toast.error(t.reset.changeFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
