@@ -1,15 +1,14 @@
+"use client";
+
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import Button from "@/shared/ui/Button";
 import ReportSectionCard from "./ReportSectionCard";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { reportMessages } from "./messages";
 
 export type DamageType = "얼굴 도용" | "온라인 괴롭힘" | "개인정보 유출" | "딥페이크";
 
-const damageTypes: { type: DamageType; description: string }[] = [
-  { type: "얼굴 도용", description: "사진이 동의 없이 사용됐어요." },
-  { type: "온라인 괴롭힘", description: "반복적인 비방이나 협박을 받았어요." },
-  { type: "개인정보 유출", description: "개인정보가 공개되거나 악용됐어요." },
-  { type: "딥페이크", description: "합성 이미지나 영상을 발견했어요." },
-];
+const damageTypes: DamageType[] = ["얼굴 도용", "온라인 괴롭힘", "개인정보 유출", "딥페이크"];
 
 interface Step1TypeSelectProps {
   damageType: DamageType | null;
@@ -18,15 +17,13 @@ interface Step1TypeSelectProps {
 }
 
 export default function Step1TypeSelect({ damageType, onSelect, onNext }: Step1TypeSelectProps) {
+  const t = useT(reportMessages);
   return (
     <div className="flex w-full flex-col items-end gap-6 md:gap-8">
-      <ReportSectionCard
-        step="01"
-        title="어떤 피해를 겪으셨나요?"
-        description="현재 상황과 가장 가까운 항목 하나를 선택해 주세요."
-      >
+      <ReportSectionCard step="01" title={t.step1.title} description={t.step1.description}>
         <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
-          {damageTypes.map(({ type, description }) => {
+          {damageTypes.map((type) => {
+            const { label, description } = t.damageTypes[type];
             const selected = damageType === type;
             return (
               <button
@@ -48,7 +45,7 @@ export default function Step1TypeSelect({ damageType, onSelect, onNext }: Step1T
                   {selected && <span className="bg-primary-500 size-2.5 rounded-full" />}
                 </span>
                 <span className="flex flex-col gap-1">
-                  <span className="text-body-2 font-medium text-black">{type}</span>
+                  <span className="text-body-2 font-medium text-black">{label}</span>
                   <span className="text-small text-gray-800">{description}</span>
                 </span>
               </button>
@@ -63,7 +60,7 @@ export default function Step1TypeSelect({ damageType, onSelect, onNext }: Step1T
         disabled={!damageType}
         onClick={onNext}
       >
-        다음
+        {t.next}
         <span className="[&>svg]:h-6 [&>svg]:w-6">
           <ArrowUp />
         </span>

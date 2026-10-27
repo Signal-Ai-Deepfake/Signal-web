@@ -5,7 +5,9 @@ import Button from "@/shared/ui/Button";
 import DraftCardHeader from "./DraftCardHeader";
 import StepNavigation from "./StepNavigation";
 import type { ReportEvidence } from "./Step2Details";
-import { REQUEST_TEXT, evidenceText, overviewText, type ReportDraft } from "./reportDraft";
+import type { ReportDraft } from "./reportDraft";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { reportMessages } from "./messages";
 
 interface Step3DraftProps {
   draft: ReportDraft;
@@ -42,6 +44,8 @@ export default function Step3Draft({
   submitting = false,
   submitLabel,
 }: Step3DraftProps) {
+  const { draft: d } = useT(reportMessages);
+  const t = useT(reportMessages);
   function update(field: keyof ReportDraft, value: string) {
     onChange({ ...draft, [field]: value });
   }
@@ -50,79 +54,79 @@ export default function Step3Draft({
     <div className="flex w-full flex-col gap-6 md:gap-8">
       <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-300 p-5 md:gap-6 md:p-8">
         <DraftCardHeader
-          title="신고 문서 초안을 확인해 주세요"
-          description="회색 항목은 자동으로 작성되며, 나머지 내용은 자유롭게 수정할 수 있습니다."
-          status="작성 완료"
+          title={d.reviewTitle}
+          description={d.reviewDescription}
+          status={d.written}
         />
 
         <div className="flex flex-col gap-2">
-          <p className="text-body-2 md:text-body-1 px-1 text-black">신고 내용</p>
+          <p className="text-body-2 md:text-body-1 px-1 text-black">{d.content}</p>
           <div className="w-full divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-300 md:max-h-[427px]">
-            <DraftRow title="피해 개요">
-              <FixedText>{overviewText(draft.damageType)}</FixedText>
+            <DraftRow title={d.overview}>
+              <FixedText>{d.overviewText(draft.damageType.trim())}</FixedText>
             </DraftRow>
-            <DraftRow title="피해 발생 시점">
+            <DraftRow title={d.incidentDate}>
               <input
                 type="date"
-                aria-label="피해 발생 시점"
+                aria-label={d.incidentDate}
                 value={draft.incidentDate}
                 onChange={(event) => update("incidentDate", event.target.value)}
                 className={fieldClass}
               />
             </DraftRow>
-            <DraftRow title="피해 유형">
+            <DraftRow title={d.damageType}>
               <input
                 type="text"
-                aria-label="피해 유형"
+                aria-label={d.damageType}
                 value={draft.damageType}
                 onChange={(event) => update("damageType", event.target.value)}
                 className={fieldClass}
               />
             </DraftRow>
-            <DraftRow title="피해 경로">
+            <DraftRow title={d.route}>
               <input
                 type="text"
-                aria-label="피해 경로"
-                placeholder="미입력"
+                aria-label={d.route}
+                placeholder={d.empty}
                 value={draft.discoveryRoute}
                 onChange={(event) => update("discoveryRoute", event.target.value)}
                 className={`${fieldClass} placeholder:text-gray-600`}
               />
             </DraftRow>
-            <DraftRow title="원본 URL">
+            <DraftRow title={d.url}>
               <input
                 type="url"
-                aria-label="원본 URL"
-                placeholder="미입력"
+                aria-label={d.url}
+                placeholder={d.empty}
                 value={draft.sourceUrl}
                 onChange={(event) => update("sourceUrl", event.target.value)}
                 className={`${fieldClass} placeholder:text-gray-600`}
               />
             </DraftRow>
-            <DraftRow title="피해 내용">
+            <DraftRow title={d.description}>
               <textarea
-                aria-label="피해 내용"
+                aria-label={d.description}
                 value={draft.description}
                 onChange={(event) => update("description", event.target.value)}
                 rows={6}
                 className={`${fieldClass} resize-none whitespace-pre-wrap`}
               />
             </DraftRow>
-            <DraftRow title="추가 전달 사항">
+            <DraftRow title={d.notes}>
               <textarea
-                aria-label="추가 전달 사항"
-                placeholder="추가로 전달할 내용이 있다면 적어 주세요."
+                aria-label={d.notes}
+                placeholder={d.notesPlaceholder}
                 value={draft.additionalNotes}
                 onChange={(event) => update("additionalNotes", event.target.value)}
                 rows={3}
                 className={`${fieldClass} resize-none whitespace-pre-wrap placeholder:text-gray-600`}
               />
             </DraftRow>
-            <DraftRow title="증거 목록">
-              <FixedText>{evidenceText(evidence)}</FixedText>
+            <DraftRow title={d.evidence}>
+              <FixedText>{evidence?.name ?? d.noEvidence}</FixedText>
             </DraftRow>
-            <DraftRow title="요청 사항">
-              <FixedText>{REQUEST_TEXT}</FixedText>
+            <DraftRow title={d.request}>
+              <FixedText>{d.requestText}</FixedText>
             </DraftRow>
           </div>
         </div>
@@ -136,7 +140,7 @@ export default function Step3Draft({
           disabled={submitting || !draft.description.trim()}
           onClick={onSubmit}
         >
-          {submitting ? "저장 중..." : submitLabel}
+          {submitting ? t.saving : submitLabel}
         </Button>
       </StepNavigation>
     </div>

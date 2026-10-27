@@ -1,4 +1,8 @@
+"use client";
+
 import BotOutline from "@/shared/asset/svg/BotOutline";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { reportMessages } from "./messages";
 
 interface DraftCardHeaderProps {
   title: string;
@@ -7,12 +11,13 @@ interface DraftCardHeaderProps {
 }
 
 export default function DraftCardHeader({ title, description, status }: DraftCardHeaderProps) {
+  const { draft } = useT(reportMessages);
   return (
     <>
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-2">
           <span className="bg-primary-50 text-primary-500 text-caption w-fit rounded-full px-3 py-1">
-            기관 제출용 초안
+            {draft.badge}
           </span>
           <p className="text-large md:text-h3 font-semibold break-keep text-black">{title}</p>
           <p className="text-small md:text-body-2 break-keep text-gray-800">{description}</p>
@@ -25,8 +30,7 @@ export default function DraftCardHeader({ title, description, status }: DraftCar
           <BotOutline />
         </span>
         <p className="text-small md:text-body-2 text-secondary-600 font-medium break-keep">
-          AI가 입력 내용을 정리한 문서입니다. 실제 제출 전 날짜, URL, 피해 내용을 한 번 더 확인해
-          주세요.
+          {draft.aiNotice}
         </p>
       </div>
     </>
