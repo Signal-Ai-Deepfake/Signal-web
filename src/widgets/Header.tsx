@@ -37,7 +37,7 @@ export default function Header({ className = "" }: { className?: string }) {
           <LinkButton
             href="/signup"
             variant="primary"
-            className="hidden h-10 whitespace-nowrap min-[400px]:inline-flex md:h-12"
+            className="h-10 whitespace-nowrap max-[399px]:hidden md:h-12"
           >
             {t.header.signup}
           </LinkButton>
