@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentType } from "react";
 import Image from "next/image";
 import Chart from "@/shared/asset/svg/Chart";
@@ -10,40 +12,18 @@ import SectionBadge from "@/shared/ui/SectionBadge";
 import StepArrow from "@/shared/ui/StepArrow";
 import StepCard from "@/shared/ui/StepCard";
 import CtaCard from "@/widgets/CtaCard";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
 
-const howItWorksSteps: {
-  icon: ComponentType;
-  step: string;
-  title: string;
-  description: string;
-}[] = [
-  {
-    icon: ImageArrowUp,
-    step: "01",
-    title: "이미지 업로드",
-    description: "분석할 사진을 업로드합니다.",
-  },
-  {
-    icon: Cpu,
-    step: "02",
-    title: "AI 위험도 분석",
-    description: "AI 위험 요소와 노출 가능성을 분석합니다.",
-  },
-  {
-    icon: Chart,
-    step: "03",
-    title: "분석결과 확인",
-    description: "위험도와 원인, 주요 요소를 확인할 수 있습니다.",
-  },
-  {
-    icon: ShieldCheck,
-    step: "04",
-    title: "보호 가이드 제공",
-    description: "상황에 맞는 보호 방법과 대응 가이드를 제공합니다.",
-  },
-];
+const stepIcons: ComponentType[] = [ImageArrowUp, Cpu, Chart, ShieldCheck];
 
 export default function HowItWorksSection() {
+  const t = useT(widgetMessages);
+  const howItWorksSteps = t.howItWorks.steps.map((step, index) => ({
+    ...step,
+    icon: stepIcons[index],
+    step: String(index + 1).padStart(2, "0"),
+  }));
   return (
     <section id="how-it-works" className="w-full bg-white">
       <FrameScale>
@@ -66,10 +46,10 @@ export default function HowItWorksSection() {
             <ScrollReveal className="flex flex-col items-center gap-4 text-center">
               <SectionBadge>HOW IT WORKS</SectionBadge>
               <h2 className="text-h3 md:text-h2 text-primary-500 font-bold">
-                AI 분석은 이렇게 진행돼요
+                {t.howItWorks.title}
               </h2>
               <p className="text-small md:text-body-1 break-keep text-gray-800">
-                사진 한 장으로 위험을 분석하고, 안전한 대응 방법을 안내해 드립니다.
+                {t.howItWorks.description}
               </p>
             </ScrollReveal>
             <div className="grid w-full grid-cols-2 gap-3 md:gap-5 xl:flex xl:w-auto xl:items-center xl:justify-center xl:gap-6">
