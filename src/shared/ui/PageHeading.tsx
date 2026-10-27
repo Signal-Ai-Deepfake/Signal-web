@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
 import BackButton from "@/shared/ui/BackButton";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
 
 interface Breadcrumb {
   label: string;
@@ -21,12 +25,16 @@ export default function PageHeading({
   breadcrumbs,
   backHref = "/",
 }: PageHeadingProps) {
+  const t = useT(uiMessages);
   return (
     <div className="flex flex-col gap-6">
       <BackButton href={backHref} className="md:hidden" />
-      <nav aria-label="현재 위치" className="hidden flex-wrap items-center gap-x-4 gap-y-2 md:flex">
+      <nav
+        aria-label={t.currentLocation}
+        className="hidden flex-wrap items-center gap-x-4 gap-y-2 md:flex"
+      >
         <Link href="/" className="text-body-1 text-gray-700">
-          홈
+          {t.home}
         </Link>
         {breadcrumbs.map((crumb, index) => {
           const isLast = index === breadcrumbs.length - 1;

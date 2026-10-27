@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-type RiskLevel = "안전" | "위험" | "주의";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
+import type { RiskLevel } from "@/shared/ui/messages";
 
 const WIDTH = 285;
 const HEIGHT = 192;
@@ -32,6 +33,7 @@ interface RiskSemiGaugeProps {
 }
 
 export default function RiskSemiGauge({ score, level, className = "" }: RiskSemiGaugeProps) {
+  const t = useT(uiMessages);
   const clampedScore = Math.min(100, Math.max(0, score));
   const [displayScore, setDisplayScore] = useState(0);
 
@@ -47,7 +49,7 @@ export default function RiskSemiGauge({ score, level, className = "" }: RiskSemi
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       fill="none"
       role="img"
-      aria-label={`위험도 ${clampedScore}%`}
+      aria-label={t.riskPercent(clampedScore)}
       className={`text-primary-500 h-auto w-full ${className}`}
     >
       {zones.map((zone) => (

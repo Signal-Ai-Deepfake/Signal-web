@@ -1,4 +1,8 @@
+"use client";
+
 import type { ComponentType } from "react";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
 
 export interface RiskFactor {
   icon: ComponentType;
@@ -27,9 +31,10 @@ function Score({ score, className = "" }: { score: number; className?: string })
 }
 
 export default function RiskFactorCard({ factors }: RiskFactorCardProps) {
+  const t = useT(uiMessages);
   return (
     <div className="flex w-full flex-col gap-4 rounded-lg border border-gray-300 p-4 md:p-6">
-      <p className="text-body-2 md:text-body-1 font-semibold text-black">요인별 위험 점수</p>
+      <p className="text-body-2 md:text-body-1 font-semibold text-black">{t.riskFactorTitle}</p>
       {factors.map((factor) => (
         <div
           key={factor.title}
