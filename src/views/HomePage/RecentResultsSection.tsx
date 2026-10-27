@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { RiskAssessmentResponse, RiskFactorResponse } from "@/entities/analysis/api";
-import { RISK_LEVEL_LABEL } from "@/entities/analysis/model";
+import { RISK_LEVEL_LABEL, factorLabel, factorLabelMessages } from "@/entities/analysis/model";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import LinkButton from "@/shared/ui/LinkButton";
 import RiskTag from "@/shared/ui/RiskTag";
@@ -19,9 +19,14 @@ function TopFactor({ factors }: { factors: RiskFactorResponse[] }) {
     null,
   );
   const { recent } = useT(homeMessages);
+  const labels = useT(factorLabelMessages);
   if (!top) return null;
 
-  return <p className="text-small px-1 text-gray-700">{recent.topRisk(top.label, top.score)}</p>;
+  return (
+    <p className="text-small px-1 text-gray-700">
+      {recent.topRisk(factorLabel(top, labels), top.score)}
+    </p>
+  );
 }
 
 export default function RecentResultsSection({ results }: RecentResultsSectionProps) {
