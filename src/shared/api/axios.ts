@@ -1,6 +1,13 @@
 import axios, { AxiosError } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
-import { clearAuthTokens, getAccessToken, getRefreshToken, setAuthTokens } from "@/shared/lib/authToken";
+import {
+  clearAuthTokens,
+  getAccessToken,
+  getRefreshToken,
+  setAuthTokens,
+} from "@/shared/lib/authToken";
+import { defineMessages } from "@/shared/i18n/defineMessages";
+import { translate } from "@/shared/i18n/currentLocale";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -23,6 +30,15 @@ interface ReissueResponse {
   refreshToken: string;
   accessTokenExpiresIn: number;
 }
+
+const axiosMessages = defineMessages(
+  { unknownError: "알 수 없는 오류" },
+  {
+    en: { unknownError: "Unknown error" },
+    ja: { unknownError: "不明なエラー" },
+    zh: { unknownError: "未知错误" },
+  },
+);
 
 let reissuePromise: Promise<string | null> | null = null;
 
@@ -73,7 +89,8 @@ api.interceptors.response.use(
       }
     }
 
-    const message = error.response?.data?.message ?? error.message ?? "알 수 없는 오류";
+    const message =
+      error.response?.data?.message ?? error.message ?? translate(axiosMessages).unknownError;
     return Promise.reject(new Error(message));
-  }
+  },
 );
