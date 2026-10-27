@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Arrow from "@/shared/asset/svg/Arrow";
 import CheckCircle from "@/shared/asset/svg/CheckCircle";
@@ -8,6 +10,8 @@ import RiskScoreGauge from "@/shared/ui/RiskScoreGauge";
 import RiskTag from "@/shared/ui/RiskTag";
 import ScoreInfoTooltip from "./ScoreInfoTooltip";
 import type { AnalysisResult, Status } from "./AnalyzePage";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { analyzeMessages } from "./messages";
 
 interface AnalysisPanelProps {
   status: Status;
@@ -38,20 +42,17 @@ export default function AnalysisPanel({
   onShare,
   onSaveProtected,
 }: AnalysisPanelProps) {
+  const t = useT(analyzeMessages);
   if (status === "error") {
     return (
       <div className="flex animate-[fade-in-up_0.4s_ease-out] flex-col gap-4 rounded-2xl border border-gray-300 p-5 md:h-[217px] md:justify-between md:px-8">
-        <p className="text-body-1 font-semibold text-black">실시간 분석</p>
+        <p className="text-body-1 font-semibold text-black">{t.panel.realtime}</p>
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-body-1 font-semibold text-black">
-            얼굴을 찾을 수 없어 분석할 수 없습니다.
-          </p>
-          <p className="text-body-2 text-gray-650">
-            얼굴이 선명하게 보이는 사진을 다시 업로드해 주세요.
-          </p>
+          <p className="text-body-1 font-semibold text-black">{t.panel.noFaceTitle}</p>
+          <p className="text-body-2 text-gray-650">{t.panel.noFaceDescription}</p>
         </div>
         <Button type="button" variant="primary" className="w-full" onClick={onAnalyze}>
-          분석하기
+          {t.panel.analyze}
         </Button>
       </div>
     );
@@ -70,7 +71,7 @@ export default function AnalysisPanel({
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <p className="text-large font-semibold text-black">위험도 등급</p>
+              <p className="text-large font-semibold text-black">{t.panel.riskGrade}</p>
               <ScoreInfoTooltip />
               <RiskTag level={result.level} />
             </div>
@@ -85,7 +86,7 @@ export default function AnalysisPanel({
                 onClick={onShare}
                 className="border-primary-500 text-primary-500 text-body-2 flex h-[50px] animate-[fade-in-up_0.3s_ease-out] items-center justify-center rounded border"
               >
-                SNS 공유
+                {t.panel.share}
               </button>
               <Button
                 type="button"
@@ -93,7 +94,7 @@ export default function AnalysisPanel({
                 className="animate-[fade-in-up_0.3s_ease-out]"
                 onClick={onSaveProtected}
               >
-                보호본 저장
+                {t.panel.saveProtected}
               </Button>
             </>
           ) : (
@@ -103,19 +104,17 @@ export default function AnalysisPanel({
                 onClick={onToggleDetails}
                 className="border-primary-500 text-primary-500 text-body-2 flex h-[50px] items-center justify-center rounded border"
               >
-                {showDetails ? "간단히 보기" : "자세히 보기"}
+                {showDetails ? t.panel.showLess : t.panel.showMore}
               </button>
               <Button type="button" variant="primary" onClick={onProtect}>
-                이미지 보호 조치
+                {t.panel.protect}
               </Button>
             </>
           )}
         </div>
         {isProtected && (
           <p className="text-caption break-keep text-gray-700">
-            {isSimulatedProtection
-              ? "⚠️ 현재 보호 처리는 시연용 단계로, 실제 노이즈가 삽입되지 않은 원본 사본이 저장됩니다."
-              : "⚠️ 이미지에 노이즈를 넣고 위치 정보 등 메타데이터를 지웠어요. 특정 AI 모델을 겨냥한 적대적 보호는 아니라서 도용·합성을 완전히 막아 주지는 않아요."}
+            {isSimulatedProtection ? t.panel.simulatedNotice : t.panel.protectedNotice}
           </p>
         )}
         {detailHref && (
@@ -123,7 +122,7 @@ export default function AnalysisPanel({
             href={detailHref}
             className="text-small text-primary-500 flex items-center justify-center gap-1 self-center py-1 font-medium hover:underline"
           >
-            분석 결과 상세 페이지로 이동
+            {t.panel.goToDetail}
             <span className="[&>svg]:h-4 [&>svg]:w-4">
               <Arrow />
             </span>
@@ -135,14 +134,14 @@ export default function AnalysisPanel({
 
   const guide =
     status === "analyzing"
-      ? { icon: Loading, text: "AI가 사진을 분석하고 있어요.", iconClass: "animate-spin" }
+      ? { icon: Loading, text: t.panel.analyzing, iconClass: "animate-spin" }
       : canAnalyze
-        ? { icon: CheckCircle, text: "사진이 준비됐어요. 분석하기를 눌러 주세요.", iconClass: "" }
-        : { icon: ImageArrowUp, text: "사진을 올리면 분석을 시작할 수 있어요.", iconClass: "" };
+        ? { icon: CheckCircle, text: t.panel.ready, iconClass: "" }
+        : { icon: ImageArrowUp, text: t.panel.idle, iconClass: "" };
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-gray-300 p-5 md:h-[217px] md:justify-between md:px-8">
-      <p className="text-body-1 font-semibold text-black">실시간 분석</p>
+      <p className="text-body-1 font-semibold text-black">{t.panel.realtime}</p>
       <div className="flex items-center gap-3 rounded-xl bg-gray-100 px-4 py-3">
         <span className={`text-primary-500 shrink-0 [&>svg]:h-6 [&>svg]:w-6 ${guide.iconClass}`}>
           <guide.icon />
@@ -156,7 +155,7 @@ export default function AnalysisPanel({
         disabled={!canAnalyze}
         onClick={onAnalyze}
       >
-        분석하기
+        {t.panel.analyze}
       </Button>
     </div>
   );

@@ -16,46 +16,55 @@ import ResultMobileHeader from "./ResultMobileHeader";
 import ResultSummaryCard from "./ResultSummaryCard";
 import RiskFactorList from "./RiskFactorList";
 import RiskLevelCard from "./RiskLevelCard";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { resultMessages } from "./messages";
+import { translate } from "@/shared/i18n/currentLocale";
+import { uiMessages } from "@/shared/ui/messages";
 
 interface AnalysisResultDetailPageProps {
   id: string;
 }
 
 function buildShareText(result: AnalysisResult) {
+  const t = translate(resultMessages);
+  const level = translate(uiMessages).riskLevel[result.level];
   const topFactors = [...result.factors]
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
     .map((factor) => `- ${factor.title} ${factor.score}%`);
   return [
-    "[Signal 사진 위험도 분석 결과]",
-    `위험도: ${result.level} (${result.score}%)`,
+    t.shareHeading,
+    t.shareRisk(level, result.score),
     result.description.replace(/\n/g, " "),
-    ...(topFactors.length > 0 ? ["", "주요 위험 요인", ...topFactors] : []),
+    ...(topFactors.length > 0 ? ["", t.shareTopFactors, ...topFactors] : []),
   ].join("\n");
 }
 
 async function shareResult(result: AnalysisResult) {
+  const t = translate(resultMessages);
   const text = buildShareText(result);
   if (navigator.share) {
     try {
-      await navigator.share({ title: "Signal 분석 결과", text });
+      await navigator.share({ title: t.shareTitle, text });
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
-      toast.error("공유하지 못했습니다.");
+      toast.error(t.shareFailed);
     }
     return;
   }
   try {
     await navigator.clipboard.writeText(text);
-    toast.success("분석 결과 요약을 복사했어요.");
+    toast.success(t.copied);
   } catch {
-    toast.error("결과를 복사하지 못했습니다.");
+    toast.error(t.copyFailed);
   }
 }
 
 export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPageProps) {
   const assessmentId = Number(id);
   const isLoggedIn = useIsLoggedIn();
+  const t = useT(resultMessages);
+  const ui = useT(uiMessages);
 
   const {
     data: assessment,
@@ -83,21 +92,21 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
           <div className="hidden flex-col gap-6 md:flex">
             <div className="flex items-center gap-4 print:hidden">
               <Link href="/" className="text-body-1 text-gray-800">
-                홈
+                {ui.home}
               </Link>
               <span className="text-gray-800 [&>svg]:h-[18px] [&>svg]:w-[18px]">
                 <Arrow />
               </span>
               <Link href="/analyze" className="text-body-1 text-gray-800">
-                사진 위험도 분석 및 보호
+                {t.analyzeTitle}
               </Link>
               <span className="text-gray-800 [&>svg]:h-[18px] [&>svg]:w-[18px]">
                 <Arrow />
               </span>
-              <span className="text-body-1 text-primary-500">분석 결과 상세</span>
+              <span className="text-body-1 text-primary-500">{t.title}</span>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <h1 className="text-h2 lg:text-h1 font-bold text-black">분석 결과 상세</h1>
+              <h1 className="text-h2 lg:text-h1 font-bold text-black">{t.title}</h1>
               {result && (
                 <button
                   type="button"
@@ -105,23 +114,23 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
                   className="text-body-2 text-primary-500 border-primary-500 hover:bg-primary-50 flex h-[50px] shrink-0 cursor-pointer items-center gap-2 rounded border px-5 transition-colors print:hidden [&>svg]:h-4 [&>svg]:w-3.5"
                 >
                   <Share />
-                  공유하기
+                  {t.share}
                 </button>
               )}
             </div>
           </div>
 
           {!Number.isFinite(assessmentId) && (
-            <p className="text-body-1 text-red-500">잘못된 분석 결과 주소입니다.</p>
+            <p className="text-body-1 text-red-500">{t.invalidId}</p>
           )}
 
           {isPending && Number.isFinite(assessmentId) && (
-            <p className="text-body-1 text-gray-700">불러오는 중...</p>
+            <p className="text-body-1 text-gray-700">{t.loading}</p>
           )}
 
           {isError && (
             <p className="text-body-1 text-red-500">
-              분석 결과를 불러오지 못했습니다.
+              {t.loadFailed}
               {error instanceof Error ? ` (${error.message})` : ""}
             </p>
           )}

@@ -1,17 +1,22 @@
+"use client";
+
 import Lightbulb from "@/shared/asset/svg/Lightbulb";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { resultMessages } from "./messages";
 
 interface ResponseGuideCardProps {
   items: string[];
 }
 
 export default function ResponseGuideCard({ items }: ResponseGuideCardProps) {
+  const t = useT(resultMessages);
   return (
     <section className="border-secondary-400/30 bg-secondary-400/20 flex w-full flex-col gap-4 rounded-3xl border p-6">
       <h3 className="text-body-2 text-primary-500 flex items-center gap-2 font-bold">
         <span className="[&>svg]:h-4 [&>svg]:w-3">
           <Lightbulb />
         </span>
-        맞춤형 대응 가이드
+        {t.guideTitle}
       </h3>
       <ol className="flex flex-col gap-4">
         {items.map((item, index) => (
