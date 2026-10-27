@@ -7,12 +7,14 @@ import PhotoScan from "@/shared/asset/svg/PhotoScan";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 import Search from "@/shared/asset/svg/Search";
 import ShieldTask from "@/shared/asset/svg/ShieldTask";
-import { useT } from "@/shared/i18n/I18nProvider";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import QuickActionLink from "@/shared/ui/QuickActionLink";
 import ServiceCategory from "@/shared/ui/ServiceCategory";
 import { homeMessages } from "./messages";
 
 function TwoLines({ lines }: { lines: string[] }) {
+  const { locale } = useLocale();
+  if (locale !== "ko") return <>{lines.join(locale === "en" ? " " : "")}</>;
   return (
     <>
       {lines[0]}
@@ -35,7 +37,7 @@ export default function QuickFeaturesSection() {
               icon={ShieldTask}
               label={quick.prevent.label}
               description={<TwoLines lines={quick.prevent.description} />}
-              className="h-full w-full xl:h-[323px]"
+              className="h-full w-full xl:min-h-[323px]"
             >
               <QuickActionLink
                 icon={PhotoScan}
@@ -50,7 +52,7 @@ export default function QuickFeaturesSection() {
               icon={Search}
               label={quick.detect.label}
               description={<TwoLines lines={quick.detect.description} />}
-              className="h-full w-full xl:h-[323px]"
+              className="h-full w-full xl:min-h-[323px]"
             >
               <QuickActionLink
                 icon={ScanFace}
@@ -65,7 +67,7 @@ export default function QuickFeaturesSection() {
               icon={Message}
               label={quick.respond.label}
               description={<TwoLines lines={quick.respond.description} />}
-              className="h-full w-full xl:h-[323px]"
+              className="h-full w-full xl:min-h-[323px]"
             >
               <QuickActionLink
                 icon={Bot}
