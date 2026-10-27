@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Toaster, toast } from "sonner";
 import { makeQueryClient } from "@/shared/config/queryClient";
 import { defineMessages } from "@/shared/i18n/defineMessages";
-import { useT } from "@/shared/i18n/I18nProvider";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 
 const messages = defineMessages(
   { loadFailed: "데이터를 불러오지 못했습니다." },
@@ -33,6 +33,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     };
     return qc;
   });
+
+  const { locale } = useLocale();
+  const localeRef = useRef(locale);
+  useEffect(() => {
+    if (localeRef.current === locale) return;
+    localeRef.current = locale;
+    client.invalidateQueries();
+  }, [client, locale]);
 
   return (
     <QueryClientProvider client={client}>
