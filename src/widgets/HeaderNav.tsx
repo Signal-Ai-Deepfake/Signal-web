@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
 import FileText from "@/shared/asset/svg/FileText";
 import Globe from "@/shared/asset/svg/Globe";
@@ -8,52 +8,45 @@ import Image from "@/shared/asset/svg/Image";
 import Message from "@/shared/asset/svg/Message";
 import ScanFace from "@/shared/asset/svg/ScanFace";
 import FeatureCard from "@/shared/ui/FeatureCard";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
 
-export const analysisNavGroup = {
-  label: "AI 분석",
+type NavItemKey = "detect" | "analyze" | "monitoring" | "chat" | "report";
+
+export interface NavGroupDef {
+  key: "analysis" | "support";
+  items: { key: NavItemKey; icon: ComponentType; href: string }[];
+}
+
+export const analysisNavGroup: NavGroupDef = {
+  key: "analysis",
   items: [
-    {
-      icon: ScanFace,
-      title: "얼굴 도용·딥페이크 탐지",
-      description: "얼굴 도용 및 딥페이크 여부를 확인해요.",
-      href: "/detect",
-    },
-    {
-      icon: Image,
-      title: "AI 이미지 분석",
-      description: "사진의 위험도를 분석해요.",
-      href: "/analyze",
-    },
-    {
-      icon: Globe,
-      title: "유포 모니터링",
-      description: "웹에서 유사 이미지를 지속적으로 확인해요.",
-      href: "/monitoring",
-    },
+    { key: "detect", icon: ScanFace, href: "/detect" },
+    { key: "analyze", icon: Image, href: "/analyze" },
+    { key: "monitoring", icon: Globe, href: "/monitoring" },
   ],
 };
 
-export const supportNavGroup = {
-  label: "신고 지원",
+export const supportNavGroup: NavGroupDef = {
+  key: "support",
   items: [
-    {
-      icon: Message,
-      title: "익명 상담 챗봇",
-      description: "AI 상담 챗봇이 24시간 상담해요.",
-      href: "/chat",
-    },
-    {
-      icon: FileText,
-      title: "신고 지원",
-      description: "신고 문서 작성과 기관 연계를 도와드려요.",
-      href: "/report",
-    },
+    { key: "chat", icon: Message, href: "/chat" },
+    { key: "report", icon: FileText, href: "/report" },
   ],
 };
 
 export const headerNavItems = [analysisNavGroup, supportNavGroup];
 
+export function useNavGroupText() {
+  const t = useT(widgetMessages);
+  return (group: NavGroupDef) => ({
+    label: t.nav[group.key],
+    items: group.items.map((item) => ({ ...item, ...t.nav[item.key] })),
+  });
+}
+
 export default function HeaderNav() {
+  const localize = useNavGroupText();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const navRef = useRef<HTMLElement>(null);
 
@@ -82,7 +75,7 @@ export default function HeaderNav() {
 
   return (
     <nav ref={navRef} className="hidden items-center gap-8 md:flex">
-      {headerNavItems.map((nav, index) => (
+      {headerNavItems.map(localize).map((nav, index) => (
         <div
           key={nav.label}
           className="relative"

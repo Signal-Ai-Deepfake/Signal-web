@@ -13,12 +13,15 @@ import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
 import { logout } from "@/entities/user/api";
 import { useMyProfile } from "@/entities/user/useMyProfile";
 import HeaderNav from "@/widgets/HeaderNav";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
+import LanguageSwitcher from "@/widgets/LanguageSwitcher";
 
 const myMenuItems = [
-  { label: "내 프로필", href: "/mypage/profile" },
-  { label: "내 대화 내역", href: "/mypage/chats" },
-  { label: "신고 문서 내역", href: "/mypage/reports" },
-];
+  { label: "myProfile", href: "/mypage/profile" },
+  { label: "myChats", href: "/mypage/chats" },
+  { label: "myReports", href: "/mypage/reports" },
+] as const;
 
 export default function HeaderAuthenticated({ className = "" }: { className?: string }) {
   const router = useRouter();
@@ -26,7 +29,8 @@ export default function HeaderAuthenticated({ className = "" }: { className?: st
   const menuRef = useRef<HTMLDivElement>(null);
   const hidden = useHideOnScroll();
   const { data: profile } = useMyProfile();
-  const userName = profile?.name ?? "사용자";
+  const t = useT(widgetMessages);
+  const userName = profile?.name ?? t.header.defaultUserName;
   const userAvatarUrl = profile?.profileImageUrl;
 
   useEffect(() => {
@@ -67,17 +71,18 @@ export default function HeaderAuthenticated({ className = "" }: { className?: st
           <Logo />
         </Link>
         <HeaderNav />
-        <div ref={menuRef} className="relative flex items-center justify-end gap-4 md:gap-0">
+        <div ref={menuRef} className="relative flex items-center justify-end gap-4 md:gap-2">
+          <LanguageSwitcher className="hidden md:block" />
           <button
             type="button"
-            aria-label="알림"
+            aria-label={t.header.notifications}
             className="text-primary-500 flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-100 transition-colors active:bg-gray-200 md:hidden"
           >
             <Bell />
           </button>
           <button
             type="button"
-            aria-label="내 메뉴"
+            aria-label={t.header.myMenu}
             onClick={() => setOpen((prev) => !prev)}
             className="flex cursor-pointer items-center gap-2 rounded-full transition-colors active:bg-gray-100 md:p-1"
           >
@@ -133,18 +138,20 @@ export default function HeaderAuthenticated({ className = "" }: { className?: st
                     onClick={() => setOpen(false)}
                     className="text-body-2 block w-full rounded-lg px-3 py-3 text-left text-black transition-colors hover:bg-gray-100 active:bg-gray-200"
                   >
-                    {item.label}
+                    {t.header[item.label]}
                   </Link>
                 ))}
               </div>
               <div className="h-px w-full bg-gray-200" />
+              <LanguageSwitcher variant="list" className="px-4 py-3 md:hidden" />
+              <div className="h-px w-full bg-gray-200 md:hidden" />
               <div className="p-2">
                 <button
                   type="button"
                   onClick={handleLogout}
                   className="text-body-2 w-full cursor-pointer rounded-lg px-3 py-3 text-left text-red-500 transition-colors hover:bg-gray-100 active:bg-gray-200"
                 >
-                  로그아웃
+                  {t.header.logout}
                 </button>
               </div>
             </div>

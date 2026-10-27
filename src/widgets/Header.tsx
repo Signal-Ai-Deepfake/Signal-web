@@ -6,9 +6,13 @@ import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
 import LinkButton from "@/shared/ui/LinkButton";
 import HeaderNav from "@/widgets/HeaderNav";
 import MobileNavMenu from "@/widgets/MobileNavMenu";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
+import LanguageSwitcher from "@/widgets/LanguageSwitcher";
 
 export default function Header({ className = "" }: { className?: string }) {
   const hidden = useHideOnScroll();
+  const t = useT(widgetMessages);
 
   return (
     <header
@@ -22,19 +26,20 @@ export default function Header({ className = "" }: { className?: string }) {
         </Link>
         <HeaderNav />
         <div className="flex items-center justify-end gap-2 md:gap-4">
+          <LanguageSwitcher className="hidden md:block" />
           <LinkButton
             href="/login"
             variant="outline"
-            className="h-10 whitespace-nowrap md:h-[46px] md:w-[103px]"
+            className="h-10 whitespace-nowrap md:h-[46px] md:min-w-[103px]"
           >
-            로그인
+            {t.header.login}
           </LinkButton>
           <LinkButton
             href="/signup"
             variant="primary"
             className="hidden h-10 whitespace-nowrap min-[400px]:inline-flex md:h-12"
           >
-            회원가입
+            {t.header.signup}
           </LinkButton>
           <MobileNavMenu />
         </div>

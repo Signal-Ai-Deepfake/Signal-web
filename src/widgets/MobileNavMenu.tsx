@@ -5,12 +5,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Menu from "@/shared/asset/svg/Menu";
 import LinkButton from "@/shared/ui/LinkButton";
-import { headerNavItems } from "@/widgets/HeaderNav";
+import { headerNavItems, useNavGroupText } from "@/widgets/HeaderNav";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
+import LanguageSwitcher from "@/widgets/LanguageSwitcher";
 
 export default function MobileNavMenu() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const localize = useNavGroupText();
+  const t = useT(widgetMessages);
 
   useEffect(() => {
     if (!open) return;
@@ -37,7 +42,7 @@ export default function MobileNavMenu() {
     <div ref={menuRef} className="md:hidden">
       <button
         type="button"
-        aria-label={open ? "메뉴 닫기" : "메뉴 열기"}
+        aria-label={open ? t.header.closeMenu : t.header.openMenu}
         aria-expanded={open}
         aria-controls="mobile-nav-menu"
         onClick={() => setOpen((prev) => !prev)}
@@ -50,7 +55,7 @@ export default function MobileNavMenu() {
           id="mobile-nav-menu"
           className="absolute inset-x-0 top-full flex max-h-[calc(100dvh-5rem)] animate-[fade-in-up_0.2s_ease-out] flex-col gap-5 overflow-y-auto border-b border-gray-300 bg-white px-5 pt-4 pb-6 shadow-lg"
         >
-          {headerNavItems.map((group) => (
+          {headerNavItems.map(localize).map((group) => (
             <div key={group.label} className="flex flex-col gap-1">
               <p className="text-caption text-gray-650 px-3 font-semibold">{group.label}</p>
               {group.items.map(({ icon: Icon, title, href }) => {
@@ -80,8 +85,9 @@ export default function MobileNavMenu() {
             className="h-12 w-full"
             onClick={() => setOpen(false)}
           >
-            회원가입하고 기록 저장하기
+            {t.header.signupToSave}
           </LinkButton>
+          <LanguageSwitcher variant="list" className="justify-center" />
         </nav>
       )}
     </div>

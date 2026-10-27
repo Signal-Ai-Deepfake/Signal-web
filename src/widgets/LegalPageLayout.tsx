@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import Arrow from "@/shared/asset/svg/Arrow";
@@ -5,6 +7,9 @@ import BackButton from "@/shared/ui/BackButton";
 import Footer from "@/widgets/Footer";
 import LegalTableOfContents from "@/widgets/LegalTableOfContents";
 import SiteHeader from "@/widgets/SiteHeader";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
+import { uiMessages } from "@/shared/ui/messages";
 
 interface LegalPageLayoutProps {
   breadcrumbLabel: string;
@@ -21,6 +26,8 @@ export default function LegalPageLayout({
   tocItems,
   children,
 }: LegalPageLayoutProps) {
+  const t = useT(widgetMessages);
+  const ui = useT(uiMessages);
   return (
     <>
       <SiteHeader />
@@ -30,7 +37,7 @@ export default function LegalPageLayout({
             <BackButton className="md:hidden" />
             <div className="hidden flex-wrap items-center gap-x-4 gap-y-2 md:flex">
               <Link href="/" className="text-body-1 text-gray-700">
-                홈
+                {ui.home}
               </Link>
               <span className="text-gray-700 [&>svg]:h-[18px] [&>svg]:w-[18px]">
                 <Arrow />
@@ -42,6 +49,12 @@ export default function LegalPageLayout({
               <p className="text-small md:text-body-1 break-keep text-gray-700">{description}</p>
             </div>
           </div>
+
+          {t.legal.koreanOnly && (
+            <p className="bg-primary-50 text-primary-500 text-small rounded-lg px-4 py-3 font-medium">
+              {t.legal.koreanOnly}
+            </p>
+          )}
 
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
             <LegalTableOfContents items={tocItems} />
