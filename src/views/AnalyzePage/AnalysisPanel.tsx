@@ -60,7 +60,7 @@ export default function AnalysisPanel({
 
   if (status === "result") {
     return (
-      <div className="flex flex-1 animate-[fade-in-up_0.4s_ease-out] flex-col justify-between gap-3 rounded-2xl border border-gray-300 px-8 py-5">
+      <div className="flex animate-[fade-in-up_0.4s_ease-out] flex-col gap-4 rounded-2xl border border-gray-300 px-8 py-5">
         <div className="flex items-center gap-6">
           <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
             <RiskScoreGauge score={result.score} size={80} level={result.level} />
