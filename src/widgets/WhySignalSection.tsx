@@ -34,7 +34,11 @@ export default function WhySignalSection() {
           </ScrollReveal>
           <div className="grid grid-cols-1 justify-items-center gap-6 md:grid-cols-2 xl:grid-cols-4 xl:gap-4">
             {whySignalItems.map((item, index) => (
-              <ScrollReveal key={item.title} delay={120 + index * 80}>
+              <ScrollReveal
+                key={item.title}
+                delay={120 + index * 80}
+                className="row-span-3 grid grid-rows-subgrid gap-y-0"
+              >
                 <InfoCard {...item} />
               </ScrollReveal>
             ))}
