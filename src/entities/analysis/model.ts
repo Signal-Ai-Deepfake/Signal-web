@@ -68,69 +68,52 @@ const assessmentMessages = defineMessages(
   },
 );
 
-type FactorKey = "face" | "quality" | "metadata" | "reverseSearch" | "background" | "personal";
+type FactorType = "IMAGE_QUALITY" | "FACE_EXPOSURE" | "METADATA_LEAK" | "REVERSE_SEARCH_RISK";
 
-type FactorLabels = Partial<Record<FactorKey, string>>;
-
-const FACTOR_KEY_BY_TYPE: Record<string, FactorKey> = {
-  FACE: "face",
-  FACE_EXPOSURE: "face",
-  RESOLUTION: "quality",
-  IMAGE_QUALITY: "quality",
-  QUALITY: "quality",
-  METADATA: "metadata",
-  METADATA_EXPOSURE: "metadata",
-  REVERSE_SEARCH: "reverseSearch",
-  BACKGROUND: "background",
-  PERSONAL_INFO: "personal",
-};
-
-const FACTOR_KEY_BY_LABEL: Record<string, FactorKey> = {
-  "얼굴 노출도": "face",
-  "이미지 품질": "quality",
-  "메타데이터 노출": "metadata",
-  "역검색 노출 위험": "reverseSearch",
-  "배경 정보": "background",
-  "배경 정보 노출": "background",
-  "개인정보 노출": "personal",
-};
+type FactorLabels = Record<FactorType, string>;
 
 export const factorLabelMessages = defineMessages<FactorLabels>(
-  {},
+  {
+    IMAGE_QUALITY: "이미지 품질",
+    FACE_EXPOSURE: "얼굴 노출도",
+    METADATA_LEAK: "메타데이터 노출",
+    REVERSE_SEARCH_RISK: "역검색 노출 위험",
+  },
   {
     en: {
-      face: "Face exposure",
-      quality: "Image quality",
-      metadata: "Metadata exposure",
-      reverseSearch: "Reverse search exposure risk",
-      background: "Background information",
-      personal: "Personal information exposure",
+      IMAGE_QUALITY: "Image quality",
+      FACE_EXPOSURE: "Face exposure",
+      METADATA_LEAK: "Metadata exposure",
+      REVERSE_SEARCH_RISK: "Reverse search exposure risk",
     },
     ja: {
-      face: "顔の露出度",
-      quality: "画像品質",
-      metadata: "メタデータの露出",
-      reverseSearch: "逆検索による露出リスク",
-      background: "背景情報",
-      personal: "個人情報の露出",
+      IMAGE_QUALITY: "画像品質",
+      FACE_EXPOSURE: "顔の露出度",
+      METADATA_LEAK: "メタデータの露出",
+      REVERSE_SEARCH_RISK: "逆検索による露出リスク",
     },
     zh: {
-      face: "面部暴露程度",
-      quality: "图像质量",
-      metadata: "元数据暴露",
-      reverseSearch: "反向搜索暴露风险",
-      background: "背景信息",
-      personal: "个人信息暴露",
+      IMAGE_QUALITY: "图像质量",
+      FACE_EXPOSURE: "面部暴露程度",
+      METADATA_LEAK: "元数据暴露",
+      REVERSE_SEARCH_RISK: "反向搜索暴露风险",
     },
   },
 );
 
+function isFactorType(type: string): type is FactorType {
+  return type in factorLabelMessages.ko;
+}
+
 export function factorLabel(factor: { type: string; label: string }, labels: FactorLabels) {
-  const key = FACTOR_KEY_BY_LABEL[factor.label.trim()] ?? FACTOR_KEY_BY_TYPE[factor.type];
-  return (key && labels[key]) ?? factor.label;
+  return isFactorType(factor.type) ? labels[factor.type] : factor.label;
 }
 
 const FACTOR_ICON_BY_TYPE: Record<string, ComponentType> = {
+  IMAGE_QUALITY: Hd,
+  FACE_EXPOSURE: ScanFace,
+  METADATA_LEAK: FileText,
+  REVERSE_SEARCH_RISK: ImageSearch,
   FACE: ScanFace,
   BACKGROUND: Image,
   PERSONAL_INFO: IdCard,
