@@ -3,8 +3,7 @@
 import Button from "@/shared/ui/Button";
 import StepHeader from "@/shared/ui/StepHeader";
 import TermsRow from "@/shared/ui/TermsRow";
-import PrivacyPolicyContent from "./PrivacyPolicyContent";
-import TermsOfServiceContent from "./TermsOfServiceContent";
+import LegalSummaryContent from "./LegalSummaryContent";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { authMessages } from "@/views/authMessages";
 
@@ -45,14 +44,14 @@ export default function Step1Terms({
             required
             checked={agreeTerms}
             onChange={onAgreeTermsChange}
-            content={<TermsOfServiceContent />}
+            content={<LegalSummaryContent document="terms" />}
           />
           <TermsRow
             label={t.signup.agreePrivacy}
             required
             checked={agreePrivacy}
             onChange={onAgreePrivacyChange}
-            content={<PrivacyPolicyContent />}
+            content={<LegalSummaryContent document="privacy" />}
           />
         </div>
       </div>
