@@ -61,6 +61,7 @@ export const chatMessages = defineMessages(
       progress: "상담 진행률",
       imageAbuse: "이미지 관련 상담",
       general: "일반 상담",
+      stepCount: (completed: number, total: number) => `${total}단계 중 ${completed}단계 완료`,
     },
     window: {
       counselor: "AI 상담사",
@@ -133,6 +134,7 @@ export const chatMessages = defineMessages(
         progress: "Progress",
         imageAbuse: "Image-related counseling",
         general: "General counseling",
+        stepCount: (completed, total) => `${completed} of ${total} steps done`,
       },
       window: {
         counselor: "AI counselor",
@@ -204,6 +206,7 @@ export const chatMessages = defineMessages(
         progress: "相談の進捗",
         imageAbuse: "画像に関する相談",
         general: "一般相談",
+        stepCount: (completed, total) => `${total}段階中${completed}段階完了`,
       },
       window: {
         counselor: "AIカウンセラー",
@@ -269,6 +272,7 @@ export const chatMessages = defineMessages(
         progress: "咨询进度",
         imageAbuse: "图片相关咨询",
         general: "一般咨询",
+        stepCount: (completed, total) => `共${total}步，已完成${completed}步`,
       },
       window: {
         counselor: "AI咨询师",
