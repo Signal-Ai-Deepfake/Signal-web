@@ -32,7 +32,7 @@ const HOTLINE =
 const SENTENCES_PER_PARAGRAPH = 2;
 const FULL_HOTLINE = /^(\d{2,4}-\d{3,4}-\d{4}|112|117|118|119|182|1332|1366|1377|1388|1398)$/;
 
-function formatPlainReply(text: string) {
+function formatPlainSegment(text: string) {
   if (text.includes("\n") || text.includes("**")) return text;
   const emphasized = text
     .replace(QUOTED, "$1**$2**$3")
@@ -46,6 +46,13 @@ function formatPlainReply(text: string) {
     paragraphs.push(sentences.slice(i, i + SENTENCES_PER_PARAGRAPH).join(" "));
   }
   return paragraphs.join("\n\n");
+}
+
+function formatPlainReply(text: string) {
+  return text
+    .split(/\n{2,}/)
+    .map(formatPlainSegment)
+    .join("\n\n");
 }
 
 export function parseChatMarkdown(source: string): Block[] {
