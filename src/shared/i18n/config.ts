@@ -38,6 +38,8 @@ export function isLocale(value: string | undefined | null): value is Locale {
   return locales.some((locale) => locale === value);
 }
 
+const TRADITIONAL_CHINESE = /^zh-(hant|tw|hk|mo)\b/;
+
 export function matchAcceptLanguage(header: string | null): Locale {
   if (!header) return defaultLocale;
   const ranked = header
@@ -47,10 +49,11 @@ export function matchAcceptLanguage(header: string | null): Locale {
       const quality = params.find((param) => param.trim().startsWith("q="));
       return { tag, q: quality ? Number(quality.trim().slice(2)) : 1 };
     })
-    .filter(({ tag, q }) => tag && !Number.isNaN(q))
+    .filter(({ tag, q }) => tag && !Number.isNaN(q) && q > 0)
     .sort((a, b) => b.q - a.q);
 
   for (const { tag } of ranked) {
+    if (TRADITIONAL_CHINESE.test(tag)) continue;
     const base = tag.split("-")[0];
     if (isLocale(base)) return base;
   }
