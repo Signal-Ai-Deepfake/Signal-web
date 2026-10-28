@@ -23,7 +23,9 @@ export function formatDateTime(value: string, locale: Locale) {
 }
 
 export function formatTime(value: number | string, locale: Locale) {
-  return new Date(value).toLocaleTimeString(intlLocale[locale], {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return typeof value === "string" ? value : "";
+  return date.toLocaleTimeString(intlLocale[locale], {
     hour: "numeric",
     minute: "2-digit",
   });
