@@ -30,7 +30,9 @@ export default function ChatPage() {
     messages,
     summary,
     isSending,
+    isClosing,
     isEnded,
+    markEnded,
     hasStarted,
     saveConsent,
     setSaveConsent,
@@ -97,7 +99,9 @@ export default function ChatPage() {
             <ChatWindow
               messages={messages}
               isSending={isSending}
+              isClosing={isClosing}
               isEnded={isEnded}
+              onEndReady={markEnded}
               onSend={send}
               onReset={() => setModal("reset")}
               mobileMenu={

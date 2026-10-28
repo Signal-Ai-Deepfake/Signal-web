@@ -16,7 +16,9 @@ const MENU_CLOSE_MS = 200;
 interface ChatWindowProps {
   messages: ChatMessage[];
   isSending: boolean;
+  isClosing?: boolean;
   isEnded?: boolean;
+  onEndReady?: () => void;
   onSend: (content: string) => void;
   onReset: () => void;
   mobileMenu?: ReactNode;
@@ -25,7 +27,9 @@ interface ChatWindowProps {
 export default function ChatWindow({
   messages,
   isSending,
+  isClosing = false,
   isEnded = false,
+  onEndReady,
   onSend,
   onReset,
   mobileMenu,
@@ -99,12 +103,16 @@ export default function ChatWindow({
       >
         {messages.map((message, index) => (
           <Fragment key={message.id}>
-            <ChatMessageBubble message={message} onTyping={scrollToBottom} />
+            <ChatMessageBubble
+              message={message}
+              onTyping={scrollToBottom}
+              onTypingComplete={message.endsSession ? onEndReady : undefined}
+            />
             {index === 0 && (
               <ChatQuickReplies
                 items={t.quickReplies}
                 onSelect={handleSend}
-                disabled={isSending || isEnded}
+                disabled={isSending || isClosing}
                 className="md:hidden"
               />
             )}
@@ -118,7 +126,7 @@ export default function ChatWindow({
       <ChatQuickReplies
         items={t.quickReplies}
         onSelect={handleSend}
-        disabled={isSending || isEnded}
+        disabled={isSending || isClosing}
         className="hidden px-[22px] pt-3.5 pb-1 md:flex"
       />
       {menuOpen && mobileMenu && (
@@ -145,7 +153,7 @@ export default function ChatWindow({
       ) : (
         <ChatInputForm
           onSend={handleSend}
-          disabled={isSending}
+          disabled={isSending || isClosing}
           menuOpen={menuOpen && !menuClosing}
           onToggleMenu={mobileMenu ? toggleMenu : undefined}
         />

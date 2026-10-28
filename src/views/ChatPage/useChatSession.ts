@@ -48,6 +48,7 @@ export function useChatSession(canSave: boolean) {
   const sessionCreatingRef = useRef<Promise<string> | null>(null);
   const generationRef = useRef(0);
   const effectiveConsent = canSave && saveConsent;
+  const isClosing = messages.some((message) => message.endsSession);
 
   function ensureSession(): Promise<string> {
     if (sessionIdRef.current) return Promise.resolve(sessionIdRef.current);
@@ -77,7 +78,7 @@ export function useChatSession(canSave: boolean) {
 
   async function send(content: string) {
     const trimmed = content.trim();
-    if (!trimmed || isSending || isEnded) return;
+    if (!trimmed || isSending || isClosing) return;
 
     setMessages((prev) => [
       ...prev,
@@ -101,9 +102,9 @@ export function useChatSession(canSave: boolean) {
           createdAt: Date.now(),
           typing: true,
           hasAgencies: (response.recommendedAgencies?.length ?? 0) > 0,
+          endsSession: response.sessionEnded === true,
         },
       ]);
-      if (response.sessionEnded) setIsEnded(true);
       try {
         const latestSummary = await getChatSummary(sessionId);
         if (!isStale()) setSummary(latestSummary);
@@ -137,7 +138,9 @@ export function useChatSession(canSave: boolean) {
     }),
     summary,
     isSending,
+    isClosing,
     isEnded,
+    markEnded: () => setIsEnded(true),
     hasStarted: messages.length > INITIAL_MESSAGE_COUNT,
     saveConsent: effectiveConsent,
     setSaveConsent,

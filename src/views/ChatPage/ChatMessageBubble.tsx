@@ -15,6 +15,7 @@ interface ChatMessageBubbleProps {
   message: ChatMessage;
   pending?: boolean;
   onTyping?: () => void;
+  onTypingComplete?: () => void;
 }
 
 function formatTime(timestamp?: number) {
@@ -22,7 +23,12 @@ function formatTime(timestamp?: number) {
   return new Date(timestamp).toLocaleTimeString("ko-KR", { hour: "numeric", minute: "2-digit" });
 }
 
-export default function ChatMessageBubble({ message, pending, onTyping }: ChatMessageBubbleProps) {
+export default function ChatMessageBubble({
+  message,
+  pending,
+  onTyping,
+  onTypingComplete,
+}: ChatMessageBubbleProps) {
   const t = useT(chatMessages);
   const time = formatTime(message.createdAt);
   const timeLabel = time && (
@@ -35,6 +41,10 @@ export default function ChatMessageBubble({ message, pending, onTyping }: ChatMe
   useEffect(() => {
     if (actions.length > 0) onTyping?.();
   }, [actions.length, onTyping]);
+
+  useEffect(() => {
+    if (typed) onTypingComplete?.();
+  }, [typed, onTypingComplete]);
 
   if (message.role === "user") {
     return (

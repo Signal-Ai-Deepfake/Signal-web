@@ -14,6 +14,7 @@ export interface ChatMessage {
   createdAt?: number;
   typing?: boolean;
   hasAgencies?: boolean;
+  endsSession?: boolean;
   actions?: ReplyAction[];
 }
 
