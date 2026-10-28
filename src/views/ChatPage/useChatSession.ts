@@ -42,11 +42,13 @@ export function useChatSession(canSave: boolean) {
   const [messages, setMessages] = useState<ChatMessage[]>(() => createInitialMessages(t.greeting));
   const [summary, setSummary] = useState<ChatSummary | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [isEnded, setIsEnded] = useState(false);
   const [saveConsent, setSaveConsent] = useState(false);
   const sessionIdRef = useRef<string | null>(null);
   const sessionCreatingRef = useRef<Promise<string> | null>(null);
   const generationRef = useRef(0);
   const effectiveConsent = canSave && saveConsent;
+  const isClosing = messages.some((message) => message.endsSession);
 
   function ensureSession(): Promise<string> {
     if (sessionIdRef.current) return Promise.resolve(sessionIdRef.current);
@@ -65,6 +67,7 @@ export function useChatSession(canSave: boolean) {
   function reset() {
     generationRef.current += 1;
     setIsSending(false);
+    setIsEnded(false);
     sessionIdRef.current = null;
     sessionCreatingRef.current = null;
     setMessages(
@@ -75,7 +78,7 @@ export function useChatSession(canSave: boolean) {
 
   async function send(content: string) {
     const trimmed = content.trim();
-    if (!trimmed || isSending) return;
+    if (!trimmed || isSending || isClosing) return;
 
     setMessages((prev) => [
       ...prev,
@@ -98,6 +101,8 @@ export function useChatSession(canSave: boolean) {
           content: response.reply,
           createdAt: Date.now(),
           typing: true,
+          hasAgencies: (response.recommendedAgencies?.length ?? 0) > 0,
+          endsSession: response.sessionEnded === true,
         },
       ]);
       try {
@@ -126,10 +131,16 @@ export function useChatSession(canSave: boolean) {
     messages: messages.map((message, index) => {
       if (message.role !== "bot") return message;
       if (index === 0) return { ...message, content: t.greeting };
-      return { ...message, actions: resolveReplyActions(message.content, t) };
+      return {
+        ...message,
+        actions: resolveReplyActions(message.content, message.hasAgencies ?? false, t),
+      };
     }),
     summary,
     isSending,
+    isClosing,
+    isEnded,
+    markEnded: () => setIsEnded(true),
     hasStarted: messages.length > INITIAL_MESSAGE_COUNT,
     saveConsent: effectiveConsent,
     setSaveConsent,

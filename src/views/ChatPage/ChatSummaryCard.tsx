@@ -17,6 +17,9 @@ function isRiskLevel(value?: string): value is RiskLevel {
 
 export default function ChatSummaryCard({ summary }: ChatSummaryCardProps) {
   const t = useT(chatMessages);
+  const progressPercent = summary.progress?.progressPercent ?? summary.progressPercent;
+  const completedCount = summary.progress?.completedCount;
+  const totalCount = summary.progress?.totalCount;
   return (
     <div className="border-primary-50 flex w-full flex-col gap-3.5 rounded-2xl border bg-white p-[25px]">
       <p className="text-body-1 font-semibold text-black">{t.summary.title}</p>
@@ -55,18 +58,20 @@ export default function ChatSummaryCard({ summary }: ChatSummaryCardProps) {
         </div>
       )}
 
-      {(summary.progress?.progressPercent ?? summary.progressPercent) !== undefined && (
+      {progressPercent !== undefined && (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <p className="text-small font-semibold text-gray-800">{t.summary.progress}</p>
-            <p className="text-small font-semibold text-black">
-              {summary.progress?.progressPercent ?? summary.progressPercent}%
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-small shrink-0 font-semibold text-gray-800">{t.summary.progress}</p>
+            <p className="text-small text-right font-semibold break-keep text-black">
+              {completedCount !== undefined && totalCount
+                ? t.summary.stepCount(completedCount, totalCount)
+                : `${progressPercent}%`}
             </p>
           </div>
           <div className="h-2 w-full rounded-full bg-gray-300">
             <div
               className="bg-primary-500 h-2 rounded-full"
-              style={{ width: `${summary.progress?.progressPercent ?? summary.progressPercent}%` }}
+              style={{ width: `${progressPercent}%` }}
             />
           </div>
           {summary.progress?.currentStage && (

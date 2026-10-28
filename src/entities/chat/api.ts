@@ -37,6 +37,13 @@ export interface SendMessageResponse {
   progress?: ConsultationProgressResponse;
 }
 
+export type ConsultationStageCode =
+  | "SITUATION_CHECK"
+  | "EMOTIONAL_SUPPORT"
+  | "EVIDENCE_PRESERVATION"
+  | "PLATFORM_REPORT"
+  | "AGENCY_GUIDANCE";
+
 export interface ConsultationStage {
   stage: string;
   label: string;
@@ -49,11 +56,14 @@ export interface ConsultationProgressResponse {
   completedStages: string[];
   stages: ConsultationStage[];
   progressPercent: number;
+  completedCount?: number;
+  totalCount?: number;
 }
 
 export interface ChatSummaryResponse {
   situation: string;
   recommendedSteps: string[];
+  recommendedStepCodes?: ConsultationStageCode[];
   riskLevel: string;
   riskDescription: string;
   progressPercent: number;

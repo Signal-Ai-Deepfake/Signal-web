@@ -15,6 +15,7 @@ interface ChatMessageBubbleProps {
   message: ChatMessage;
   pending?: boolean;
   onTyping?: () => void;
+  onTypingComplete?: () => void;
 }
 
 function formatTime(timestamp?: number) {
@@ -22,7 +23,12 @@ function formatTime(timestamp?: number) {
   return new Date(timestamp).toLocaleTimeString("ko-KR", { hour: "numeric", minute: "2-digit" });
 }
 
-export default function ChatMessageBubble({ message, pending, onTyping }: ChatMessageBubbleProps) {
+export default function ChatMessageBubble({
+  message,
+  pending,
+  onTyping,
+  onTypingComplete,
+}: ChatMessageBubbleProps) {
   const t = useT(chatMessages);
   const time = formatTime(message.createdAt);
   const timeLabel = time && (
@@ -35,6 +41,10 @@ export default function ChatMessageBubble({ message, pending, onTyping }: ChatMe
   useEffect(() => {
     if (actions.length > 0) onTyping?.();
   }, [actions.length, onTyping]);
+
+  useEffect(() => {
+    if (typed) onTypingComplete?.();
+  }, [typed, onTypingComplete]);
 
   if (message.role === "user") {
     return (
@@ -59,7 +69,7 @@ export default function ChatMessageBubble({ message, pending, onTyping }: ChatMe
           <BotOutline />
         </span>
       </span>
-      <div className="flex max-w-[80%] flex-col items-start gap-2">
+      <div className="flex max-w-[80%] min-w-0 flex-col items-start gap-2">
         <div className="max-md:border-secondary-400/30 max-md:bg-secondary-50 rounded-2xl rounded-tl-none border p-4 max-md:shadow-sm md:rounded-tl-[2px] md:border-gray-300 md:bg-white">
           {pending ? (
             <span
