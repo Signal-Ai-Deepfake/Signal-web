@@ -42,6 +42,7 @@ export function useChatSession(canSave: boolean) {
   const [messages, setMessages] = useState<ChatMessage[]>(() => createInitialMessages(t.greeting));
   const [summary, setSummary] = useState<ChatSummary | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [isEnded, setIsEnded] = useState(false);
   const [saveConsent, setSaveConsent] = useState(false);
   const sessionIdRef = useRef<string | null>(null);
   const sessionCreatingRef = useRef<Promise<string> | null>(null);
@@ -65,6 +66,7 @@ export function useChatSession(canSave: boolean) {
   function reset() {
     generationRef.current += 1;
     setIsSending(false);
+    setIsEnded(false);
     sessionIdRef.current = null;
     sessionCreatingRef.current = null;
     setMessages(
@@ -75,7 +77,7 @@ export function useChatSession(canSave: boolean) {
 
   async function send(content: string) {
     const trimmed = content.trim();
-    if (!trimmed || isSending) return;
+    if (!trimmed || isSending || isEnded) return;
 
     setMessages((prev) => [
       ...prev,
@@ -101,6 +103,7 @@ export function useChatSession(canSave: boolean) {
           hasAgencies: (response.recommendedAgencies?.length ?? 0) > 0,
         },
       ]);
+      if (response.sessionEnded) setIsEnded(true);
       try {
         const latestSummary = await getChatSummary(sessionId);
         if (!isStale()) setSummary(latestSummary);
@@ -134,6 +137,7 @@ export function useChatSession(canSave: boolean) {
     }),
     summary,
     isSending,
+    isEnded,
     hasStarted: messages.length > INITIAL_MESSAGE_COUNT,
     saveConsent: effectiveConsent,
     setSaveConsent,

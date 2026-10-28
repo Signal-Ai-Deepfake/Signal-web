@@ -26,8 +26,17 @@ export default function ChatPage() {
   const ui = useT(uiMessages);
   const router = useRouter();
   const isLoggedIn = useIsLoggedIn();
-  const { messages, summary, isSending, hasStarted, saveConsent, setSaveConsent, send, reset } =
-    useChatSession(isLoggedIn === true);
+  const {
+    messages,
+    summary,
+    isSending,
+    isEnded,
+    hasStarted,
+    saveConsent,
+    setSaveConsent,
+    send,
+    reset,
+  } = useChatSession(isLoggedIn === true);
   const [modal, setModal] = useState<ModalKind>(null);
 
   function handleConfirm() {
@@ -88,6 +97,7 @@ export default function ChatPage() {
             <ChatWindow
               messages={messages}
               isSending={isSending}
+              isEnded={isEnded}
               onSend={send}
               onReset={() => setModal("reset")}
               mobileMenu={

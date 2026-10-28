@@ -3,6 +3,7 @@
 import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import BotOutline from "@/shared/asset/svg/BotOutline";
 import Delete from "@/shared/asset/svg/Delete";
+import Button from "@/shared/ui/Button";
 import ChatInputForm from "./ChatInputForm";
 import ChatMessageBubble from "./ChatMessageBubble";
 import ChatQuickReplies from "./ChatQuickReplies";
@@ -15,6 +16,7 @@ const MENU_CLOSE_MS = 200;
 interface ChatWindowProps {
   messages: ChatMessage[];
   isSending: boolean;
+  isEnded?: boolean;
   onSend: (content: string) => void;
   onReset: () => void;
   mobileMenu?: ReactNode;
@@ -23,6 +25,7 @@ interface ChatWindowProps {
 export default function ChatWindow({
   messages,
   isSending,
+  isEnded = false,
   onSend,
   onReset,
   mobileMenu,
@@ -101,7 +104,7 @@ export default function ChatWindow({
               <ChatQuickReplies
                 items={t.quickReplies}
                 onSelect={handleSend}
-                disabled={isSending}
+                disabled={isSending || isEnded}
                 className="md:hidden"
               />
             )}
@@ -115,7 +118,7 @@ export default function ChatWindow({
       <ChatQuickReplies
         items={t.quickReplies}
         onSelect={handleSend}
-        disabled={isSending}
+        disabled={isSending || isEnded}
         className="hidden px-[22px] pt-3.5 pb-1 md:flex"
       />
       {menuOpen && mobileMenu && (
@@ -129,12 +132,24 @@ export default function ChatWindow({
           {mobileMenu}
         </div>
       )}
-      <ChatInputForm
-        onSend={handleSend}
-        disabled={isSending}
-        menuOpen={menuOpen && !menuClosing}
-        onToggleMenu={mobileMenu ? toggleMenu : undefined}
-      />
+      {isEnded ? (
+        <div
+          role="status"
+          className="flex flex-col items-center gap-3 border-t border-gray-300 bg-white px-5 py-4 text-center md:flex-row md:justify-between md:px-[22px] md:pt-3.5 md:pb-[22px] md:text-left"
+        >
+          <p className="text-small md:text-body-2 break-keep text-gray-800">{t.ended.notice}</p>
+          <Button type="button" variant="primary" onClick={onReset} className="shrink-0">
+            {t.ended.newChat}
+          </Button>
+        </div>
+      ) : (
+        <ChatInputForm
+          onSend={handleSend}
+          disabled={isSending}
+          menuOpen={menuOpen && !menuClosing}
+          onToggleMenu={mobileMenu ? toggleMenu : undefined}
+        />
+      )}
     </section>
   );
 }
