@@ -28,9 +28,9 @@ const SENTENCE_BREAK = /(?<=[.!?])\s+/;
 const QUOTED = /([‘“"'])([^’”"'\n]{1,30})([’”"'])/g;
 const AGENCY = /([가-힣]*(?:경찰청|수사대|센터|위원회|상담소|지원단))/g;
 const HOTLINE =
-  /(?<![\d-])(\d{2,4}-\d{3,4}-\d{4}|112|117|118|119|182|1332|1366|1377|1388|1398)(?![\d-])/g;
+  /(?<![\d-])(\d{2,4}-\d{3,4}-\d{4}|109|112|117|118|119|182|1332|1366|1377|1388|1398)(?![\d-])/g;
 const SENTENCES_PER_PARAGRAPH = 2;
-const FULL_HOTLINE = /^(\d{2,4}-\d{3,4}-\d{4}|112|117|118|119|182|1332|1366|1377|1388|1398)$/;
+const FULL_HOTLINE = /^(\d{2,4}-\d{3,4}-\d{4}|109|112|117|118|119|182|1332|1366|1377|1388|1398)$/;
 
 function formatPlainSegment(text: string) {
   if (text.includes("\n") || text.includes("**")) return text;
