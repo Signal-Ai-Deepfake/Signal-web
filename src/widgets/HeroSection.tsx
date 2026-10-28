@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Arrow from "@/shared/asset/svg/Arrow";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
@@ -8,8 +10,14 @@ import LinkButton from "@/shared/ui/LinkButton";
 import ScrollReveal from "@/shared/ui/ScrollReveal";
 import SectionBadge from "@/shared/ui/SectionBadge";
 import TypingHeadline from "@/shared/ui/TypingHeadline";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
+import { toTypingLines } from "@/widgets/BrandText";
 
 export default function HeroSection() {
+  const t = useT(widgetMessages);
+  const { locale } = useLocale();
+  const nowrap = locale === "ko" ? "xl:whitespace-nowrap" : "";
   return (
     <section className="hidden w-full bg-white md:block">
       <FrameScale>
@@ -33,30 +41,22 @@ export default function HeroSection() {
         >
           <div className="flex w-fit flex-col items-center gap-6 text-center xl:items-start xl:text-left">
             <ScrollReveal className="xl:hidden">
-              <SectionBadge>AI 기반 딥페이크 피해 예방·탐지·대응</SectionBadge>
+              <SectionBadge>{t.hero.badge}</SectionBadge>
             </ScrollReveal>
             <TypingHeadline
-              className="text-h1 font-bold break-keep text-black xl:whitespace-nowrap"
+              className={`text-h1 font-bold break-keep text-black ${nowrap}`}
               afterClassName="flex flex-col items-center gap-6 xl:items-start"
-              lines={[
-                [{ text: "당신이 보낸 구조 신호," }],
-                [
-                  { text: "Signal", className: "text-secondary-400" },
-                  { text: "이 안전한 일상으로 답합니다." },
-                ],
-              ]}
+              lines={toTypingLines(t.hero.headline)}
             >
               <div className="text-body-1 flex max-w-[640px] flex-col gap-1 break-keep text-gray-800 xl:max-w-none">
-                <p className="xl:whitespace-nowrap">
-                  디지털 괴롭힘부터 딥페이크까지, 홀로 감당하기 힘든 순간에 Signal을 켜세요.
-                </p>
-                <p className="xl:whitespace-nowrap">
-                  AI 기술을 통해 가장 빠르고 정확하게 증거를 분석하고 맞춤형 대응 가이드를
-                  제공합니다.
-                </p>
+                {t.hero.intro.map((line) => (
+                  <p key={line} className={nowrap}>
+                    {line}
+                  </p>
+                ))}
               </div>
               <LinkButton href="/analyze" variant="primary" className="gap-1">
-                AI 분석 시작하기
+                {t.hero.cta}
                 <span className="[&>svg]:h-6 [&>svg]:w-6">
                   <ArrowUp />
                 </span>
@@ -68,7 +68,7 @@ export default function HeroSection() {
               percent={72}
               riskPercent={24}
               level="안전"
-              message="현재 이미지는 안전합니다."
+              message={t.hero.sampleMessage}
             />
           </ScrollReveal>
           <ScrollReveal distance={0} className="hidden xl:block">
@@ -76,7 +76,7 @@ export default function HeroSection() {
               percent={72}
               riskPercent={24}
               level="안전"
-              message="현재 이미지는 안전합니다."
+              message={t.hero.sampleMessage}
             />
           </ScrollReveal>
         </div>
@@ -84,7 +84,7 @@ export default function HeroSection() {
           href="#why-signal"
           className="text-caption hover:text-primary-500 absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-gray-700 transition-colors"
         >
-          스크롤해서 더 알아보기
+          {t.hero.scrollMore}
           <span className="animate-bounce motion-reduce:animate-none">
             <span className="block rotate-90 [&>svg]:h-4 [&>svg]:w-4">
               <Arrow />

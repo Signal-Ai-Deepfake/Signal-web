@@ -15,6 +15,9 @@ import MobileAnalyzeStepper from "./MobileAnalyzeStepper";
 import ResultDetails from "./ResultDetails";
 import UploadCard from "./UploadCard";
 import { useAnalyzeFlow } from "./useAnalyzeFlow";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { analyzeMessages } from "./messages";
+import { uiMessages } from "@/shared/ui/messages";
 
 export type { Status } from "./useAnalyzeFlow";
 export type { AnalysisResult };
@@ -45,6 +48,8 @@ export default function AnalyzePage() {
     handleShare,
     handleSaveProtected,
   } = useAnalyzeFlow();
+  const t = useT(analyzeMessages);
+  const ui = useT(uiMessages);
   const detailsRef = useRef<HTMLDivElement>(null);
   const scrollToDetailsRef = useRef(false);
 
@@ -67,18 +72,16 @@ export default function AnalyzePage() {
           <BackButton className="md:hidden" />
           <div className="hidden items-center gap-4 md:flex">
             <Link href="/" className="text-body-1 text-gray-800">
-              홈
+              {ui.home}
             </Link>
             <span className="text-gray-800 [&>svg]:h-[18px] [&>svg]:w-[18px]">
               <Arrow />
             </span>
-            <span className="text-body-1 text-primary-500">사진 위험도 분석 및 보호</span>
+            <span className="text-body-1 text-primary-500">{t.title}</span>
           </div>
           <div className="flex flex-col gap-2 md:gap-6">
-            <h1 className="text-h3 md:text-h1 font-bold text-black">사진 위험도 분석 및 보호</h1>
-            <p className="text-small md:text-body-1 text-gray-800">
-              SNS 업로드 전 사진의 위험 요소를 AI가 분석하고 안전하게 보호할 수 있도록 도와드립니다.
-            </p>
+            <h1 className="text-h3 md:text-h1 font-bold text-black">{t.title}</h1>
+            <p className="text-small md:text-body-1 break-keep text-gray-800">{t.description}</p>
           </div>
 
           <MobileAnalyzeStepper status={status} />
@@ -99,9 +102,7 @@ export default function AnalyzePage() {
                   <span className="text-gray-800 [&>svg]:h-5 [&>svg]:w-5">
                     <Lock />
                   </span>
-                  <p className="text-caption text-gray-800">
-                    모든 데이터는 암호화되어 안전하게 보호됩니다.
-                  </p>
+                  <p className="text-caption text-gray-800">{t.encrypted}</p>
                 </div>
               )}
               <AnalysisPanel

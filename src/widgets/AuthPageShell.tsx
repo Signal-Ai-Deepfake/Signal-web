@@ -7,6 +7,9 @@ import Logo from "@/shared/asset/svg/Logo";
 import Sparkle from "@/shared/asset/svg/Sparkle";
 import { useGoBack } from "@/shared/lib/useGoBack";
 import { useHideOnScroll } from "@/shared/lib/useHideOnScroll";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
+import { uiMessages } from "@/shared/ui/messages";
 
 export const authCardClass =
   "relative flex w-full motion-safe:animate-[fade-in-up_0.4s_ease-out] flex-col gap-5 rounded-2xl bg-white px-6 py-8 shadow-md md:max-w-[520px] md:px-14 md:py-10 lg:px-12 lg:py-8";
@@ -14,6 +17,8 @@ export const authCardClass =
 export default function AuthPageShell({ children }: { children: ReactNode }) {
   const hidden = useHideOnScroll();
   const goBack = useGoBack();
+  const t = useT(widgetMessages);
+  const ui = useT(uiMessages);
 
   return (
     <div className="relative flex min-h-dvh w-full flex-col overflow-hidden bg-[linear-gradient(170deg,#ffffff_5%,var(--color-secondary-50)_40%,var(--color-secondary-100)_100%)] md:bg-[linear-gradient(110deg,#ffffff_49%,var(--color-secondary-50)_96%)]">
@@ -61,14 +66,14 @@ export default function AuthPageShell({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={goBack}
-            aria-label="뒤로 가기"
+            aria-label={ui.back}
             className="text-primary-500 active:bg-primary-50 absolute left-2 flex size-10 cursor-pointer items-center justify-center rounded-full md:hidden [&>svg]:h-[18px] [&>svg]:w-[11.25px]"
           >
             <ChevronLeft />
           </button>
           <Link
             href="/"
-            aria-label="Signal 홈"
+            aria-label={t.header.homeLink}
             className="max-md:[&>svg]:h-[26px] max-md:[&>svg]:w-[82px]"
           >
             <Logo />

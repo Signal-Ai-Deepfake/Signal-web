@@ -1,5 +1,9 @@
+"use client";
+
 import Warning from "@/shared/asset/svg/Warning";
 import SuspicionBanner from "@/shared/ui/SuspicionBanner";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { detectMessages } from "./messages";
 
 function verdictStyle(score: number) {
   if (score >= 70) return { bg: "bg-red-50", text: "text-red-500" };
@@ -34,6 +38,7 @@ export default function VerdictCard({
   suspicion = false,
   unsupported = false,
 }: VerdictCardProps) {
+  const t = useT(detectMessages).result;
   const style = verdictStyle(score);
 
   if (unsupported) {
@@ -44,7 +49,7 @@ export default function VerdictCard({
           <span className="shrink-0 text-gray-500 [&>svg]:h-8 [&>svg]:w-8">
             <Warning />
           </span>
-          <p className="text-body-1 font-bold text-gray-500">준비 중인 기능입니다</p>
+          <p className="text-body-1 font-bold text-gray-500">{t.unsupported}</p>
         </div>
         <p className="text-body-2 text-gray-650 text-center">{caption}</p>
       </div>

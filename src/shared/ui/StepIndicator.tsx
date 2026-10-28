@@ -1,9 +1,14 @@
+"use client";
+
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
 interface StepIndicatorProps {
   total: number;
   current: number;
 }
 
 export default function StepIndicator({ total, current }: StepIndicatorProps) {
+  const t = useT(uiMessages);
   return (
     <div
       className="flex w-full max-w-[270px] items-center"
@@ -11,7 +16,7 @@ export default function StepIndicator({ total, current }: StepIndicatorProps) {
       aria-valuemin={1}
       aria-valuemax={total}
       aria-valuenow={current}
-      aria-label={`${total}단계 중 ${current}단계`}
+      aria-label={t.stepOf(current, total)}
     >
       {Array.from({ length: total }, (_, index) => index + 1).map((step) => (
         <div key={step} className="flex flex-1 items-center last:flex-none">

@@ -5,6 +5,8 @@ import { createConnection, type AgencyResponse } from "@/entities/agency/api";
 import Clock from "@/shared/asset/svg/Clock";
 import HandHeart from "@/shared/asset/svg/HandHeart";
 import Phone from "@/shared/asset/svg/Phone";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { referralMessages } from "./messages";
 
 interface AgencyCardProps {
   agency: AgencyResponse;
@@ -17,6 +19,7 @@ function extractDialNumber(phone: string) {
 
 export default function AgencyCard({ agency }: AgencyCardProps) {
   const { agencyId, name, phone, website, availableHours, supportedActions } = agency;
+  const t = useT(referralMessages);
   const [isConnecting, setIsConnecting] = useState(false);
 
   async function recordConnection(connectionType: "PHONE" | "WEB") {
@@ -40,7 +43,7 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
               <span className="shrink-0 text-gray-700 [&>svg]:h-5 [&>svg]:w-5">
                 <Clock />
               </span>
-              <span className="text-small md:text-large shrink-0 text-gray-700">운영시간</span>
+              <span className="text-small md:text-large shrink-0 text-gray-700">{t.hours}</span>
               <span className="text-small break-keep text-gray-700">{availableHours}</span>
             </div>
           )}
@@ -49,7 +52,7 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
               <span className="shrink-0 text-gray-700 [&>svg]:h-5 [&>svg]:w-5 md:[&>svg]:h-6 md:[&>svg]:w-6">
                 <HandHeart />
               </span>
-              <span className="text-small md:text-large shrink-0 text-gray-700">지원 항목</span>
+              <span className="text-small md:text-large shrink-0 text-gray-700">{t.supports}</span>
               <span className="text-small break-keep text-gray-700">
                 {supportedActions.join(" · ")}
               </span>
@@ -60,7 +63,7 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
       <div className="flex w-full flex-col gap-3 border-t border-gray-300 pt-5 md:pt-6 lg:w-[381px] lg:shrink-0 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
         {phone && (
           <div className="flex flex-col gap-1">
-            <p className="text-caption text-gray-700">상담 전화</p>
+            <p className="text-caption text-gray-700">{t.hotline}</p>
             <p className="md:text-h3 text-primary-450 text-xl font-bold break-keep">{phone}</p>
           </div>
         )}
@@ -74,7 +77,7 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
               <span className="[&>svg]:h-5 [&>svg]:w-5">
                 <Phone />
               </span>
-              전화 연결
+              {t.call}
             </a>
           )}
           {website && (
@@ -85,14 +88,12 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
               onClick={() => recordConnection("WEB")}
               className="bg-primary-500 text-body-2 md:text-large hover:bg-primary-400 flex flex-1 items-center justify-center rounded px-6 py-3 text-white transition-colors"
             >
-              온라인 상담 이동
+              {t.online}
             </a>
           )}
         </div>
-        {!phone && !website && (
-          <p className="text-caption text-gray-700">등록된 연락처 정보가 없습니다.</p>
-        )}
-        {isConnecting && <p className="text-caption text-gray-700">연결 기록 중...</p>}
+        {!phone && !website && <p className="text-caption text-gray-700">{t.noContact}</p>}
+        {isConnecting && <p className="text-caption text-gray-700">{t.recording}</p>}
       </div>
     </div>
   );

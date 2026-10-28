@@ -1,8 +1,11 @@
+"use client";
+
 import Button from "@/shared/ui/Button";
 import StepHeader from "@/shared/ui/StepHeader";
 import TermsRow from "@/shared/ui/TermsRow";
-import PrivacyPolicyContent from "./PrivacyPolicyContent";
-import TermsOfServiceContent from "./TermsOfServiceContent";
+import LegalSummaryContent from "./LegalSummaryContent";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 interface Step1TermsProps {
   agreeTerms: boolean;
@@ -23,36 +26,43 @@ export default function Step1Terms({
   canProceed,
   onNext,
 }: Step1TermsProps) {
+  const t = useT(authMessages);
   return (
     <>
-      <StepHeader title="약관에 동의해 주세요" description="서비스 이용을 위해 약관에 동의해 주세요." />
+      <StepHeader title={t.signup.termsTitle} description={t.signup.termsDescription} />
       <div className="flex w-full flex-col gap-3">
         <div className="overflow-hidden rounded-lg border border-gray-300">
           <TermsRow
-            label="전체 동의"
+            label={t.signup.agreeAll}
             checked={agreeTerms && agreePrivacy}
             onChange={onAgreeAllChange}
           />
         </div>
         <div className="flex flex-col divide-y divide-gray-300 overflow-hidden rounded-lg border border-gray-300">
           <TermsRow
-            label="이용약관 동의"
+            label={t.signup.agreeTerms}
             required
             checked={agreeTerms}
             onChange={onAgreeTermsChange}
-            content={<TermsOfServiceContent />}
+            content={<LegalSummaryContent document="terms" />}
           />
           <TermsRow
-            label="개인정보 처리방침 동의"
+            label={t.signup.agreePrivacy}
             required
             checked={agreePrivacy}
             onChange={onAgreePrivacyChange}
-            content={<PrivacyPolicyContent />}
+            content={<LegalSummaryContent document="privacy" />}
           />
         </div>
       </div>
-      <Button type="button" variant="primary" className="w-full" disabled={!canProceed} onClick={onNext}>
-        다음
+      <Button
+        type="button"
+        variant="primary"
+        className="w-full"
+        disabled={!canProceed}
+        onClick={onNext}
+      >
+        {t.next}
       </Button>
     </>
   );

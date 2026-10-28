@@ -1,11 +1,12 @@
-const steps = [
-  { step: 1, label: "유형 선택" },
-  { step: 2, label: "상황 입력" },
-  { step: 3, label: "초안 확인" },
-  { step: 4, label: "문서 생성" },
-] as const;
+"use client";
+
+import { useT } from "@/shared/i18n/I18nProvider";
+import { reportMessages } from "./messages";
+const stepNumbers = [1, 2, 3, 4] as const;
 
 export default function MobileReportStepper({ currentStep }: { currentStep: number }) {
+  const t = useT(reportMessages);
+  const steps = stepNumbers.map((step, index) => ({ step, label: t.steps[index] }));
   return (
     <div className="flex w-full items-center px-1 md:hidden">
       {steps.map(({ step, label }, index) => (

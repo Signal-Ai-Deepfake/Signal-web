@@ -11,6 +11,8 @@ import Button from "@/shared/ui/Button";
 import Input from "@/shared/ui/Input";
 import ReportSectionCard from "./ReportSectionCard";
 import StepNavigation from "./StepNavigation";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { reportMessages } from "./messages";
 
 export interface ReportEvidence {
   id: number;
@@ -79,6 +81,7 @@ export default function Step2Details({
   onBack,
   onNext,
 }: Step2DetailsProps) {
+  const t = useT(reportMessages);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -89,7 +92,7 @@ export default function Step2Details({
       const result = await uploadReportEvidence(file);
       onEvidenceChange({ id: result.evidenceId, name: file.name });
     } catch (error) {
-      toast.error("증거 자료 업로드에 실패했습니다.", {
+      toast.error(t.step2.uploadFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     } finally {
@@ -123,39 +126,35 @@ export default function Step2Details({
 
   const canProceed = details.description.trim().length > 0;
   const urlError =
-    details.url.trim().length > 0 && !isValidUrl(details.url)
-      ? "올바른 URL 형식으로 입력해 주세요."
-      : undefined;
+    details.url.trim().length > 0 && !isValidUrl(details.url) ? t.step2.invalidUrl : undefined;
 
   return (
     <div className="flex w-full flex-col gap-6 md:gap-8">
-      <ReportSectionCard
-        step="02"
-        title="피해 상황을 알려주세요"
-        description="확실하지 않은 내용은 비워두거나 대략적으로 적어도 괜찮습니다."
-      >
+      <ReportSectionCard step="02" title={t.step2.title} description={t.step2.description}>
         <div className="flex w-full flex-col gap-5 md:gap-6">
           <div className="flex flex-col gap-4 border-t border-gray-300 pt-5 md:pt-6">
-            <p className="text-body-2 md:text-body-1 font-semibold text-black">기본 정보</p>
+            <p className="text-body-2 md:text-body-1 font-semibold text-black">
+              {t.step2.basicInfo}
+            </p>
             <div className="grid grid-cols-1 gap-x-4 md:grid-cols-2">
               <Input
-                label="피해 발생 일시"
+                label={t.step2.incidentDate}
                 icon={Calendar}
                 type="date"
                 value={details.incidentDate}
                 onChange={(event) => onChange({ ...details, incidentDate: event.target.value })}
               />
               <Input
-                label="피해 발생 플랫폼"
-                placeholder="예: 인스타그램, 유튜브, 카카오톡"
+                label={t.step2.platform}
+                placeholder={t.step2.platformPlaceholder}
                 value={details.platform}
                 onChange={(event) => onChange({ ...details, platform: event.target.value })}
               />
             </div>
             <Input
-              label="발견한 원본 URL"
+              label={t.step2.url}
               type="url"
-              placeholder="피해 게시물이나 계정 주소를 붙여 넣어 주세요."
+              placeholder={t.step2.urlPlaceholder}
               value={details.url}
               onChange={(event) => onChange({ ...details, url: event.target.value })}
               error={urlError}
@@ -163,27 +162,27 @@ export default function Step2Details({
           </div>
 
           <div className="flex flex-col gap-4 border-t border-gray-300 pt-5 md:pt-6">
-            <p className="text-body-2 md:text-body-1 font-semibold text-black">피해 내용</p>
+            <p className="text-body-2 md:text-body-1 font-semibold text-black">{t.step2.details}</p>
             <TextArea
-              label="어떤 일이 있었는지 적어주세요"
-              placeholder="발견한 내용과 현재 상황을 편하게 적어주세요."
+              label={t.step2.whatHappened}
+              placeholder={t.step2.whatHappenedPlaceholder}
               value={details.description}
               onChange={(value) => onChange({ ...details, description: value })}
-              hint="누가, 언제, 어디에서, 어떤 행동을 했는지 적으면 초안이 더 정확해져요."
+              hint={t.step2.whatHappenedHint}
             />
             <TextArea
-              label="추가로 전달할 내용"
-              placeholder="추가로 기관에 전달하고 싶은 내용이 있다면 적어 주세요."
+              label={t.step2.extra}
+              placeholder={t.step2.extraPlaceholder}
               value={details.additionalNotes}
               onChange={(value) => onChange({ ...details, additionalNotes: value })}
             />
           </div>
 
           <div className="flex flex-col gap-2 border-t border-gray-300 pt-5 md:pt-6">
-            <p className="text-body-2 md:text-body-1 font-semibold text-black">증거 자료</p>
-            <p className="text-caption text-gray-800">
-              캡처 이미지나 영상을 첨부하면 피해 확인에 도움이 됩니다.
+            <p className="text-body-2 md:text-body-1 font-semibold text-black">
+              {t.step2.evidence}
             </p>
+            <p className="text-caption text-gray-800">{t.step2.evidenceHint}</p>
             <div
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -197,10 +196,10 @@ export default function Step2Details({
                   <ImageArrowUp />
                 </span>
                 <p className="text-body-2 md:text-body-1 font-semibold text-black">
-                  사진 또는 영상 업로드
+                  {t.step2.upload}
                 </p>
                 <p className="text-small md:text-body-2 text-gray-650 max-w-full text-center break-all">
-                  {isUploading ? "업로드 중..." : (evidence?.name ?? "JPG , PNG 파일 지원")}
+                  {isUploading ? t.step2.uploading : (evidence?.name ?? t.step2.fileTypes)}
                 </p>
               </div>
               <input
@@ -213,11 +212,11 @@ export default function Step2Details({
               <Button
                 type="button"
                 variant="primary"
-                className="w-[151px]"
+                className="min-w-[151px]"
                 disabled={isUploading}
                 onClick={() => fileInputRef.current?.click()}
               >
-                {isUploading ? "업로드 중..." : "파일 찾기"}
+                {isUploading ? t.step2.uploading : t.step2.browse}
               </Button>
             </div>
           </div>
@@ -232,7 +231,7 @@ export default function Step2Details({
           disabled={!canProceed}
           onClick={onNext}
         >
-          초안 확인하기
+          {t.step2.toDraft}
           <span className="[&>svg]:h-6 [&>svg]:w-6">
             <ArrowUp />
           </span>

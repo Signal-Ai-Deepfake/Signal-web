@@ -1,17 +1,22 @@
+"use client";
+
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import AnalysisStepCard from "@/shared/ui/AnalysisStepCard";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
 
 export default function UploadStepCard() {
+  const t = useT(uiMessages);
   return (
-    <AnalysisStepCard step="01" title="이미지 업로드" size="sm">
-      <div className="flex w-[192px] h-[119px] border border-gray-200 py-4 px-[10px] flex-col items-center justify-center gap-2 rounded-xl bg-gray-50">
+    <AnalysisStepCard step="01" title={t.stepUpload} size="sm">
+      <div className="flex h-[119px] w-[192px] flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-[10px] py-4">
         <div className="text-primary-500 [&>svg]:h-10 [&>svg]:w-10">
           <ImageArrowUp />
         </div>
-        <p className="text-body-2 text-black">이미지 업로드</p>
-        <p className="text-caption text-gray-700">JPG, PNG 파일 지원</p>
+        <p className="text-body-2 text-black">{t.stepUpload}</p>
+        <p className="text-caption text-center text-gray-700">{t.fileTypes}</p>
       </div>
-      <div className="h-[121px] w-[192px] border border-gray-200 py-4 px-[10px] rounded-xl bg-gray-50" />
+      <div className="h-[121px] w-[192px] rounded-xl border border-gray-200 bg-gray-50 px-[10px] py-4" />
     </AnalysisStepCard>
   );
 }

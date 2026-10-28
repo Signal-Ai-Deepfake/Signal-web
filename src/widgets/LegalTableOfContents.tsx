@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
 
 interface LegalTableOfContentsProps {
   items: { id: string; label: string }[];
@@ -11,6 +13,7 @@ const ACTIVE_OFFSET = 120;
 
 export default function LegalTableOfContents({ items }: LegalTableOfContentsProps) {
   const [activeId, setActiveId] = useState(items[0]?.id);
+  const t = useT(widgetMessages);
 
   useEffect(() => {
     let frame = 0;
@@ -54,7 +57,7 @@ export default function LegalTableOfContents({ items }: LegalTableOfContentsProp
     <>
       <details className="group w-full rounded-2xl border border-gray-200 lg:hidden">
         <summary className="text-body-2 flex cursor-pointer list-none items-center justify-between px-5 py-4 font-bold text-black [&::-webkit-details-marker]:hidden">
-          목차
+          {t.legal.toc}
           <span className="text-gray-600 transition-transform duration-200 group-open:rotate-90 [&>svg]:h-5 [&>svg]:w-2.5">
             <Arrow />
           </span>
@@ -72,7 +75,7 @@ export default function LegalTableOfContents({ items }: LegalTableOfContentsProp
           ))}
         </ul>
       </details>
-      <LegalDesktopNav items={items} activeId={activeId} />
+      <LegalDesktopNav items={items} activeId={activeId} title={t.legal.toc} />
     </>
   );
 }
@@ -80,10 +83,11 @@ export default function LegalTableOfContents({ items }: LegalTableOfContentsProp
 function LegalDesktopNav({
   items,
   activeId,
-}: LegalTableOfContentsProps & { activeId: string | undefined }) {
+  title,
+}: LegalTableOfContentsProps & { activeId: string | undefined; title: string }) {
   return (
     <nav className="sticky top-24 hidden w-60 shrink-0 flex-col gap-2 rounded-2xl border border-gray-200 p-6 lg:flex">
-      <p className="text-body-2 font-bold text-black">목차</p>
+      <p className="text-body-2 font-bold text-black">{title}</p>
       <ul className="flex flex-col gap-1">
         {items.map((item) => {
           const active = item.id === activeId;

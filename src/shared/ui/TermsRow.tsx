@@ -1,7 +1,11 @@
+"use client";
+
 import { useState } from "react";
 import type { ReactNode } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Check from "@/shared/asset/svg/Check";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
 
 export default function TermsRow({
   label,
@@ -16,6 +20,7 @@ export default function TermsRow({
   onChange: (checked: boolean) => void;
   content?: ReactNode;
 }) {
+  const t = useT(uiMessages);
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -35,7 +40,7 @@ export default function TermsRow({
           </span>
           <span className="text-body-2 text-black">
             {label}
-            {required && <span className="text-secondary-500"> (필수)</span>}
+            {required && <span className="text-secondary-500"> {t.required}</span>}
           </span>
         </button>
         {required && content && (
@@ -58,7 +63,9 @@ export default function TermsRow({
           }`}
         >
           <div className="overflow-hidden">
-            <div className="max-h-48 overflow-y-auto border-t border-gray-200 px-5 py-3">{content}</div>
+            <div className="max-h-48 overflow-y-auto border-t border-gray-200 px-5 py-3">
+              {content}
+            </div>
           </div>
         </div>
       )}

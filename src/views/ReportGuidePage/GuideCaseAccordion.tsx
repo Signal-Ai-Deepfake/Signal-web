@@ -2,18 +2,21 @@
 
 import { Fragment, useId, useState } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
-import { guideCases } from "./guideContent";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { guideMessages } from "./guideContent";
 
 export default function GuideCaseAccordion() {
+  const t = useT(guideMessages);
+  const guideCases = t.cases;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const baseId = useId();
 
   return (
     <section className="flex w-full flex-col">
       <div className="flex items-center justify-between py-6 md:pt-0">
-        <h2 className="text-xl font-bold text-black md:text-[28px]">신고 사례</h2>
+        <h2 className="text-xl font-bold text-black md:text-[28px]">{t.casesTitle}</h2>
         <span className="bg-primary-50 text-primary-500 rounded-full px-3 py-1 text-[13px] font-medium">
-          {guideCases.length}가지 사례
+          {t.caseCount(guideCases.length)}
         </span>
       </div>
       <ul className="flex flex-col gap-2">

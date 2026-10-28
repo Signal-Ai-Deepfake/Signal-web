@@ -7,6 +7,8 @@ import ProgressRing from "@/shared/asset/svg/ProgressRing";
 import Button from "@/shared/ui/Button";
 import PhotoResetButton from "@/shared/ui/PhotoResetButton";
 import type { DetectStatus } from "./types";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { detectMessages } from "./messages";
 
 interface DetectUploadCardProps {
   status: DetectStatus;
@@ -21,6 +23,7 @@ export default function DetectUploadCard({
   onFileSelect,
   onReset,
 }: DetectUploadCardProps) {
+  const { upload } = useT(detectMessages);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -60,7 +63,7 @@ export default function DetectUploadCard({
                 <span className="text-primary-500 animate-spin [&>svg]:h-16 [&>svg]:w-16">
                   <ProgressRing />
                 </span>
-                <p className="text-body-1 font-semibold text-black">탐지 중...</p>
+                <p className="text-body-1 font-semibold text-black">{upload.detecting}</p>
               </div>
             )}
           </div>
@@ -81,8 +84,8 @@ export default function DetectUploadCard({
             <span className="text-black [&>svg]:h-10 [&>svg]:w-10 md:[&>svg]:h-12 md:[&>svg]:w-12">
               <ImageArrowUp />
             </span>
-            <p className="text-body-2 md:text-body-1 font-semibold text-black">사진 업로드</p>
-            <p className="text-small md:text-body-2 text-gray-650">JPG, PNG 파일 지원</p>
+            <p className="text-body-2 md:text-body-1 font-semibold text-black">{upload.title}</p>
+            <p className="text-small md:text-body-2 text-gray-650">{upload.fileTypes}</p>
           </div>
           <input
             ref={fileInputRef}
@@ -94,10 +97,10 @@ export default function DetectUploadCard({
           <Button
             type="button"
             variant="primary"
-            className="w-[151px]"
+            className="min-w-[151px]"
             onClick={() => fileInputRef.current?.click()}
           >
-            파일 찾기
+            {upload.browse}
           </Button>
         </div>
       )}

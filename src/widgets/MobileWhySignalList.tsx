@@ -1,42 +1,31 @@
+"use client";
+
 import type { ComponentType } from "react";
 import Headset from "@/shared/asset/svg/Headset";
 import ShieldCheck from "@/shared/asset/svg/ShieldCheck";
 import Sparkle from "@/shared/asset/svg/Sparkle";
 import ScrollReveal from "@/shared/ui/ScrollReveal";
 import SectionBadge from "@/shared/ui/SectionBadge";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
 
-const whySignalItems: {
-  icon: ComponentType;
-  title: string;
-  description: string;
-  tint: string;
-}[] = [
-  {
-    icon: Sparkle,
-    title: "빠르고 정확한 AI 분석",
-    description: "유해 콘텐츠를 즉시 판별하고 증거화합니다.",
-    tint: "bg-primary-50/50 border-primary-50",
-  },
-  {
-    icon: ShieldCheck,
-    title: "철저한 익명성 보장",
-    description: "개인정보를 노출하지 않고 도움을 받으세요.",
-    tint: "bg-secondary-50/50 border-secondary-50",
-  },
-  {
-    icon: Headset,
-    title: "전문가 직접 연결",
-    description: "법률, 심리 전문가와 신속하게 연계해 드립니다.",
-    tint: "bg-primary-50/50 border-primary-50",
-  },
+const whySignalStyles: { icon: ComponentType; tint: string }[] = [
+  { icon: Sparkle, tint: "bg-primary-50/50 border-primary-50" },
+  { icon: ShieldCheck, tint: "bg-secondary-50/50 border-secondary-50" },
+  { icon: Headset, tint: "bg-primary-50/50 border-primary-50" },
 ];
 
 export default function MobileWhySignalList() {
+  const t = useT(widgetMessages);
+  const whySignalItems = t.whySignal.mobileItems.map((item, index) => ({
+    ...item,
+    ...whySignalStyles[index],
+  }));
   return (
     <section className="w-full px-5 py-4 md:hidden">
       <div className="flex flex-col gap-4">
         <ScrollReveal distance={24} className="flex items-center justify-between">
-          <h2 className="text-primary-500 text-h3 font-bold">왜 Signal인가요?</h2>
+          <h2 className="text-primary-500 text-h3 font-bold">{t.whySignal.mobileTitle}</h2>
           <SectionBadge>WHY SIGNAL</SectionBadge>
         </ScrollReveal>
         <div className="flex flex-col gap-3">

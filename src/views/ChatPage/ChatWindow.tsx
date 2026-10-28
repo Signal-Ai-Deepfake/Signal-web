@@ -6,8 +6,9 @@ import Delete from "@/shared/asset/svg/Delete";
 import ChatInputForm from "./ChatInputForm";
 import ChatMessageBubble from "./ChatMessageBubble";
 import ChatQuickReplies from "./ChatQuickReplies";
-import { QUICK_REPLIES } from "./mockConversation";
 import type { ChatMessage } from "./types";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { chatMessages } from "./messages";
 
 const MENU_CLOSE_MS = 200;
 
@@ -26,6 +27,7 @@ export default function ChatWindow({
   onReset,
   mobileMenu,
 }: ChatWindowProps) {
+  const t = useT(chatMessages);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
@@ -73,8 +75,8 @@ export default function ChatWindow({
           <BotOutline />
         </span>
         <div className="flex flex-col">
-          <p className="text-body-2 font-medium text-black">AI 상담사</p>
-          <p className="text-small text-gray-800">상담중</p>
+          <p className="text-body-2 font-medium text-black">{t.window.counselor}</p>
+          <p className="text-small text-gray-800">{t.window.online}</p>
         </div>
         <button
           type="button"
@@ -84,7 +86,7 @@ export default function ChatWindow({
           <span className="[&>svg]:h-[18px] [&>svg]:w-[18px]">
             <Delete />
           </span>
-          대화 초기화
+          {t.window.reset}
         </button>
       </header>
 
@@ -97,7 +99,7 @@ export default function ChatWindow({
             <ChatMessageBubble message={message} onTyping={scrollToBottom} />
             {index === 0 && (
               <ChatQuickReplies
-                items={QUICK_REPLIES}
+                items={t.quickReplies}
                 onSelect={handleSend}
                 disabled={isSending}
                 className="md:hidden"
@@ -111,7 +113,7 @@ export default function ChatWindow({
       </div>
 
       <ChatQuickReplies
-        items={QUICK_REPLIES}
+        items={t.quickReplies}
         onSelect={handleSend}
         disabled={isSending}
         className="hidden px-[22px] pt-3.5 pb-1 md:flex"

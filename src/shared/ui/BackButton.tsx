@@ -4,6 +4,8 @@ import Link from "next/link";
 import type { MouseEvent } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
 import { canGoBack, useGoBack } from "@/shared/lib/useGoBack";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
 
 interface BackButtonProps {
   href?: string;
@@ -12,6 +14,7 @@ interface BackButtonProps {
 
 export default function BackButton({ href = "/", className = "" }: BackButtonProps) {
   const goBack = useGoBack(href);
+  const t = useT(uiMessages);
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
@@ -29,7 +32,7 @@ export default function BackButton({ href = "/", className = "" }: BackButtonPro
       <span className="block rotate-180 [&>svg]:h-4 [&>svg]:w-4">
         <Arrow />
       </span>
-      뒤로 가기
+      {t.back}
     </Link>
   );
 }

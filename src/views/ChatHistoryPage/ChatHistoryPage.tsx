@@ -7,6 +7,8 @@ import NoticeBanner from "@/shared/ui/NoticeBanner";
 import { getMyChatSessions } from "@/entities/chat/api";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { mypageMessages } from "@/views/mypageMessages";
 
 function formatDate(value: string) {
   const date = new Date(value);
@@ -17,6 +19,7 @@ function formatDate(value: string) {
 }
 
 export default function ChatHistoryPage() {
+  const { chats: t, loading } = useT(mypageMessages);
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["myChatSessions"],
     queryFn: getMyChatSessions,
@@ -28,17 +31,17 @@ export default function ChatHistoryPage() {
       <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
           <PageHeading
-            title="대화 내역"
-            description="지금까지의 익명 상담 내역이 표시됩니다."
-            breadcrumbs={[{ label: "대화 내역" }]}
+            title={t.title}
+            description={t.description}
+            breadcrumbs={[{ label: t.title }]}
           />
 
-          <NoticeBanner>익명 상담 내용은 사용자가 저장에 동의한 경우에만 보관됩니다.</NoticeBanner>
+          <NoticeBanner>{t.notice}</NoticeBanner>
 
-          {isLoading && <p className="text-body-2 text-gray-700">불러오는 중입니다...</p>}
+          {isLoading && <p className="text-body-2 text-gray-700">{loading}</p>}
 
           {!isLoading && sessions?.length === 0 && (
-            <p className="text-body-2 text-gray-700">아직 저장된 상담 내역이 없습니다.</p>
+            <p className="text-body-2 text-gray-700">{t.empty}</p>
           )}
 
           <div className="flex w-full flex-col gap-4">
@@ -46,9 +49,9 @@ export default function ChatHistoryPage() {
               <HistoryListItem
                 key={session.sessionId}
                 href={`/mypage/chats/${session.sessionId}`}
-                badge={session.saveConsent ? "저장됨" : "미저장"}
+                badge={session.saveConsent ? t.saved : t.unsaved}
                 badgeTone={session.saveConsent ? "primary" : "secondary"}
-                title="익명 상담"
+                title={t.itemTitle}
                 meta={formatDate(session.createdAt)}
               />
             ))}

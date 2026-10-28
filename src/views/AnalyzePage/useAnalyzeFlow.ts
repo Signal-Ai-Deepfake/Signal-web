@@ -4,56 +4,89 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { createRiskAssessment } from "@/entities/analysis/api";
+import { createRiskAssessment, type RiskAssessmentResponse } from "@/entities/analysis/api";
 import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
+import { ApiError } from "@/shared/api/axios";
 import { getAccessToken } from "@/shared/lib/authToken";
 import { pollUntil } from "@/shared/lib/poll";
 import { createProtection, downloadProtection, getProtection } from "./analyzeApi";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
+import { analyzeMessages } from "./messages";
+import { loadAnalyzeSession, saveAnalyzeSession, type Status } from "./analyzeSession";
 
-export type Status = "idle" | "selected" | "analyzing" | "error" | "result";
+export type { Status };
 
-function isInternalMessage(message?: string) {
-  return !message || message.includes("X-Anonymous-Id") || message === "인증이 필요합니다.";
+function needsLogin(error: unknown) {
+  if (!(error instanceof Error) || !error.message) return true;
+  return (
+    error instanceof ApiError &&
+    (error.code === "UNAUTHORIZED" || error.code === "ANONYMOUS_ID_REQUIRED")
+  );
 }
 
 export function useAnalyzeFlow() {
+  const t = useT(analyzeMessages);
+  const { locale } = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [status, setStatus] = useState<Status>("idle");
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [showDetails, setShowDetails] = useState(false);
-  const [isProtected, setIsProtected] = useState(false);
-  const [isSimulatedProtection, setIsSimulatedProtection] = useState(false);
-  const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [assessmentId, setAssessmentId] = useState<number | null>(null);
-  const [protectionId, setProtectionId] = useState<number | null>(null);
+  const [initial] = useState(loadAnalyzeSession);
+  const [status, setStatus] = useState<Status>(initial.status);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initial.previewUrl);
+  const [selectedFile, setSelectedFile] = useState<File | null>(initial.selectedFile);
+  const [showDetails, setShowDetails] = useState(initial.showDetails);
+  const [isProtected, setIsProtected] = useState(initial.isProtected);
+  const [isSimulatedProtection, setIsSimulatedProtection] = useState(
+    initial.isSimulatedProtection,
+  );
+  const [assessment, setAssessment] = useState<RiskAssessmentResponse | null>(initial.assessment);
+  const result: AnalysisResult | null = assessment ? mapAssessment(assessment, locale) : null;
+  const [assessmentId, setAssessmentId] = useState<number | null>(initial.assessmentId);
+  const [protectionId, setProtectionId] = useState<number | null>(initial.protectionId);
 
   useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
+    saveAnalyzeSession({
+      status,
+      previewUrl,
+      selectedFile,
+      showDetails,
+      isProtected,
+      isSimulatedProtection,
+      assessment,
+      assessmentId,
+      protectionId,
+    });
+  }, [
+    status,
+    previewUrl,
+    selectedFile,
+    showDetails,
+    isProtected,
+    isSimulatedProtection,
+    assessment,
+    assessmentId,
+    protectionId,
+  ]);
 
   function showError(title: string, error: unknown, guestFallback: string) {
     const message = error instanceof Error ? error.message : undefined;
-    if (getAccessToken() || !isInternalMessage(message)) {
+    if (getAccessToken() || !needsLogin(error)) {
       toast.error(title, { description: message });
       return;
     }
     toast.error(title, {
       description: guestFallback,
-      action: { label: "로그인", onClick: () => router.push("/login") },
+      action: { label: t.flow.login, onClick: () => router.push("/login") },
     });
   }
 
   function handleFileSelect(file: File) {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(URL.createObjectURL(file));
     setSelectedFile(file);
     setShowDetails(false);
     setIsProtected(false);
     setIsSimulatedProtection(false);
-    setResult(null);
+    setAssessment(null);
     setAssessmentId(null);
     setProtectionId(null);
     setStatus("selected");
@@ -66,7 +99,7 @@ export function useAnalyzeFlow() {
     setShowDetails(false);
     setIsProtected(false);
     setIsSimulatedProtection(false);
-    setResult(null);
+    setAssessment(null);
     setAssessmentId(null);
     setProtectionId(null);
     setStatus("idle");
@@ -74,7 +107,7 @@ export function useAnalyzeFlow() {
 
   const analyzeMutation = useMutation({
     mutationFn: () => {
-      if (!selectedFile) throw new Error("이미지를 선택해 주세요.");
+      if (!selectedFile) throw new Error(t.flow.selectImage);
       return createRiskAssessment(selectedFile);
     },
     onSuccess: (data) => {
@@ -85,18 +118,18 @@ export function useAnalyzeFlow() {
       queryClient.setQueryData(["riskAssessments", data.assessmentId], data);
       queryClient.invalidateQueries({ queryKey: ["riskAssessments"], exact: true });
       setAssessmentId(data.assessmentId);
-      setResult(mapAssessment(data));
+      setAssessment(data);
       setStatus("result");
     },
     onError: (error) => {
       setStatus("selected");
-      showError("분석에 실패했습니다.", error, "로그인 후 다시 시도해 주세요.");
+      showError(t.flow.analyzeFailed, error, t.flow.loginAndRetry);
     },
   });
 
   const protectMutation = useMutation({
     mutationFn: async () => {
-      if (!assessmentId) throw new Error("먼저 이미지를 분석해 주세요.");
+      if (!assessmentId) throw new Error(t.flow.analyzeFirst);
       const created = await createProtection(assessmentId);
       return pollUntil(
         () => getProtection(created.protectionId),
@@ -105,7 +138,7 @@ export function useAnalyzeFlow() {
     },
     onSuccess: (protection) => {
       if (protection.status === "FAILED") {
-        toast.error("이미지 보호 처리에 실패했습니다.");
+        toast.error(t.flow.protectFailed);
         return;
       }
       setProtectionId(protection.protectionId);
@@ -113,24 +146,18 @@ export function useAnalyzeFlow() {
       setIsProtected(true);
       setIsSimulatedProtection(simulated);
       setShowDetails(true);
-      toast.success("보호 처리된 이미지를 준비했습니다.", {
-        description: simulated
-          ? "현재는 시연용 단계로, 실제 노이즈는 삽입되지 않았어요."
-          : "이미지에 노이즈를 삽입했어요. 도용·합성을 완전히 막아 주지는 않아요.",
+      toast.success(t.flow.protectReady, {
+        description: simulated ? t.flow.protectSimulated : t.flow.protectApplied,
       });
     },
     onError: (error) => {
-      showError(
-        "이미지 보호 처리에 실패했습니다.",
-        error,
-        "보호 처리는 로그인 후 이용할 수 있어요.",
-      );
+      showError(t.flow.protectFailed, error, t.flow.protectLoginOnly);
     },
   });
 
   const saveProtectedMutation = useMutation({
     mutationFn: async () => {
-      if (!protectionId) throw new Error("보호 처리된 이미지가 없습니다.");
+      if (!protectionId) throw new Error(t.flow.noProtected);
       return downloadProtection(protectionId);
     },
     onSuccess: (blob) => {
@@ -140,10 +167,10 @@ export function useAnalyzeFlow() {
       link.download = "protected-image";
       link.click();
       URL.revokeObjectURL(url);
-      toast.success("보호본을 저장했습니다.");
+      toast.success(t.flow.saved);
     },
     onError: (error) => {
-      showError("보호본 저장에 실패했습니다.", error, "보호본 저장은 로그인 후 이용할 수 있어요.");
+      showError(t.flow.saveFailed, error, t.flow.saveLoginOnly);
     },
   });
 
@@ -158,7 +185,7 @@ export function useAnalyzeFlow() {
   }
 
   function handleShare() {
-    toast.success("SNS 공유 링크를 준비했습니다.");
+    toast.success(t.flow.shareReady);
   }
 
   function handleSaveProtected() {

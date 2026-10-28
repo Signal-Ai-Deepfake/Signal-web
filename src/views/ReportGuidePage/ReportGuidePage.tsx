@@ -11,28 +11,35 @@ import GuideCaseAccordion from "./GuideCaseAccordion";
 import GuideHelpCard from "./GuideHelpCard";
 import GuideMobileHeader from "./GuideMobileHeader";
 import GuideStepList from "./GuideStepList";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { guideMessages } from "./guideContent";
+import { translate } from "@/shared/i18n/currentLocale";
+import { uiMessages } from "@/shared/ui/messages";
 
 async function shareGuide() {
+  const t = translate(guideMessages);
   const url = window.location.href;
   if (navigator.share) {
     try {
-      await navigator.share({ title: "Signal 신고 가이드", url });
+      await navigator.share({ title: t.shareTitle, url });
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
-      toast.error("공유하지 못했습니다.");
+      toast.error(t.shareFailed);
     }
     return;
   }
   try {
     await navigator.clipboard.writeText(url);
-    toast.success("신고 가이드 링크를 복사했어요.");
+    toast.success(t.linkCopied);
   } catch {
-    toast.error("링크를 복사하지 못했습니다.");
+    toast.error(t.copyFailed);
   }
 }
 
 export default function ReportGuidePage() {
   const isLoggedIn = useIsLoggedIn();
+  const t = useT(guideMessages);
+  const ui = useT(uiMessages);
 
   return (
     <>
@@ -43,24 +50,22 @@ export default function ReportGuidePage() {
           <div className="hidden flex-col gap-6 md:flex">
             <div className="flex items-center gap-4">
               <Link href="/" className="text-body-1 text-gray-800">
-                홈
+                {ui.home}
               </Link>
               <span className="text-gray-800 [&>svg]:h-[18px] [&>svg]:w-[18px]">
                 <Arrow />
               </span>
               <Link href="/report" className="text-body-1 text-gray-800">
-                신고 지원
+                {t.reportSupport}
               </Link>
               <span className="text-gray-800 [&>svg]:h-[18px] [&>svg]:w-[18px]">
                 <Arrow />
               </span>
-              <span className="text-body-1 text-primary-500">신고 가이드</span>
+              <span className="text-body-1 text-primary-500">{t.title}</span>
             </div>
             <div className="flex flex-col gap-6">
-              <h1 className="text-h1 font-bold text-black">신고 가이드</h1>
-              <p className="text-body-1 text-gray-800">
-                피해를 발견했을 때 무엇부터 해야 하는지, 상황별로 차근차근 안내해 드립니다.
-              </p>
+              <h1 className="text-h1 font-bold text-black">{t.title}</h1>
+              <p className="text-body-1 text-gray-800">{t.description}</p>
             </div>
           </div>
 
@@ -76,13 +81,11 @@ export default function ReportGuidePage() {
               <GuideHelpCard />
               <div className="border-primary-50 hidden flex-col gap-4 rounded-2xl border bg-white p-6 shadow-sm md:flex">
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-body-1 font-bold text-black">신고 문서가 필요하신가요?</h3>
-                  <p className="text-small text-gray-650 break-keep">
-                    기억나는 내용만 입력하면 기관에 제출하기 좋은 형태로 정리해 드려요.
-                  </p>
+                  <h3 className="text-body-1 font-bold text-black">{t.ctaTitle}</h3>
+                  <p className="text-small text-gray-650 break-keep">{t.ctaDescription}</p>
                 </div>
                 <Link href="/report" className={buttonStyle("primary", "w-full")}>
-                  신고 지원 시작하기
+                  {t.ctaButton}
                 </Link>
               </div>
             </aside>
@@ -98,7 +101,7 @@ export default function ReportGuidePage() {
           href="/report"
           className="bg-primary-500 text-body-2 active:bg-primary-700 flex w-full items-center justify-center rounded-2xl py-5 font-bold text-white drop-shadow-[0px_8px_10px_rgba(45,75,102,0.2)] transition-colors"
         >
-          신고 지원 시작하기
+          {t.ctaButton}
         </Link>
       </div>
       <Footer />

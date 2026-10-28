@@ -1,8 +1,12 @@
+"use client";
+
 import Mail from "@/shared/asset/svg/Mail";
 import Warning from "@/shared/asset/svg/Warning";
 import Button from "@/shared/ui/Button";
 import Input from "@/shared/ui/Input";
 import PrevButton from "@/shared/ui/PrevButton";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 function formatTime(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -37,21 +41,22 @@ export default function Step2EmailCode({
   onVerifyCode,
   onBack,
 }: Step2EmailCodeProps) {
+  const t = useT(authMessages);
   return (
     <>
       <div className="flex w-full flex-col gap-2">
-        <label className="text-body-2 px-1 text-black">이메일</label>
+        <label className="text-body-2 px-1 text-black">{t.email}</label>
         <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
           <div className="focus-within:border-secondary-500 flex h-[52px] w-full items-center gap-2 rounded-lg border border-gray-400 p-3 transition-colors sm:min-w-0 sm:flex-1">
-            <span className="text-gray-600 shrink-0 [&>svg]:h-5 [&>svg]:w-5">
+            <span className="shrink-0 text-gray-600 [&>svg]:h-5 [&>svg]:w-5">
               <Mail />
             </span>
             <input
               type="email"
               value={email}
               onChange={(event) => onEmailChange(event.target.value)}
-              placeholder="이메일을 입력해 주세요."
-              className="text-body-2 placeholder:text-gray-600 min-w-0 flex-1 text-black outline-none"
+              placeholder={t.emailPlaceholder}
+              className="text-body-2 min-w-0 flex-1 text-black outline-none placeholder:text-gray-600"
             />
           </div>
           <Button
@@ -61,16 +66,16 @@ export default function Step2EmailCode({
             disabled={!email}
             onClick={onSendCode}
           >
-            인증번호 보내기
+            {t.sendCode}
           </Button>
         </div>
       </div>
       <Input
-        label="인증번호"
+        label={t.code}
         type="text"
         inputMode="numeric"
         maxLength={6}
-        placeholder="인증번호 6자리를 입력하세요."
+        placeholder={t.codePlaceholder}
         value={code}
         onChange={(event) => onCodeChange(event.target.value.replace(/\D/g, "").slice(0, 6))}
         onKeyDown={(event) => {
@@ -80,7 +85,9 @@ export default function Step2EmailCode({
         rightSlot={
           codeSent &&
           secondsLeft > 0 && (
-            <span className="text-body-2 text-secondary-500 shrink-0">{formatTime(secondsLeft)}</span>
+            <span className="text-body-2 text-secondary-500 shrink-0">
+              {formatTime(secondsLeft)}
+            </span>
           )
         }
       />
@@ -89,7 +96,7 @@ export default function Step2EmailCode({
           <span className="text-secondary-500 shrink-0 [&>svg]:h-5 [&>svg]:w-5">
             <Warning />
           </span>
-          <p className="text-body-2 text-secondary-500">이메일이 오지 않나요? 스팸함을 확인해주세요.</p>
+          <p className="text-body-2 text-secondary-500">{t.noEmail}</p>
         </div>
       )}
       <div className="grid w-full grid-cols-2 gap-2">
@@ -101,7 +108,7 @@ export default function Step2EmailCode({
           disabled={!canVerifyCode}
           onClick={onVerifyCode}
         >
-          인증하기
+          {t.verify}
         </Button>
       </div>
     </>

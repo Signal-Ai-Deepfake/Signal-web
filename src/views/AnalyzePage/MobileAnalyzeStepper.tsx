@@ -1,10 +1,10 @@
-import type { Status } from "./AnalyzePage";
+"use client";
 
-const steps = [
-  { step: 1, label: "업로드" },
-  { step: 2, label: "분석중" },
-  { step: 3, label: "결과 확인" },
-] as const;
+import type { Status } from "./AnalyzePage";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { analyzeMessages } from "./messages";
+
+const stepNumbers = [1, 2, 3] as const;
 
 function statusToStep(status: Status): 1 | 2 | 3 {
   if (status === "analyzing") return 2;
@@ -14,6 +14,8 @@ function statusToStep(status: Status): 1 | 2 | 3 {
 
 export default function MobileAnalyzeStepper({ status }: { status: Status }) {
   const currentStep = statusToStep(status);
+  const t = useT(analyzeMessages);
+  const steps = stepNumbers.map((step, index) => ({ step, label: t.steps[index] }));
 
   return (
     <div className="flex w-full items-center px-2 md:hidden">
@@ -21,7 +23,7 @@ export default function MobileAnalyzeStepper({ status }: { status: Status }) {
         <div key={step} className="contents">
           <div className="flex flex-col items-center gap-2">
             <div
-              className={`flex size-8 shrink-0 items-center justify-center rounded-full text-body-2 font-bold ${
+              className={`text-body-2 flex size-8 shrink-0 items-center justify-center rounded-full font-bold ${
                 step <= currentStep ? "bg-primary-500 text-white" : "bg-primary-50 text-gray-800"
               }`}
             >

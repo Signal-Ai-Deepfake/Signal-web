@@ -1,10 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import Lock from "@/shared/asset/svg/Lock";
 import Sparkle from "@/shared/asset/svg/Sparkle";
 import LinkButton from "@/shared/ui/LinkButton";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
+import BrandText from "@/widgets/BrandText";
 
 export default function CtaCard() {
+  const t = useT(widgetMessages);
   return (
     <div
       id="cta"
@@ -13,21 +19,18 @@ export default function CtaCard() {
         backgroundImage: "linear-gradient(78deg, #ffffff 52%, var(--color-secondary-50) 100%)",
       }}
     >
-      <div className="relative z-10 flex flex-col items-start gap-6 px-5 py-7 md:max-xl:items-center md:max-xl:py-14 md:max-xl:text-center md:px-9 xl:py-10">
+      <div className="relative z-10 flex flex-col items-start gap-6 px-5 py-7 md:px-9 md:max-xl:items-center md:max-xl:py-14 md:max-xl:text-center xl:py-10">
         <div className="flex flex-col gap-2">
           <div className="flex flex-col">
-            <p className="text-body-1 md:text-h3 font-semibold text-black">혼자 고민하지 마세요.</p>
+            <p className="text-body-1 md:text-h3 font-semibold text-black">{t.cta.line1}</p>
             <p className="text-body-1 md:text-h3 font-semibold break-keep">
-              <span className="text-secondary-400">Signal</span>
-              <span className="text-black">이 함께 안전한 해결 방법을 찾아드립니다.</span>
+              <BrandText segments={t.cta.line2} className="text-black" />
             </p>
           </div>
-          <p className="text-small break-keep text-gray-800">
-            AI 분석부터 익명 상담, 신고 지원까지 한 곳에서 이용해 보세요.
-          </p>
+          <p className="text-small break-keep text-gray-800">{t.cta.description}</p>
         </div>
         <LinkButton href="/chat" variant="primary" className="w-full gap-1 md:w-auto">
-          익명 상담 시작하기
+          {t.cta.button}
           <span className="[&>svg]:h-6 [&>svg]:w-6">
             <ArrowUp />
           </span>
@@ -36,7 +39,7 @@ export default function CtaCard() {
           <span className="shrink-0 [&>svg]:h-6 [&>svg]:w-6">
             <Lock />
           </span>
-          <p className="text-caption md:text-small">모든 상담 내용은 익명으로 안전하게 보호됩니다.</p>
+          <p className="text-caption md:text-small">{t.cta.note}</p>
         </div>
       </div>
 

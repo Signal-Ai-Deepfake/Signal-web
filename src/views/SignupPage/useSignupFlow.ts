@@ -8,6 +8,8 @@ import { login, signup, uploadProfileImage, type AuthGender } from "@/entities/u
 import { setAuthTokens } from "@/shared/lib/authToken";
 import type { Gender } from "./Step3Profile";
 import { useEmailVerification } from "./useEmailVerification";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 const GENDER_MAP: Record<Gender, AuthGender> = {
   남: "MALE",
@@ -27,6 +29,7 @@ function calculateAge(birthDate: string): number {
 }
 
 export function useSignupFlow() {
+  const t = useT(authMessages);
   const [step, setStep] = useState(1);
 
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -71,17 +74,17 @@ export function useSignupFlow() {
           try {
             await uploadProfileImage(photoFile);
           } catch {
-            toast.error("프로필 사진 등록에 실패했습니다. 마이페이지에서 다시 시도해 주세요.");
+            toast.error(t.signup.photoFailed);
           }
         }
-        toast.success("회원가입이 완료되었습니다.");
+        toast.success(t.signup.done);
       } catch {
-        toast.success("회원가입이 완료되었습니다. 로그인 후 이용해 주세요.");
+        toast.success(t.signup.doneLogin);
       }
       setStep(5);
     },
     onError: (error) => {
-      toast.error("회원가입에 실패했습니다.", {
+      toast.error(t.signup.failed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },

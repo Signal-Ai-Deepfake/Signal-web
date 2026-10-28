@@ -1,3 +1,5 @@
+"use client";
+
 import Calendar from "@/shared/asset/svg/Calendar";
 import User from "@/shared/asset/svg/User";
 import Button from "@/shared/ui/Button";
@@ -5,6 +7,8 @@ import GenderOption from "@/shared/ui/GenderOption";
 import Input from "@/shared/ui/Input";
 import PrevButton from "@/shared/ui/PrevButton";
 import StepHeader from "@/shared/ui/StepHeader";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 export type Gender = "남" | "여" | "선택 안함";
 
@@ -33,34 +37,32 @@ export default function Step3Profile({
   onBack,
   onNext,
 }: Step3ProfileProps) {
+  const t = useT(authMessages);
   return (
     <>
-      <StepHeader
-        title="기본 정보 입력"
-        description="서비스 이용을 위한 기본 정보를 입력해 주세요."
-      />
+      <StepHeader title={t.signup.profileTitle} description={t.signup.profileDescription} />
       <div className="flex w-full flex-col gap-3">
         <Input
-          label="이름"
+          label={t.signup.name}
           icon={User}
-          placeholder="이름을 입력해 주세요."
+          placeholder={t.signup.namePlaceholder}
           value={name}
           onChange={(event) => onNameChange(event.target.value)}
         />
         <Input
-          label="생년월일"
+          label={t.signup.birthDate}
           icon={Calendar}
           type="date"
           value={birthDate}
           onChange={(event) => onBirthDateChange(event.target.value)}
         />
         <div className="flex w-full flex-col gap-2">
-          <label className="text-body-2 px-1 text-black">성별</label>
+          <label className="text-body-2 px-1 text-black">{t.signup.gender}</label>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 md:gap-8">
             {GENDER_OPTIONS.map((option) => (
               <GenderOption
                 key={option}
-                label={option}
+                label={t.signup.genderOptions[option]}
                 selected={gender === option}
                 onSelect={() => onGenderChange(option)}
               />
@@ -76,7 +78,7 @@ export default function Step3Profile({
             disabled={!canProceed}
             onClick={onNext}
           >
-            다음
+            {t.next}
           </Button>
         </div>
       </div>

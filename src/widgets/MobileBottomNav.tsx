@@ -8,31 +8,39 @@ import Message from "@/shared/asset/svg/Message";
 import PhotoScan from "@/shared/asset/svg/PhotoScan";
 import User from "@/shared/asset/svg/User";
 import { useIsLoggedIn } from "@/shared/lib/useIsLoggedIn";
-import { analysisNavGroup, supportNavGroup } from "@/widgets/HeaderNav";
+import {
+  analysisNavGroup,
+  supportNavGroup,
+  useNavGroupText,
+  type NavGroupDef,
+} from "@/widgets/HeaderNav";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
 
-type NavGroup = typeof analysisNavGroup;
+type NavGroup = NavGroupDef;
+type TabLabel = "home" | "analysis" | "support" | "mypage";
 
 type Tab =
-  | { kind: "link"; icon: ComponentType; label: string; href: string; match: string[] }
-  | { kind: "sheet"; icon: ComponentType; label: string; group: NavGroup; match: string[] };
+  | { kind: "link"; icon: ComponentType; label: TabLabel; href: string; match: string[] }
+  | { kind: "sheet"; icon: ComponentType; label: TabLabel; group: NavGroup; match: string[] };
 
 const tabs: Tab[] = [
-  { kind: "link", icon: Home, label: "홈", href: "/", match: [] },
+  { kind: "link", icon: Home, label: "home", href: "/", match: [] },
   {
     kind: "sheet",
     icon: PhotoScan,
-    label: "분석",
+    label: "analysis",
     group: analysisNavGroup,
     match: analysisNavGroup.items.map((item) => item.href),
   },
   {
     kind: "sheet",
     icon: Message,
-    label: "상담·신고",
+    label: "support",
     group: supportNavGroup,
     match: [...supportNavGroup.items.map((item) => item.href), "/support-referral"],
   },
-  { kind: "link", icon: User, label: "마이페이지", href: "/mypage/profile", match: ["/mypage"] },
+  { kind: "link", icon: User, label: "mypage", href: "/mypage/profile", match: ["/mypage"] },
 ];
 
 const tabClass = "flex flex-col items-center gap-1 px-4 py-2";
@@ -54,6 +62,9 @@ export default function MobileBottomNav() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [group, setGroup] = useState<NavGroup>(analysisNavGroup);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const t = useT(widgetMessages);
+  const localize = useNavGroupText();
+  const shownGroup = localize(group);
 
   useEffect(() => {
     if (!sheetOpen) return;
@@ -95,7 +106,7 @@ export default function MobileBottomNav() {
                 aria-current={isActive ? "page" : undefined}
                 className={`${tabClass} ${isActive ? "text-primary-500" : "text-gray-650"}`}
               >
-                <TabContent icon={tab.icon} label={tab.label} />
+                <TabContent icon={tab.icon} label={t.bottomNav[tab.label]} />
               </Link>
             );
           }
@@ -112,7 +123,7 @@ export default function MobileBottomNav() {
                 isActive || isOpen ? "text-primary-500" : "text-gray-650"
               }`}
             >
-              <TabContent icon={tab.icon} label={tab.label} />
+              <TabContent icon={tab.icon} label={t.bottomNav[tab.label]} />
             </button>
           );
         })}
@@ -122,13 +133,13 @@ export default function MobileBottomNav() {
         className={`fixed inset-0 z-40 md:hidden print:hidden ${sheetOpen ? "" : "pointer-events-none"}`}
         role="dialog"
         aria-modal="true"
-        aria-label={group.label}
+        aria-label={shownGroup.label}
         aria-hidden={!sheetOpen}
         inert={!sheetOpen}
       >
         <button
           type="button"
-          aria-label="닫기"
+          aria-label={t.bottomNav.close}
           onClick={() => setSheetOpen(false)}
           className={`absolute inset-0 cursor-default bg-black/40 transition-opacity duration-300 ease-out motion-reduce:transition-none ${
             sheetOpen ? "opacity-100" : "opacity-0"
@@ -141,8 +152,8 @@ export default function MobileBottomNav() {
           }`}
         >
           <span aria-hidden className="mx-auto mb-2 h-1 w-10 rounded-full bg-gray-300" />
-          <p className="text-body-1 px-1 pb-1 font-bold text-black">{group.label}</p>
-          {group.items.map(({ icon: Icon, title, description, href }) => {
+          <p className="text-body-1 px-1 pb-1 font-bold text-black">{shownGroup.label}</p>
+          {shownGroup.items.map(({ icon: Icon, title, description, href }) => {
             const isActive = pathname.startsWith(href);
             return (
               <Link

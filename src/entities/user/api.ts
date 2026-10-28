@@ -1,4 +1,6 @@
 import { api } from "@/shared/api/axios";
+import { defineMessages } from "@/shared/i18n/defineMessages";
+import { translate } from "@/shared/i18n/currentLocale";
 
 export type AuthGender = "MALE" | "FEMALE" | "NONE";
 export type VerificationPurpose = "SIGNUP" | "PASSWORD_RESET";
@@ -80,13 +82,22 @@ export async function sendVerification(payload: SendVerificationRequest): Promis
   await api.post("/api/v1/auth/verification/send", payload);
 }
 
+const userApiMessages = defineMessages(
+  { verifyFailed: "인증 확인에 실패했습니다. 다시 시도해 주세요." },
+  {
+    en: { verifyFailed: "Verification failed. Please try again." },
+    ja: { verifyFailed: "認証に失敗しました。もう一度お試しください。" },
+    zh: { verifyFailed: "验证失败，请重试。" },
+  },
+);
+
 export async function verifyCode(payload: VerifyCodeRequest): Promise<string> {
   const { data } = await api.post<Record<string, string>>(
     "/api/v1/auth/verification/verify",
-    payload
+    payload,
   );
   if (!data.verificationToken) {
-    throw new Error("인증 확인에 실패했습니다. 다시 시도해 주세요.");
+    throw new Error(translate(userApiMessages).verifyFailed);
   }
   return data.verificationToken;
 }
@@ -101,7 +112,7 @@ export async function uploadProfileImage(file: File): Promise<ProfileImageRespon
   const { data } = await api.post<ProfileImageResponse>(
     "/api/v1/users/me/profile-image",
     formData,
-    { headers: { "Content-Type": "multipart/form-data" } }
+    { headers: { "Content-Type": "multipart/form-data" } },
   );
   return data;
 }

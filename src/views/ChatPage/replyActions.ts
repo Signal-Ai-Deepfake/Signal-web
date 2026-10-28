@@ -1,13 +1,22 @@
 import type { ReplyAction } from "./types";
 
-const RULES: { pattern: RegExp; action: ReplyAction }[] = [
-  { pattern: /신고/, action: { href: "/report", label: "신고 문서 작성하기" } },
+interface ReplyActionLabels {
+  writeReport: string;
+  referral: string;
+}
+
+const RULES: { pattern: RegExp; href: string; label: keyof ReplyActionLabels }[] = [
+  { pattern: /신고|report/i, href: "/report", label: "writeReport" },
   {
-    pattern: /기관|센터|상담소|수사대|경찰|지원단|위원회|법률/,
-    action: { href: "/support-referral", label: "전문 기관 연결하기" },
+    pattern: /기관|센터|상담소|수사대|경찰|지원단|위원회|법률|agency|center|police/i,
+    href: "/support-referral",
+    label: "referral",
   },
 ];
 
-export function resolveReplyActions(reply: string): ReplyAction[] {
-  return RULES.filter(({ pattern }) => pattern.test(reply)).map(({ action }) => action);
+export function resolveReplyActions(reply: string, labels: ReplyActionLabels): ReplyAction[] {
+  return RULES.filter(({ pattern }) => pattern.test(reply)).map(({ href, label }) => ({
+    href,
+    label: labels[label],
+  }));
 }
