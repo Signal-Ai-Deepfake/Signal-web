@@ -1,5 +1,6 @@
 import { defineMessages } from "@/shared/i18n/defineMessages";
 import { translate } from "@/shared/i18n/currentLocale";
+
 const pollMessages = defineMessages(
   { timeout: "처리 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요." },
   {
