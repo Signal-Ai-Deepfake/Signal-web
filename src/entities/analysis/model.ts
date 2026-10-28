@@ -102,7 +102,7 @@ export const factorLabelMessages = defineMessages<FactorLabels>(
 );
 
 function isFactorType(type: string): type is FactorType {
-  return type in factorLabelMessages.ko;
+  return Object.hasOwn(factorLabelMessages.ko, type);
 }
 
 export function factorLabel(factor: { type: string; label: string }, labels: FactorLabels) {
