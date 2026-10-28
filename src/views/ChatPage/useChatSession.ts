@@ -98,6 +98,7 @@ export function useChatSession(canSave: boolean) {
           content: response.reply,
           createdAt: Date.now(),
           typing: true,
+          hasAgencies: (response.recommendedAgencies?.length ?? 0) > 0,
         },
       ]);
       try {
@@ -126,7 +127,10 @@ export function useChatSession(canSave: boolean) {
     messages: messages.map((message, index) => {
       if (message.role !== "bot") return message;
       if (index === 0) return { ...message, content: t.greeting };
-      return { ...message, actions: resolveReplyActions(message.content, t) };
+      return {
+        ...message,
+        actions: resolveReplyActions(message.content, message.hasAgencies ?? false, t),
+      };
     }),
     summary,
     isSending,

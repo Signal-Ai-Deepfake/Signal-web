@@ -13,6 +13,7 @@ export interface ChatMessage {
   content: string;
   createdAt?: number;
   typing?: boolean;
+  hasAgencies?: boolean;
   actions?: ReplyAction[];
 }
 
