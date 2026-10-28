@@ -96,6 +96,9 @@ api.interceptors.response.use(
     const t = errorMessages[locale];
     const data = error.response?.data;
     const code = isApiErrorCode(data?.code) ? data.code : undefined;
+    if (process.env.NODE_ENV !== "production" && data?.code && !code) {
+      console.warn(`[api] errorMessages에 없는 에러 코드: ${data.code}`, data.message);
+    }
     const serverMessage = locale === "ko" ? data?.message : undefined;
     const fallback = error.response
       ? t.unknown
