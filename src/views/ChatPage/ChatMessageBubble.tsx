@@ -59,7 +59,7 @@ export default function ChatMessageBubble({ message, pending, onTyping }: ChatMe
           <BotOutline />
         </span>
       </span>
-      <div className="flex max-w-[80%] flex-col items-start gap-2">
+      <div className="flex max-w-[80%] min-w-0 flex-col items-start gap-2">
         <div className="max-md:border-secondary-400/30 max-md:bg-secondary-50 rounded-2xl rounded-tl-none border p-4 max-md:shadow-sm md:rounded-tl-[2px] md:border-gray-300 md:bg-white">
           {pending ? (
             <span
