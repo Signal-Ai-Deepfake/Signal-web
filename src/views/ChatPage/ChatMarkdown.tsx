@@ -36,6 +36,7 @@ const STARTS_WITH_COUNT_UNIT = new RegExp(`^${COUNT_UNIT}`);
 
 function formatPlainSegment(text: string) {
   if (text.includes("\n") || text.includes("**")) return text;
+  if (HEADING.test(text) || BULLET.test(text) || NUMBER.test(text)) return text;
   const emphasized = text
     .replace(QUOTED, "$1**$2**$3")
     .replace(AGENCY, "**$1**")
