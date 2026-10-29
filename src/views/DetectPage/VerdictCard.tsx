@@ -11,6 +11,12 @@ function verdictStyle(score: number) {
   return { bg: "bg-green-50", text: "text-green-500" };
 }
 
+function toneStyle(tone: "REAL" | "SUSPICIOUS" | "FAKE") {
+  if (tone === "FAKE") return { bg: "bg-red-50", text: "text-red-500" };
+  if (tone === "SUSPICIOUS") return { bg: "bg-yellow-50", text: "text-yellow-500" };
+  return { bg: "bg-green-50", text: "text-green-500" };
+}
+
 function scoreToSuspicionStatus(score: number): "의심" | "주의" | "의심없음" {
   if (score >= 70) return "의심";
   if (score >= 40) return "주의";
@@ -24,6 +30,8 @@ interface VerdictCardProps {
   scoreLabel: string;
   scoreSuffix: string;
   caption: string;
+  /** 판정 코드가 있으면 색을 점수 크기 대신 판정으로 정한다. */
+  tone?: "REAL" | "SUSPICIOUS" | "FAKE";
   suspicion?: boolean;
   unsupported?: boolean;
 }
@@ -35,11 +43,12 @@ export default function VerdictCard({
   scoreLabel,
   scoreSuffix,
   caption,
+  tone,
   suspicion = false,
   unsupported = false,
 }: VerdictCardProps) {
   const t = useT(detectMessages).result;
-  const style = verdictStyle(score);
+  const style = tone ? toneStyle(tone) : verdictStyle(score);
 
   if (unsupported) {
     return (

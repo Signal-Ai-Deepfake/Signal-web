@@ -37,6 +37,7 @@ export default function DetectResultSection({ result, previewUrl }: DetectResult
           title={tr.deepfake}
           verdict={result.deepfakeVerdict}
           score={result.deepfakeProbability}
+          tone={result.deepfakeTone}
           scoreLabel={tr.probability}
           scoreSuffix="%"
           caption={result.deepfakeCaption}
