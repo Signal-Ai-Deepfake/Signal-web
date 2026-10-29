@@ -25,7 +25,7 @@ export default function QuickActionLink({
       </span>
       <p className="text-body-2 md:text-body-1 font-medium text-black md:font-normal">{title}</p>
       <p className="text-small md:text-body-2 text-gray-700">{description}</p>
-      <span className="text-primary-500 self-end [&>svg]:h-6 [&>svg]:w-6">
+      <span className="text-primary-500 mt-auto self-end [&>svg]:h-6 [&>svg]:w-6">
         <ArrowUp />
       </span>
     </Link>

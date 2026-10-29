@@ -5,6 +5,8 @@ import type { FormEvent } from "react";
 import Plus from "@/shared/asset/svg/Plus";
 import Send from "@/shared/asset/svg/Send";
 import Button from "@/shared/ui/Button";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { chatMessages } from "./messages";
 
 interface ChatInputFormProps {
   onSend: (content: string) => void;
@@ -19,6 +21,7 @@ export default function ChatInputForm({
   menuOpen = false,
   onToggleMenu,
 }: ChatInputFormProps) {
+  const t = useT(chatMessages);
   const [value, setValue] = useState("");
 
   function handleSubmit(event: FormEvent) {
@@ -37,7 +40,7 @@ export default function ChatInputForm({
         <button
           type="button"
           onClick={onToggleMenu}
-          aria-label={menuOpen ? "상담 저장 설정 닫기" : "상담 저장 설정 열기"}
+          aria-label={menuOpen ? t.input.closeSettings : t.input.openSettings}
           aria-expanded={menuOpen}
           className="bg-primary-50 text-primary-500 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full md:hidden"
         >
@@ -54,13 +57,13 @@ export default function ChatInputForm({
         value={value}
         onChange={(event) => setValue(event.target.value)}
         disabled={disabled}
-        placeholder="현재 상황을 입력해 주세요"
+        placeholder={t.input.placeholder}
         className="text-small bg-primary-50 focus:ring-primary-200 md:text-body-1 md:focus:border-primary-400 h-10 min-w-0 flex-1 rounded-2xl px-4 text-black outline-none placeholder:text-gray-800/50 focus:ring-2 disabled:opacity-60 md:h-[60px] md:rounded-lg md:border md:border-gray-300 md:bg-white md:placeholder:text-gray-600 md:focus:ring-0 md:disabled:bg-gray-200 md:disabled:opacity-100"
       />
       <button
         type="submit"
         disabled={disabled}
-        aria-label="전송"
+        aria-label={t.input.send}
         className="bg-primary-500 flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-white disabled:cursor-not-allowed disabled:bg-gray-200 md:hidden"
       >
         <span className="[&>svg]:size-3.5">
@@ -68,8 +71,13 @@ export default function ChatInputForm({
         </span>
       </button>
       <div className="hidden md:flex">
-        <Button type="submit" variant="primary" disabled={disabled} className="h-[60px] w-[104px]">
-          전송
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={disabled}
+          className="h-[60px] min-w-[104px]"
+        >
+          {t.input.send}
         </Button>
       </div>
     </form>

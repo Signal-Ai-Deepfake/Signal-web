@@ -1,3 +1,5 @@
+import { useT } from "@/shared/i18n/I18nProvider";
+import { chatMessages } from "./messages";
 interface Inline {
   text: string;
   bold: boolean;
@@ -25,13 +27,16 @@ function parseInline(line: string): Inline[] {
 const SENTENCE_BREAK = /(?<=[.!?])\s+/;
 const QUOTED = /([‘“"'])([^’”"'\n]{1,30})([’”"'])/g;
 const AGENCY = /([가-힣]*(?:경찰청|수사대|센터|위원회|상담소|지원단))/g;
-const HOTLINE =
-  /(?<![\d-])(\d{2,4}-\d{3,4}-\d{4}|112|117|118|119|182|1332|1366|1377|1388|1398)(?![\d-])/g;
+const HOTLINE_NUMBER = "\\d{2,4}-\\d{3,4}-\\d{4}|109|112|117|118|119|182|1332|1366|1377|1388|1398";
+const COUNT_UNIT = "[명호개년월일세원층회분초시건위%人個年月日歳円号件岁元个次]";
+const HOTLINE = new RegExp(`(?<![\\d-])(${HOTLINE_NUMBER})(?![\\d-]|${COUNT_UNIT})`, "g");
 const SENTENCES_PER_PARAGRAPH = 2;
-const FULL_HOTLINE = /^(\d{2,4}-\d{3,4}-\d{4}|112|117|118|119|182|1332|1366|1377|1388|1398)$/;
+const FULL_HOTLINE = new RegExp(`^(${HOTLINE_NUMBER})$`);
+const STARTS_WITH_COUNT_UNIT = new RegExp(`^${COUNT_UNIT}`);
 
-function formatPlainReply(text: string) {
+function formatPlainSegment(text: string) {
   if (text.includes("\n") || text.includes("**")) return text;
+  if (HEADING.test(text) || BULLET.test(text) || NUMBER.test(text)) return text;
   const emphasized = text
     .replace(QUOTED, "$1**$2**$3")
     .replace(AGENCY, "**$1**")
@@ -44,6 +49,13 @@ function formatPlainReply(text: string) {
     paragraphs.push(sentences.slice(i, i + SENTENCES_PER_PARAGRAPH).join(" "));
   }
   return paragraphs.join("\n\n");
+}
+
+function formatPlainReply(text: string) {
+  return text
+    .split(/\n{2,}/)
+    .map(formatPlainSegment)
+    .join("\n\n");
 }
 
 export function parseChatMarkdown(source: string): Block[] {
@@ -127,15 +139,22 @@ function limitBlocks(blocks: Block[], limit: number): Block[] {
   return result;
 }
 
+function isHotline(line: Inline[], index: number) {
+  const inline = line[index];
+  const next = line[index + 1]?.text ?? "";
+  return inline.bold && FULL_HOTLINE.test(inline.text) && !STARTS_WITH_COUNT_UNIT.test(next);
+}
+
 function InlineText({ line }: { line: Inline[] }) {
+  const t = useT(chatMessages);
   return (
     <>
       {line.map((inline, index) =>
-        inline.bold && FULL_HOTLINE.test(inline.text) ? (
+        isHotline(line, index) ? (
           <a
             key={index}
             href={`tel:${inline.text.replace(/-/g, "")}`}
-            aria-label={`${inline.text}로 전화 걸기`}
+            aria-label={t.call(inline.text)}
             className="text-primary-500 font-bold underline underline-offset-2"
           >
             {inline.text}

@@ -10,8 +10,11 @@ import Step4Photo from "./Step4Photo";
 import StepComplete from "./StepComplete";
 import StepShell from "./StepShell";
 import { useSignupFlow } from "./useSignupFlow";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 export default function SignupPage() {
+  const t = useT(authMessages);
   const { step, setStep, terms, account, profile, photo } = useSignupFlow();
 
   if (step === 1) {
@@ -37,11 +40,11 @@ export default function SignupPage() {
       <AuthPageShell>
         <StepShell step={2} order={account.emailVerified ? 2.5 : 2}>
           <StepHeader
-            title="이메일 인증"
+            title={t.signup.emailStepTitle}
             description={
               account.emailVerified
-                ? "사용할 비밀번호를 설정해 주세요."
-                : "이메일로 받은 인증번호를 입력해 주세요."
+                ? t.signup.passwordStepDescription
+                : t.signup.codeStepDescription
             }
           />
           <div className="flex w-full flex-col gap-3">
@@ -113,7 +116,7 @@ export default function SignupPage() {
             onBack={() => setStep(3)}
             onNext={photo.submit}
             nextDisabled={photo.isSubmitting}
-            nextLabel={photo.isSubmitting ? "가입 처리 중..." : "다음"}
+            nextLabel={photo.isSubmitting ? t.signup.submitting : t.next}
           />
         </StepShell>
       </AuthPageShell>

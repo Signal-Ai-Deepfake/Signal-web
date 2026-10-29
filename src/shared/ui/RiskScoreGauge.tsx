@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { RiskLevel } from "@/shared/ui/messages";
 
 const SWEEP_DEG = 260;
 const ROTATE_DEG = 140;
-
-type RiskLevel = "안전" | "위험" | "주의";
 
 const trackColorClass: Record<RiskLevel, string> = {
   안전: "text-green-100",

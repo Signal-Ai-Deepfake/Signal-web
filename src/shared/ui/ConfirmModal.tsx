@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
 
 interface ConfirmModalProps {
   open: boolean;
@@ -16,11 +18,12 @@ export default function ConfirmModal({
   open,
   title,
   description,
-  confirmLabel = "확인",
-  cancelLabel = "취소",
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
+  const t = useT(uiMessages);
   useEffect(() => {
     if (!open) return;
 
@@ -58,14 +61,14 @@ export default function ConfirmModal({
             onClick={onCancel}
             className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-[44px] cursor-pointer items-center justify-center rounded border px-5 transition-colors"
           >
-            {cancelLabel}
+            {cancelLabel ?? t.cancel}
           </button>
           <button
             type="button"
             onClick={onConfirm}
             className="text-body-2 flex h-[44px] cursor-pointer items-center justify-center rounded bg-red-500 px-5 font-semibold text-white transition-colors active:bg-red-700"
           >
-            {confirmLabel}
+            {confirmLabel ?? t.confirm}
           </button>
         </div>
       </div>

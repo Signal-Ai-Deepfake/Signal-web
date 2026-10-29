@@ -5,13 +5,10 @@ import Button, { buttonStyle } from "@/shared/ui/Button";
 import DraftCardHeader from "./DraftCardHeader";
 import StepNavigation from "./StepNavigation";
 import type { ReportEvidence } from "./Step2Details";
-import {
-  REQUEST_TEXT,
-  evidenceText,
-  formatDraftDate,
-  overviewText,
-  type ReportDraft,
-} from "./reportDraft";
+import type { ReportDraft } from "./reportDraft";
+import { useLocale, useT } from "@/shared/i18n/I18nProvider";
+import { formatDateLong } from "@/shared/i18n/format";
+import { reportMessages } from "./messages";
 
 interface Step4GeneratedProps {
   draft: ReportDraft;
@@ -32,37 +29,42 @@ export default function Step4Generated({
   onBack,
   onFindAgency,
 }: Step4GeneratedProps) {
+  const { draft: d } = useT(reportMessages);
+  const { locale } = useLocale();
   const sourceUrl = draft.sourceUrl.trim();
   const rows: { title: string; body: string }[] = [
-    { title: "피해 개요", body: overviewText(draft.damageType) },
-    { title: "피해 발생 시점", body: formatDraftDate(draft.incidentDate) },
-    { title: "피해 유형", body: draft.damageType.trim() || "미입력" },
-    { title: "피해 경로", body: draft.discoveryRoute.trim() || "미입력" },
-    { title: "원본 URL", body: sourceUrl || "미입력" },
-    { title: "피해 내용", body: draft.description.trim() || "미입력" },
+    { title: d.overview, body: d.overviewText(draft.damageType.trim()) },
+    {
+      title: d.incidentDate,
+      body: draft.incidentDate ? formatDateLong(draft.incidentDate, locale) : d.empty,
+    },
+    { title: d.damageType, body: draft.damageType.trim() || d.empty },
+    { title: d.route, body: draft.discoveryRoute.trim() || d.empty },
+    { title: d.url, body: sourceUrl || d.empty },
+    { title: d.description, body: draft.description.trim() || d.empty },
     ...(draft.additionalNotes.trim()
-      ? [{ title: "추가 전달 사항", body: draft.additionalNotes.trim() }]
+      ? [{ title: d.notes, body: draft.additionalNotes.trim() }]
       : []),
-    { title: "증거 목록", body: evidenceText(evidence) },
-    { title: "요청 사항", body: REQUEST_TEXT },
+    { title: d.evidence, body: evidence?.name ?? d.noEvidence },
+    { title: d.request, body: d.requestText },
   ];
 
   return (
     <div className="flex w-full flex-col gap-6 md:gap-8">
       <div className="flex w-full flex-col gap-5 rounded-2xl border border-gray-300 p-5 md:gap-6 md:p-8">
         <DraftCardHeader
-          title="신고 문서가 준비되었어요"
-          description="내 신고 문서에서 내용을 확정하면 기관 제출용 문서로 보관됩니다."
-          status="문서 생성 완료"
+          title={d.readyTitle}
+          description={d.readyDescription}
+          status={d.generated}
         />
 
         <div className="flex flex-col gap-2">
-          <p className="text-body-2 md:text-body-1 px-1 text-black">신고 내용</p>
+          <p className="text-body-2 md:text-body-1 px-1 text-black">{d.content}</p>
           <div className="w-full divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-300 md:max-h-[427px]">
             {rows.map((row) => (
               <div key={row.title} className="flex flex-col gap-1 p-3 md:gap-1.5 md:p-4">
                 <p className="text-body-2 md:text-body-1 font-semibold text-black">{row.title}</p>
-                {row.title === "원본 URL" && sourceUrl ? (
+                {row.title === d.url && sourceUrl ? (
                   <a
                     href={toHref(sourceUrl)}
                     target="_blank"
@@ -88,7 +90,7 @@ export default function Step4Generated({
             href={`/mypage/reports/${reportId}`}
             className={buttonStyle("outline", "w-full md:w-auto")}
           >
-            내 신고 문서에서 확정하기
+            {d.finalizeInMyPage}
           </Link>
           <Button
             type="button"
@@ -96,7 +98,7 @@ export default function Step4Generated({
             className="w-full md:w-auto"
             onClick={onFindAgency}
           >
-            적합한 신고 기관 확인하기
+            {d.findAgency}
           </Button>
         </div>
       </StepNavigation>

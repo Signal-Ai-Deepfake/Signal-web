@@ -3,17 +3,22 @@
 import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import BotOutline from "@/shared/asset/svg/BotOutline";
 import Delete from "@/shared/asset/svg/Delete";
+import Button from "@/shared/ui/Button";
 import ChatInputForm from "./ChatInputForm";
 import ChatMessageBubble from "./ChatMessageBubble";
 import ChatQuickReplies from "./ChatQuickReplies";
-import { QUICK_REPLIES } from "./mockConversation";
 import type { ChatMessage } from "./types";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { chatMessages } from "./messages";
 
 const MENU_CLOSE_MS = 200;
 
 interface ChatWindowProps {
   messages: ChatMessage[];
   isSending: boolean;
+  isClosing?: boolean;
+  isEnded?: boolean;
+  onEndReady?: () => void;
   onSend: (content: string) => void;
   onReset: () => void;
   mobileMenu?: ReactNode;
@@ -22,10 +27,14 @@ interface ChatWindowProps {
 export default function ChatWindow({
   messages,
   isSending,
+  isClosing = false,
+  isEnded = false,
+  onEndReady,
   onSend,
   onReset,
   mobileMenu,
 }: ChatWindowProps) {
+  const t = useT(chatMessages);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
@@ -73,8 +82,8 @@ export default function ChatWindow({
           <BotOutline />
         </span>
         <div className="flex flex-col">
-          <p className="text-body-2 font-medium text-black">AI 상담사</p>
-          <p className="text-small text-gray-800">상담중</p>
+          <p className="text-body-2 font-medium text-black">{t.window.counselor}</p>
+          <p className="text-small text-gray-800">{t.window.online}</p>
         </div>
         <button
           type="button"
@@ -84,7 +93,7 @@ export default function ChatWindow({
           <span className="[&>svg]:h-[18px] [&>svg]:w-[18px]">
             <Delete />
           </span>
-          대화 초기화
+          {t.window.reset}
         </button>
       </header>
 
@@ -94,12 +103,16 @@ export default function ChatWindow({
       >
         {messages.map((message, index) => (
           <Fragment key={message.id}>
-            <ChatMessageBubble message={message} onTyping={scrollToBottom} />
+            <ChatMessageBubble
+              message={message}
+              onTyping={scrollToBottom}
+              onTypingComplete={message.endsSession ? onEndReady : undefined}
+            />
             {index === 0 && (
               <ChatQuickReplies
-                items={QUICK_REPLIES}
+                items={t.quickReplies}
                 onSelect={handleSend}
-                disabled={isSending}
+                disabled={isSending || isClosing}
                 className="md:hidden"
               />
             )}
@@ -111,9 +124,9 @@ export default function ChatWindow({
       </div>
 
       <ChatQuickReplies
-        items={QUICK_REPLIES}
+        items={t.quickReplies}
         onSelect={handleSend}
-        disabled={isSending}
+        disabled={isSending || isClosing}
         className="hidden px-[22px] pt-3.5 pb-1 md:flex"
       />
       {menuOpen && mobileMenu && (
@@ -127,12 +140,24 @@ export default function ChatWindow({
           {mobileMenu}
         </div>
       )}
-      <ChatInputForm
-        onSend={handleSend}
-        disabled={isSending}
-        menuOpen={menuOpen && !menuClosing}
-        onToggleMenu={mobileMenu ? toggleMenu : undefined}
-      />
+      {isEnded ? (
+        <div
+          role="status"
+          className="flex flex-col items-center gap-3 border-t border-gray-300 bg-white px-5 py-4 text-center md:flex-row md:justify-between md:px-[22px] md:pt-3.5 md:pb-[22px] md:text-left"
+        >
+          <p className="text-small md:text-body-2 break-keep text-gray-800">{t.ended.notice}</p>
+          <Button type="button" variant="primary" onClick={onReset} className="shrink-0">
+            {t.ended.newChat}
+          </Button>
+        </div>
+      ) : (
+        <ChatInputForm
+          onSend={handleSend}
+          disabled={isSending || isClosing}
+          menuOpen={menuOpen && !menuClosing}
+          onToggleMenu={mobileMenu ? toggleMenu : undefined}
+        />
+      )}
     </section>
   );
 }

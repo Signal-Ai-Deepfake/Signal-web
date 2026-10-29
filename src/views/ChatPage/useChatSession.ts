@@ -8,24 +8,29 @@ import {
   sendChatMessage,
   type SendMessageResponse,
 } from "@/entities/chat/api";
-import { INITIAL_MESSAGES } from "./mockConversation";
+import { INITIAL_MESSAGE_COUNT, createInitialMessages } from "./mockConversation";
 import { resolveReplyActions } from "./replyActions";
 import type { ChatMessage, ChatSummary } from "./types";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { chatMessages } from "./messages";
 
-let messageIdCounter = INITIAL_MESSAGES.length;
+let messageIdCounter = INITIAL_MESSAGE_COUNT;
 
 function createMessageId() {
   messageIdCounter += 1;
   return String(messageIdCounter);
 }
 
-function mapChatSummary(response: SendMessageResponse): ChatSummary | null {
+function mapChatSummary(
+  response: SendMessageResponse,
+  labels: { imageAbuse: string; general: string },
+): ChatSummary | null {
   if (!response.progress) return null;
   return {
     situation: response.situationType
       ? response.situationType === "IMAGE_ABUSE"
-        ? "이미지 관련 상담"
-        : "일반 상담"
+        ? labels.imageAbuse
+        : labels.general
       : undefined,
     recommendedSteps: response.suggestedActions ?? [],
     progress: response.progress,
@@ -33,14 +38,17 @@ function mapChatSummary(response: SendMessageResponse): ChatSummary | null {
 }
 
 export function useChatSession(canSave: boolean) {
-  const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
+  const t = useT(chatMessages);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => createInitialMessages(t.greeting));
   const [summary, setSummary] = useState<ChatSummary | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [isEnded, setIsEnded] = useState(false);
   const [saveConsent, setSaveConsent] = useState(false);
   const sessionIdRef = useRef<string | null>(null);
   const sessionCreatingRef = useRef<Promise<string> | null>(null);
   const generationRef = useRef(0);
   const effectiveConsent = canSave && saveConsent;
+  const isClosing = messages.some((message) => message.endsSession);
 
   function ensureSession(): Promise<string> {
     if (sessionIdRef.current) return Promise.resolve(sessionIdRef.current);
@@ -59,15 +67,18 @@ export function useChatSession(canSave: boolean) {
   function reset() {
     generationRef.current += 1;
     setIsSending(false);
+    setIsEnded(false);
     sessionIdRef.current = null;
     sessionCreatingRef.current = null;
-    setMessages(INITIAL_MESSAGES.map((message) => ({ ...message, id: createMessageId() })));
+    setMessages(
+      createInitialMessages(t.greeting).map((message) => ({ ...message, id: createMessageId() })),
+    );
     setSummary(null);
   }
 
   async function send(content: string) {
     const trimmed = content.trim();
-    if (!trimmed || isSending) return;
+    if (!trimmed || isSending || isClosing) return;
 
     setMessages((prev) => [
       ...prev,
@@ -81,7 +92,7 @@ export function useChatSession(canSave: boolean) {
       const sessionId = await ensureSession();
       const response = await sendChatMessage(sessionId, trimmed);
       if (isStale()) return;
-      setSummary(mapChatSummary(response));
+      setSummary(mapChatSummary(response, t.summary));
       setMessages((prev) => [
         ...prev,
         {
@@ -90,7 +101,8 @@ export function useChatSession(canSave: boolean) {
           content: response.reply,
           createdAt: Date.now(),
           typing: true,
-          actions: resolveReplyActions(response.reply),
+          hasAgencies: (response.recommendedAgencies?.length ?? 0) > 0,
+          endsSession: response.sessionEnded === true,
         },
       ]);
       try {
@@ -98,16 +110,16 @@ export function useChatSession(canSave: boolean) {
         if (!isStale()) setSummary(latestSummary);
       } catch (summaryError) {
         if (isStale()) return;
-        toast.error("상담 요약을 불러오지 못했습니다.", {
+        toast.error(t.summaryFailed, {
           description: summaryError instanceof Error ? summaryError.message : undefined,
         });
       }
       if (response.crisisDetected) {
-        toast.warning("긴급 상황이 감지되었어요. 전문 기관 연결을 고려해 주세요.");
+        toast.warning(t.crisis);
       }
     } catch (error) {
       if (isStale()) return;
-      toast.error("메시지 전송에 실패했습니다.", {
+      toast.error(t.sendFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     } finally {
@@ -116,10 +128,20 @@ export function useChatSession(canSave: boolean) {
   }
 
   return {
-    messages,
+    messages: messages.map((message, index) => {
+      if (message.role !== "bot") return message;
+      if (index === 0) return { ...message, content: t.greeting };
+      return {
+        ...message,
+        actions: resolveReplyActions(message.content, message.hasAgencies ?? false, t),
+      };
+    }),
     summary,
     isSending,
-    hasStarted: messages.length > INITIAL_MESSAGES.length,
+    isClosing,
+    isEnded,
+    markEnded: () => setIsEnded(true),
+    hasStarted: messages.length > INITIAL_MESSAGE_COUNT,
     saveConsent: effectiveConsent,
     setSaveConsent,
     send,

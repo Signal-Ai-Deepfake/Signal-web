@@ -9,6 +9,8 @@ import EvidenceHighlightCard from "./EvidenceHighlightCard";
 import OverallRiskCard from "./OverallRiskCard";
 import VerdictCard from "./VerdictCard";
 import WebMatchCard from "./WebMatchCard";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { detectMessages } from "./messages";
 
 interface DetectResultSectionProps {
   result: DetectResult;
@@ -16,25 +18,26 @@ interface DetectResultSectionProps {
 }
 
 export default function DetectResultSection({ result, previewUrl }: DetectResultSectionProps) {
+  const { result: tr } = useT(detectMessages);
   return (
     <div className="flex w-full animate-[fade-in-up_0.4s_ease-out] flex-col gap-6 rounded-2xl border border-gray-300 p-5 md:gap-8 md:px-8 md:py-6">
-      <p className="text-body-1 font-semibold text-black">탐지 결과</p>
+      <p className="text-body-1 font-semibold text-black">{tr.title}</p>
       <div className="flex flex-col gap-4 md:gap-8 lg:flex-row">
         <VerdictCard
-          title="얼굴 도용 여부"
+          title={tr.faceTheft}
           verdict={result.faceTheftVerdict}
           score={result.faceTheftScore}
-          scoreLabel="위험도"
+          scoreLabel={tr.risk}
           scoreSuffix="/100"
           caption={result.faceTheftCaption}
           suspicion
           unsupported
         />
         <VerdictCard
-          title="딥페이크 여부"
+          title={tr.deepfake}
           verdict={result.deepfakeVerdict}
           score={result.deepfakeProbability}
-          scoreLabel="추정 확률"
+          scoreLabel={tr.probability}
           scoreSuffix="%"
           caption={result.deepfakeCaption}
         />
@@ -54,7 +57,7 @@ export default function DetectResultSection({ result, previewUrl }: DetectResult
           <span className="[&>svg]:h-6 [&>svg]:w-6">
             <Message />
           </span>
-          익명 상담하기
+          {tr.chat}
         </Link>
         <Link
           href="/report"
@@ -63,7 +66,7 @@ export default function DetectResultSection({ result, previewUrl }: DetectResult
           <span className="[&>svg]:h-6 [&>svg]:w-6">
             <FileText />
           </span>
-          신고 문서 작성하기
+          {tr.report}
         </Link>
       </div>
     </div>

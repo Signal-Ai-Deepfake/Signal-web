@@ -14,56 +14,16 @@ import {
   createDeepfakeDetection,
   getDeepfakeDetection,
   type DeepfakeDetectionResponse,
-  type DeepfakeVerdict,
-  type DetectionFailureReason,
 } from "./detectApi";
 import DetectResultSection from "./DetectResultSection";
 import DetectUploadCard from "./DetectUploadCard";
 import { MOCK_RESULT } from "./mockResult";
 import type { DetectResult, DetectStatus } from "./types";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { detectMessages } from "./messages";
 
-const VERDICT_LABEL: Record<DeepfakeVerdict, string> = {
-  FAKE: "합성 흔적 발견",
-  SUSPICIOUS: "합성 의심",
-  REAL: "합성 흔적 없음",
-};
-
-const VERDICT_CAPTION: Record<DeepfakeVerdict, string> = {
-  FAKE: "얼굴 영역에서 합성 흔적이 감지되었습니다.",
-  SUSPICIOUS: "합성 여부가 의심되는 부분이 있습니다.",
-  REAL: "얼굴 영역에서 합성 흔적이 발견되지 않았습니다.",
-};
-
-const FAILURE_MESSAGE: Record<DetectionFailureReason, { title: string; description: string }> = {
-  NO_FACE_DETECTED: {
-    title: "사진에서 얼굴을 찾지 못했어요.",
-    description: "얼굴이 정면으로 잘 보이는 사진으로 다시 시도해 주세요.",
-  },
-  VIDEO_NOT_SUPPORTED: {
-    title: "영상 탐지는 아직 지원하지 않아요.",
-    description: "영상 속 얼굴이 잘 보이는 장면을 캡처한 사진으로 시도해 주세요.",
-  },
-  AI_SERVER_ERROR: {
-    title: "AI 분석 서버에 일시적인 문제가 있어요.",
-    description: "잠시 후 다시 시도해 주세요.",
-  },
-  TIMEOUT: {
-    title: "분석 시간이 초과되었어요.",
-    description: "잠시 후 다시 시도해 주세요.",
-  },
-};
-
-const EVIDENCE_TYPE_LABEL: Record<string, string> = {
-  BLINK_PATTERN_ANOMALY: "눈 깜빡임 패턴",
-  COMPRESSION_ARTIFACT: "압축 아티팩트",
-  FACE_BOUNDARY: "얼굴 경계",
-  LIGHTING_INCONSISTENCY: "조명 일관성",
-  SKIN_TEXTURE: "피부 질감",
-  MOUTH_SYNC: "입 주변 움직임",
-};
-
-function formatEvidenceType(type: string): string {
-  if (EVIDENCE_TYPE_LABEL[type]) return EVIDENCE_TYPE_LABEL[type];
+function formatEvidenceType(type: string, labels: Record<string, string>): string {
+  if (labels[type]) return labels[type];
   return type
     .toLowerCase()
     .split("_")
@@ -72,42 +32,47 @@ function formatEvidenceType(type: string): string {
     .join(" ");
 }
 
-function mapDetection(data: DeepfakeDetectionResponse): DetectResult {
+function mapDetection(
+  data: DeepfakeDetectionResponse,
+  t: (typeof detectMessages)[keyof typeof detectMessages],
+): DetectResult {
   const verdict = data.verdict ?? "SUSPICIOUS";
   const confidencePercent = Math.round((data.confidence ?? 0) * 100);
   const overallScore = data.riskScore ?? confidencePercent;
   const evidenceHighlights =
     data.evidences && data.evidences.length > 0
       ? data.evidences.map((evidence, index) => ({
-          tab: evidence.type ? formatEvidenceType(evidence.type) : `근거 ${index + 1}`,
-          description: evidence.description || "세부 설명이 제공되지 않았습니다.",
+          tab: evidence.type
+            ? formatEvidenceType(evidence.type, t.evidenceType)
+            : t.evidenceFallbackTab(index + 1),
+          description: evidence.description || t.evidenceNoDescription,
         }))
-      : [{ tab: "분석 결과", description: "탐지된 세부 근거가 없습니다." }];
+      : [{ tab: t.noEvidenceTab, description: t.noEvidenceDescription }];
 
   return {
     ...MOCK_RESULT,
-    deepfakeVerdict: VERDICT_LABEL[verdict],
+    deepfakeVerdict: t.verdict[verdict],
     deepfakeProbability: confidencePercent,
-    deepfakeCaption: VERDICT_CAPTION[verdict],
+    deepfakeCaption: t.verdictCaption[verdict],
     overallScore,
-    overallCaption: VERDICT_CAPTION[verdict],
+    overallCaption: t.verdictCaption[verdict],
     modelConfidence: confidencePercent,
-    modelConfidenceNote: data.fallbackUsed
-      ? "⚠️ AI 모델 응답에 실패해 실제 이미지 분석이 아닌 참고용 추정치가 표시되고 있습니다."
-      : "AI 모델이 이미지를 분석한 결과입니다.",
+    modelConfidenceNote: data.fallbackUsed ? t.fallbackNote : t.modelNote,
     evidenceHighlights,
-    faceTheftVerdict: "준비 중",
+    faceTheftVerdict: t.comingSoon,
     faceTheftScore: 0,
-    faceTheftCaption: "얼굴 도용 웹 검색 탐지는 아직 준비 중인 기능입니다.",
+    faceTheftCaption: t.faceTheftCaption,
     webMatchCount: 0,
   };
 }
 
 export default function DetectPage() {
+  const t = useT(detectMessages);
   const [status, setStatus] = useState<DetectStatus>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [result, setResult] = useState<DetectResult>(MOCK_RESULT);
+  const [detection, setDetection] = useState<DeepfakeDetectionResponse | null>(null);
+  const result: DetectResult = detection ? mapDetection(detection, t) : MOCK_RESULT;
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -136,7 +101,7 @@ export default function DetectPage() {
 
   const detectMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedFile) throw new Error("파일을 선택해 주세요.");
+      if (!selectedFile) throw new Error(t.selectFile);
       const created = await createDeepfakeDetection(selectedFile);
       return pollUntil(
         () => getDeepfakeDetection(created.detectionId),
@@ -146,18 +111,18 @@ export default function DetectPage() {
     onSuccess: (data) => {
       if (data.status === "FAILED") {
         setStatus("selected");
-        const failure = data.failureReason ? FAILURE_MESSAGE[data.failureReason] : undefined;
-        toast.error(failure?.title ?? "탐지에 실패했습니다.", {
-          description: failure?.description ?? "다시 시도해 주세요.",
+        const failure = data.failureReason ? t.failure[data.failureReason] : undefined;
+        toast.error(failure?.title ?? t.failed, {
+          description: failure?.description ?? t.retry,
         });
         return;
       }
-      setResult(mapDetection(data));
+      setDetection(data);
       setStatus("result");
     },
     onError: (error) => {
       setStatus("selected");
-      toast.error("탐지에 실패했습니다.", {
+      toast.error(t.failed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -175,9 +140,9 @@ export default function DetectPage() {
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col items-end gap-6">
           <div className="flex w-full flex-col items-start gap-6 md:gap-12">
             <PageHeading
-              title="얼굴 도용·딥페이크 탐지"
-              description="사진을 업로드하여 얼굴 도용 여부와 딥페이크 합성 여부를 확인할 수 있습니다."
-              breadcrumbs={[{ label: "얼굴 도용·딥페이크 탐지" }]}
+              title={t.title}
+              description={t.description}
+              breadcrumbs={[{ label: t.title }]}
             />
 
             <div className="flex w-full flex-col items-stretch gap-6 lg:flex-row lg:gap-10">
@@ -199,7 +164,7 @@ export default function DetectPage() {
               disabled={status !== "selected"}
               onClick={handleDetect}
             >
-              탐지 시작
+              {t.start}
             </Button>
           )}
 

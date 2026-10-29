@@ -1,11 +1,16 @@
+"use client";
+
 import AnalysisProgressCard from "@/shared/ui/AnalysisProgressCard";
 import AnalysisResultCard from "@/shared/ui/AnalysisResultCard";
 import UploadStepCard from "@/shared/ui/UploadStepCard";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { uiMessages } from "@/shared/ui/messages";
+import type { RiskLevel } from "@/shared/ui/messages";
 
 interface AnalysisStepStackProps {
   percent: number;
   riskPercent: number;
-  level: "안전" | "위험" | "주의";
+  level: RiskLevel;
   message: string;
 }
 
@@ -15,6 +20,7 @@ export default function AnalysisStepStack({
   level,
   message,
 }: AnalysisStepStackProps) {
+  const t = useT(uiMessages);
   return (
     <div className="relative h-[300px] w-[300px] overflow-visible sm:h-[380px] sm:w-[380px] lg:h-[460px] lg:w-[460px]">
       <div className="relative h-[460px] w-[460px] origin-top scale-[0.65] sm:scale-[0.826] lg:scale-100">
@@ -29,7 +35,7 @@ export default function AnalysisStepStack({
         </div>
       </div>
       <p className="text-caption absolute inset-x-0 bottom-0 animate-[step-in_0.7s_ease-out_both] text-center text-gray-700 [animation-delay:1650ms] group-data-[typing=pending]/hero:[animation-play-state:paused] motion-reduce:animate-none">
-        예시 화면 · 사진을 분석하면 이런 순서로 결과를 확인할 수 있어요.
+        {t.exampleScreen} · {t.exampleResultSequence}
       </p>
     </div>
   );

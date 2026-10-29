@@ -115,6 +115,36 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-pretendard);
+  overflow-wrap: break-word;
+}
+
+body:lang(ko) {
+  word-break: keep-all;
+}
+
+@layer base {
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  .text-center,
+  .text-center :is(p, h1, h2, h3, h4, h5, h6, li) {
+    text-wrap: balance;
+  }
+
+  :lang(ja) :is(p, h1, h2, h3, h4, h5, h6, li, dd),
+  :lang(ja) .text-center,
+  :lang(ja) .text-center :is(p, h1, h2, h3, h4, h5, h6, li) {
+    text-wrap: wrap;
+  }
 }
 
 @keyframes dropdown-in {
@@ -193,4 +223,16 @@ body::-webkit-scrollbar {
 
 .legal-section:target {
   animation: legal-target-flash 1.4s ease-out;
+}
+
+:lang(ja) .break-keep,
+:lang(zh) .break-keep {
+  word-break: normal;
+}
+
+@supports (word-break: auto-phrase) {
+  body:lang(ja),
+  :lang(ja) .break-keep {
+    word-break: auto-phrase;
+  }
 }

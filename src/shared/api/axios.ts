@@ -1,6 +1,24 @@
 import axios, { AxiosError } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
-import { clearAuthTokens, getAccessToken, getRefreshToken, setAuthTokens } from "@/shared/lib/authToken";
+import {
+  clearAuthTokens,
+  getAccessToken,
+  getRefreshToken,
+  setAuthTokens,
+} from "@/shared/lib/authToken";
+import { htmlLang } from "@/shared/i18n/config";
+import { currentLocale } from "@/shared/i18n/currentLocale";
+import { type ApiErrorCode, errorMessages, isApiErrorCode } from "./errorMessages";
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly code?: ApiErrorCode,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -45,13 +63,14 @@ api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = getAccessToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
+    config.headers["Accept-Language"] = htmlLang[currentLocale()];
   }
   return config;
 });
 
 api.interceptors.response.use(
   (res) => res,
-  async (error: AxiosError<{ message?: string }>) => {
+  async (error: AxiosError<{ message?: string; code?: string }>) => {
     const original = error.config as RetryableConfig | undefined;
     const isAuthEndpoint = original?.url?.includes("/api/v1/auth/");
 
@@ -73,7 +92,20 @@ api.interceptors.response.use(
       }
     }
 
-    const message = error.response?.data?.message ?? error.message ?? "알 수 없는 오류";
-    return Promise.reject(new Error(message));
-  }
+    const locale = currentLocale();
+    const t = errorMessages[locale];
+    const data = error.response?.data;
+    const code = isApiErrorCode(data?.code) ? data.code : undefined;
+    if (process.env.NODE_ENV !== "production" && data?.code && !code) {
+      console.warn(`[api] errorMessages에 없는 에러 코드: ${data.code}`, data.message);
+    }
+    const serverMessage = locale === "ko" ? data?.message : undefined;
+    const fallback = error.response
+      ? t.unknown
+      : error.code === AxiosError.ECONNABORTED
+        ? t.timeout
+        : t.network;
+    const message = serverMessage ?? (code ? t.codes[code] : undefined) ?? fallback;
+    return Promise.reject(new ApiError(message, code));
+  },
 );

@@ -1,4 +1,8 @@
+"use client";
+
 import type { RiskFactor } from "@/shared/ui/RiskFactorCard";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { resultMessages } from "./messages";
 
 interface RiskFactorListProps {
   factors: RiskFactor[];
@@ -11,9 +15,10 @@ function scoreTextColor(score: number) {
 }
 
 export default function RiskFactorList({ factors }: RiskFactorListProps) {
+  const t = useT(resultMessages);
   return (
     <section className="flex w-full flex-col gap-3">
-      <h3 className="text-body-2 text-primary-500 font-bold">상세 분석 내용</h3>
+      <h3 className="text-body-2 text-primary-500 font-bold">{t.factorsTitle}</h3>
       <ul className="flex flex-col gap-3">
         {factors.map((factor, index) => (
           <li

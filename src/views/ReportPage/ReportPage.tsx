@@ -16,6 +16,8 @@ import type { ReportDetails, ReportEvidence } from "./Step2Details";
 import Step3Draft from "./Step3Draft";
 import Step4Generated from "./Step4Generated";
 import { createDraft, toCreateRequest, toUpdateRequest, type ReportDraft } from "./reportDraft";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { reportMessages } from "./messages";
 
 const emptyDetails: ReportDetails = {
   incidentDate: "",
@@ -28,6 +30,7 @@ const emptyDetails: ReportDetails = {
 export default function ReportPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useT(reportMessages);
   const [step, setStep] = useState(1);
   const [damageType, setDamageType] = useState<DamageType | null>(null);
   const [details, setDetails] = useState<ReportDetails>(emptyDetails);
@@ -49,10 +52,10 @@ export default function ReportPage() {
       setReportId(savedId);
       queryClient.invalidateQueries({ queryKey: ["reports"] });
       setStep(4);
-      toast.success(isUpdate ? "신고 문서를 수정했습니다." : "신고 문서를 생성했습니다.");
+      toast.success(isUpdate ? t.updated : t.created);
     },
     onError: (error) => {
-      toast.error("신고 문서 저장에 실패했습니다.", {
+      toast.error(t.saveFailed, {
         description: error instanceof Error ? error.message : undefined,
       });
     },
@@ -60,7 +63,7 @@ export default function ReportPage() {
 
   function goToDraft() {
     if (!damageType) return;
-    setDraft(createDraft(damageType, details));
+    setDraft(createDraft(t.damageTypes[damageType].label, details));
     setStep(3);
   }
 
@@ -108,7 +111,7 @@ export default function ReportPage() {
                 onBack={() => setStep(2)}
                 onSubmit={handleSubmit}
                 submitting={saveReportMutation.isPending}
-                submitLabel={reportId === null ? "신고 문서 생성하기" : "수정 내용 저장하기"}
+                submitLabel={reportId === null ? t.createSubmit : t.updateSubmit}
               />
             )}
             {step === 4 && draft && reportId !== null && (

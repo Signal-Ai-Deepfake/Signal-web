@@ -1,9 +1,14 @@
-import { guideSteps } from "./guideContent";
+"use client";
+
+import { useT } from "@/shared/i18n/I18nProvider";
+import { guideMessages } from "./guideContent";
 
 export default function GuideStepList() {
+  const t = useT(guideMessages);
+  const guideSteps = t.steps;
   return (
     <section className="flex w-full flex-col gap-4 md:gap-6">
-      <h2 className="text-xl font-bold text-black md:text-[28px]">신고 절차</h2>
+      <h2 className="text-xl font-bold text-black md:text-[28px]">{t.stepsTitle}</h2>
       <ol className="grid w-full grid-cols-1 gap-3 md:grid-cols-3 md:gap-5">
         {guideSteps.map(({ title, description }, index) => (
           <li

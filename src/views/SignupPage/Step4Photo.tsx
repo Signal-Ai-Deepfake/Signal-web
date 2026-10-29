@@ -1,9 +1,13 @@
+"use client";
+
 import type { ChangeEvent, RefObject } from "react";
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
 import User from "@/shared/asset/svg/User";
 import Button from "@/shared/ui/Button";
 import PrevButton from "@/shared/ui/PrevButton";
 import StepHeader from "@/shared/ui/StepHeader";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { authMessages } from "@/views/authMessages";
 
 interface Step4PhotoProps {
   photoPreview: string | null;
@@ -22,13 +26,14 @@ export default function Step4Photo({
   onBack,
   onNext,
   nextDisabled = false,
-  nextLabel = "다음",
+  nextLabel,
 }: Step4PhotoProps) {
+  const t = useT(authMessages);
   return (
     <>
-      <StepHeader title="프로필 설정" />
+      <StepHeader title={t.signup.photoTitle} />
       <div className="flex w-full flex-col items-center gap-8">
-        <div className="bg-gray-200 flex size-32 items-center justify-center overflow-hidden rounded-full">
+        <div className="flex size-32 items-center justify-center overflow-hidden rounded-full bg-gray-200">
           {photoPreview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={photoPreview} alt="" className="size-full object-cover" />
@@ -54,12 +59,12 @@ export default function Step4Photo({
             <span className="[&>svg]:h-5 [&>svg]:w-5">
               <ImageArrowUp />
             </span>
-            <span className="text-body-2 font-medium">사진 업로드</span>
+            <span className="text-body-2 font-medium">{t.signup.uploadPhoto}</span>
           </button>
           <p className="text-body-2 text-gray-650 text-center">
-            지금 등록하지 않아도
+            {t.signup.photoLater[0]}
             <br />
-            나중에 언제든 추가할 수 있습니다.
+            {t.signup.photoLater[1]}
           </p>
         </div>
       </div>
@@ -72,7 +77,7 @@ export default function Step4Photo({
           disabled={nextDisabled}
           onClick={onNext}
         >
-          {nextLabel}
+          {nextLabel ?? t.next}
         </Button>
       </div>
     </>

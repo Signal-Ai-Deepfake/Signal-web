@@ -3,11 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import Arrow from "@/shared/asset/svg/Arrow";
 import { animateScrollTo } from "@/shared/lib/animateScrollTo";
+import { useT } from "@/shared/i18n/I18nProvider";
+import { widgetMessages } from "@/widgets/messages";
 
 const SHOW_AFTER = 400;
 const SCROLL_DURATION = 1300;
 
 export default function ScrollToTopButton() {
+  const t = useT(widgetMessages);
   const [visible, setVisible] = useState(false);
   const frameRef = useRef(0);
 
@@ -50,7 +53,7 @@ export default function ScrollToTopButton() {
   return (
     <button
       type="button"
-      aria-label="맨 위로"
+      aria-label={t.scrollToTop}
       onClick={handleClick}
       tabIndex={visible ? 0 : -1}
       className={`text-primary-500 fixed right-5 bottom-6 z-20 flex size-11 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white shadow-lg transition-opacity duration-300 active:bg-gray-100 ${
