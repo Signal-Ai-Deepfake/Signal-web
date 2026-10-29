@@ -62,10 +62,15 @@ export const privacyMessages = defineMessages<PrivacyText>(
     tableCategory: "구분",
     tableItems: "처리 항목",
     collectedRows: [
-      { label: "회원 정보", value: "이름, 이메일, 생년월일, 성별, 프로필 사진" },
+      {
+        label: "회원 정보",
+        value:
+          "이름, 이메일, 비밀번호(암호화 저장), 나이(가입 시 입력한 생년월일로 계산하며 생년월일은 저장하지 않음), 성별, 프로필 사진(선택)",
+      },
       {
         label: "서비스 이용 정보",
-        value: "분석·탐지 기록, 저장에 동의한 상담 내역, 신고 문서 내역",
+        value:
+          "분석·탐지를 위해 업로드한 사진·영상, 분석·탐지 기록, 저장에 동의한 상담 내역, 신고 문서 내역",
       },
       { label: "자동 생성 정보", value: "접속 기록, 브라우저 및 기기 정보, 서비스 이용 시간" },
     ],
@@ -77,11 +82,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
       "문의 대응과 서비스 관련 안내",
     ],
     retention:
-      "개인정보는 이용 목적이 달성되면 지체 없이 삭제합니다. 회원 정보는 회원 탈퇴 시까지 보관하며, 관계 법령에 따라 보존 의무가 있는 정보는 정해진 기간 동안 별도로 보관합니다.",
+      "개인정보는 이용 목적이 달성되면 지체 없이 삭제하는 것을 원칙으로 합니다. 회원 정보는 회원 탈퇴 시 삭제하며, 관계 법령에 따라 보존 의무가 있는 정보는 정해진 기간 동안 별도로 보관합니다. 다만 현재는 업로드한 사진·영상과 분석·탐지·상담·신고 기록이 탈퇴 후에도 서버에 남을 수 있으며, 업로드 파일에 관한 내용은 8항을 따릅니다.",
     deletedRecords: {
       title: "사용자가 삭제한 기록",
       description:
-        "삭제한 상담 내역, 분석 결과 및 신고 문서는 복구할 수 없도록 처리하는 것을 원칙으로 합니다.",
+        "삭제한 상담 내역, 분석 결과 및 신고 문서 기록은 서비스에서 다시 조회할 수 없도록 삭제합니다. 다만 기록에 쓰인 사진·영상 파일은 8항에 따라 서버에 남을 수 있습니다.",
     },
     thirdParty:
       "원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 법률에 특별한 규정이 있거나 이용자가 사전에 동의한 경우에만 필요한 범위에서 제공합니다.",
@@ -104,7 +109,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
       {
         heading: "이미지 및 영상 분석",
         description:
-          "업로드한 파일은 분석 결과 제공에 필요한 범위에서 처리합니다. 저장 여부와 삭제 시점은 서버 정책 확정 후 구체적으로 안내합니다.",
+          "업로드한 사진·영상은 분석·탐지 결과와 함께 서버에 저장됩니다. 현재는 자동 삭제 기간이 정해져 있지 않아, 기록을 삭제하거나 회원 탈퇴를 해도 파일이 서버에 남을 수 있습니다. 보관 기간과 삭제 절차가 정해지면 이 방침을 개정해 안내합니다.",
       },
       {
         heading: "전문 기관 연결",
@@ -149,12 +154,13 @@ export const privacyMessages = defineMessages<PrivacyText>(
       collectedRows: [
         {
           label: "Account information",
-          value: "Name, email, date of birth, gender, profile photo",
+          value:
+            "Name, email, password (stored encrypted), age (calculated from the date of birth you enter at sign-up; the date of birth itself is not stored), gender, profile photo (optional)",
         },
         {
           label: "Service usage information",
           value:
-            "Analysis and detection history, chat history you agreed to save, report document history",
+            "Photos and videos uploaded for analysis or detection, analysis and detection history, chat history you agreed to save, report document history",
         },
         {
           label: "Automatically generated information",
@@ -169,11 +175,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "Responding to inquiries and sending service-related notices",
       ],
       retention:
-        "We delete personal information without delay once its purpose has been fulfilled. Account information is kept until you delete your account, and information that must be preserved under applicable laws is stored separately for the required period.",
+        "As a rule, we delete personal information without delay once its purpose has been fulfilled. Account information is deleted when you delete your account, and information that must be preserved under applicable laws is stored separately for the required period. However, uploaded photos and videos and your analysis, detection, chat, and report records may currently remain on our servers after you delete your account. Uploaded files are handled as described in Section 8.",
       deletedRecords: {
         title: "Records you delete",
         description:
-          "As a rule, chat history, analysis results, and report documents you delete are processed so that they cannot be recovered.",
+          "Chat history, analysis results, and report document records you delete are removed so that they can no longer be viewed in the service. However, the photo and video files used in those records may remain on our servers as described in Section 8.",
       },
       thirdParty:
         "As a rule, we do not provide your personal information to outside parties. We provide it only to the extent necessary when required by law or when you have given prior consent.",
@@ -196,7 +202,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "Image and video analysis",
           description:
-            "Uploaded files are processed only as needed to provide analysis results. Whether they are stored and when they are deleted will be specified once the server policy is finalized.",
+            "Uploaded photos and videos are stored on our servers together with the analysis or detection results. No automatic deletion period has been set yet, so files may remain on our servers even after you delete the records or your account. Once a retention period and deletion procedure are set, we will update this policy.",
         },
         {
           heading: "Connecting to agencies",
@@ -238,10 +244,15 @@ export const privacyMessages = defineMessages<PrivacyText>(
       tableCategory: "区分",
       tableItems: "取り扱う項目",
       collectedRows: [
-        { label: "会員情報", value: "氏名、メールアドレス、生年月日、性別、プロフィール写真" },
+        {
+          label: "会員情報",
+          value:
+            "氏名、メールアドレス、パスワード（暗号化して保存）、年齢（登録時に入力した生年月日から計算し、生年月日は保存しません）、性別、プロフィール写真（任意）",
+        },
         {
           label: "サービス利用情報",
-          value: "分析・検出の記録、保存に同意した相談履歴、通報書類の履歴",
+          value:
+            "分析・検出のためにアップロードされた写真・動画、分析・検出の記録、保存に同意した相談履歴、通報書類の履歴",
         },
         {
           label: "自動生成情報",
@@ -256,11 +267,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "お問い合わせへの対応とサービスに関するご案内",
       ],
       retention:
-        "個人情報は利用目的を達成した後、遅滞なく削除します。会員情報は退会するまで保管し、関係法令により保存義務がある情報は定められた期間、別途保管します。",
+        "個人情報は利用目的を達成した後、遅滞なく削除することを原則とします。会員情報は退会時に削除し、関係法令により保存義務がある情報は定められた期間、別途保管します。ただし現在、アップロードされた写真・動画と分析・検出・相談・通報の記録は、退会後もサーバーに残る場合があります。アップロードされたファイルについては第8項に従います。",
       deletedRecords: {
         title: "利用者が削除した記録",
         description:
-          "削除された相談履歴、分析結果および通報書類は、復元できないよう処理することを原則とします。",
+          "削除された相談履歴、分析結果および通報書類の記録は、サービス上で再び閲覧できないよう削除します。ただし、記録に使われた写真・動画ファイルは第8項のとおりサーバーに残る場合があります。",
       },
       thirdParty:
         "原則として、利用者の個人情報を外部に提供しません。法律に特別な定めがある場合、または利用者の事前の同意がある場合に限り、必要な範囲で提供します。",
@@ -283,7 +294,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "画像・動画の分析",
           description:
-            "アップロードされたファイルは、分析結果の提供に必要な範囲で取り扱います。保存の有無と削除の時期は、サーバーのポリシー確定後に具体的にご案内します。",
+            "アップロードされた写真・動画は、分析・検出結果とともにサーバーに保存されます。現在は自動削除の期間が定められていないため、記録を削除したり退会したりしても、ファイルがサーバーに残る場合があります。保管期間と削除手続きが決まり次第、本ポリシーを改定してお知らせします。",
         },
         {
           heading: "専門機関へのおつなぎ",
@@ -323,8 +334,15 @@ export const privacyMessages = defineMessages<PrivacyText>(
       tableCategory: "类别",
       tableItems: "处理项目",
       collectedRows: [
-        { label: "会员信息", value: "姓名、电子邮箱、出生日期、性别、头像" },
-        { label: "服务使用信息", value: "分析与检测记录、同意保存的咨询记录、举报文件记录" },
+        {
+          label: "会员信息",
+          value:
+            "姓名、电子邮箱、密码（加密保存）、年龄（根据注册时填写的出生日期计算，不保存出生日期）、性别、头像（可选）",
+        },
+        {
+          label: "服务使用信息",
+          value: "为分析与检测而上传的照片和视频、分析与检测记录、同意保存的咨询记录、举报文件记录",
+        },
         { label: "自动生成信息", value: "访问记录、浏览器及设备信息、服务使用时间" },
       ],
       purposeItems: [
@@ -335,10 +353,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "回复咨询并发送服务相关通知",
       ],
       retention:
-        "个人信息在使用目的达成后将立即删除。会员信息保存至注销账号为止；根据相关法律法规须保存的信息，将在规定期限内另行保存。",
+        "原则上，个人信息在使用目的达成后将立即删除。会员信息在注销账号时删除；根据相关法律法规须保存的信息，将在规定期限内另行保存。但目前，上传的照片和视频以及分析、检测、咨询、举报记录在注销账号后仍可能保留在服务器上。上传文件的处理遵循第8项。",
       deletedRecords: {
         title: "用户删除的记录",
-        description: "原则上，已删除的咨询记录、分析结果及举报文件将被处理为无法恢复。",
+        description:
+          "已删除的咨询记录、分析结果及举报文件记录将被删除，无法再在服务中查看。但这些记录所使用的照片和视频文件可能会按照第8项保留在服务器上。",
       },
       thirdParty:
         "原则上不向外部提供用户的个人信息。仅在法律有特别规定或用户事先同意的情况下，在必要范围内提供。",
@@ -360,7 +379,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "图片与视频分析",
           description:
-            "上传的文件仅在提供分析结果所需的范围内处理。是否保存及删除时间将在服务器政策确定后具体说明。",
+            "上传的照片和视频会与分析、检测结果一起保存在服务器上。目前尚未设定自动删除期限，因此即使删除记录或注销账号，文件仍可能保留在服务器上。保存期限和删除流程确定后，我们将修订本政策并另行通知。",
         },
         {
           heading: "对接专业机构",
