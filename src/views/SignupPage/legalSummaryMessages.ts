@@ -67,11 +67,12 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
         title: "제2조 (수집하는 개인정보 항목)",
         body: "서비스 이용을 위해 다음 정보를 수집할 수 있습니다.",
         items: [
-          "이메일",
-          "비밀번호",
+          "이름, 이메일, 비밀번호",
+          "나이(생년월일로 계산), 성별",
           "프로필 이미지(선택)",
-          "서비스 이용 기록",
-          "AI 분석을 위해 업로드한 사진 및 영상",
+          "AI 분석·탐지를 위해 업로드한 사진 및 영상",
+          "분석·탐지·상담·신고 등 서비스 이용 기록",
+          "접속 기록, 브라우저 및 기기 정보",
         ],
       },
       {
@@ -87,7 +88,7 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
       },
       {
         title: "제4조 (보유 및 이용 기간)",
-        body: "개인정보는 회원 탈퇴 시까지 보관하며, 관계 법령에 따라 보관이 필요한 경우 해당 기간 동안 안전하게 보관합니다.",
+        body: "개인정보는 회원 탈퇴 시까지 보관하며, 관계 법령에 따라 보관이 필요한 경우 해당 기간 동안 안전하게 보관합니다. 업로드한 사진·영상의 보관 기준은 개인정보처리방침의 '상담 및 분석 데이터 처리' 항목을 따릅니다.",
       },
       {
         title: "제5조 (개인정보 보호)",
@@ -155,11 +156,12 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
           title: "Article 2 (Information collected)",
           body: "We may collect the following information to provide the Service.",
           items: [
-            "Email",
-            "Password",
+            "Name, email, password",
+            "Age (calculated from your date of birth), gender",
             "Profile image (optional)",
-            "Service usage records",
-            "Photos and videos uploaded for AI analysis",
+            "Photos and videos uploaded for AI analysis or detection",
+            "Service usage records such as analysis, detection, chat, and reports",
+            "Access logs, browser and device information",
           ],
         },
         {
@@ -175,7 +177,7 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
         },
         {
           title: "Article 4 (Retention period)",
-          body: "Personal information is kept until you delete your account. Where applicable laws require retention, it is stored securely for the required period.",
+          body: "Personal information is kept until you delete your account. Where applicable laws require retention, it is stored securely for the required period. Uploaded photos and videos are kept as described under 'Handling of chat and analysis data' in the Privacy Policy.",
         },
         {
           title: "Article 5 (Protection of personal information)",
@@ -242,11 +244,12 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
           title: "第2条（収集する個人情報の項目）",
           body: "サービスの利用にあたり、次の情報を収集する場合があります。",
           items: [
-            "メールアドレス",
-            "パスワード",
+            "氏名、メールアドレス、パスワード",
+            "年齢（生年月日から計算）、性別",
             "プロフィール画像（任意）",
-            "サービスの利用記録",
-            "AI分析のためにアップロードされた写真および動画",
+            "AI分析・検出のためにアップロードされた写真および動画",
+            "分析・検出・相談・通報などのサービス利用記録",
+            "アクセス記録、ブラウザおよび端末の情報",
           ],
         },
         {
@@ -262,7 +265,7 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
         },
         {
           title: "第4条（保有および利用期間）",
-          body: "個人情報は退会するまで保管し、関係法令により保管が必要な場合は、その期間中安全に保管します。",
+          body: "個人情報は退会するまで保管し、関係法令により保管が必要な場合は、その期間中安全に保管します。アップロードされた写真・動画の保管基準は、プライバシーポリシーの「相談・分析データの取り扱い」に従います。",
         },
         {
           title: "第5条（個人情報の保護）",
@@ -324,7 +327,14 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
         {
           title: "第二条（收集的个人信息项目）",
           body: "为使用本服务，可能会收集以下信息。",
-          items: ["电子邮箱", "密码", "头像（可选）", "服务使用记录", "为AI分析而上传的照片和视频"],
+          items: [
+            "姓名、电子邮箱、密码",
+            "年龄（根据出生日期计算）、性别",
+            "头像（可选）",
+            "为AI分析与检测而上传的照片和视频",
+            "分析、检测、咨询、举报等服务使用记录",
+            "访问记录、浏览器及设备信息",
+          ],
         },
         {
           title: "第三条（个人信息的使用目的）",
@@ -339,7 +349,7 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
         },
         {
           title: "第四条（保存及使用期限）",
-          body: "个人信息保存至注销账号为止；如相关法律法规要求保存，将在规定期限内安全保存。",
+          body: "个人信息保存至注销账号为止；如相关法律法规要求保存，将在规定期限内安全保存。上传的照片和视频的保存标准遵循隐私政策中“咨询与分析数据的处理”一项。",
         },
         {
           title: "第五条（个人信息保护）",

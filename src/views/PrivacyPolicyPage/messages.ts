@@ -62,10 +62,15 @@ export const privacyMessages = defineMessages<PrivacyText>(
     tableCategory: "구분",
     tableItems: "처리 항목",
     collectedRows: [
-      { label: "회원 정보", value: "이름, 이메일, 생년월일, 성별, 프로필 사진" },
+      {
+        label: "회원 정보",
+        value:
+          "이름, 이메일, 비밀번호(암호화 저장), 나이(가입 시 입력한 생년월일로 계산하며 생년월일은 저장하지 않음), 성별, 프로필 사진(선택)",
+      },
       {
         label: "서비스 이용 정보",
-        value: "분석·탐지 기록, 저장에 동의한 상담 내역, 신고 문서 내역",
+        value:
+          "분석·탐지를 위해 업로드한 사진·영상, 분석·탐지 기록, 저장에 동의한 상담 내역, 신고 문서 내역",
       },
       { label: "자동 생성 정보", value: "접속 기록, 브라우저 및 기기 정보, 서비스 이용 시간" },
     ],
@@ -104,7 +109,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
       {
         heading: "이미지 및 영상 분석",
         description:
-          "업로드한 파일은 분석 결과 제공에 필요한 범위에서 처리합니다. 저장 여부와 삭제 시점은 서버 정책 확정 후 구체적으로 안내합니다.",
+          "업로드한 사진·영상은 분석·탐지 결과와 함께 서버에 저장됩니다. 자동 삭제 기간은 아직 정하지 않았으며, 삭제가 필요하면 서비스 문의 채널로 요청할 수 있습니다.",
       },
       {
         heading: "전문 기관 연결",
@@ -149,12 +154,13 @@ export const privacyMessages = defineMessages<PrivacyText>(
       collectedRows: [
         {
           label: "Account information",
-          value: "Name, email, date of birth, gender, profile photo",
+          value:
+            "Name, email, password (stored encrypted), age (calculated from the date of birth you enter at sign-up; the date of birth itself is not stored), gender, profile photo (optional)",
         },
         {
           label: "Service usage information",
           value:
-            "Analysis and detection history, chat history you agreed to save, report document history",
+            "Photos and videos uploaded for analysis or detection, analysis and detection history, chat history you agreed to save, report document history",
         },
         {
           label: "Automatically generated information",
@@ -196,7 +202,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "Image and video analysis",
           description:
-            "Uploaded files are processed only as needed to provide analysis results. Whether they are stored and when they are deleted will be specified once the server policy is finalized.",
+            "Uploaded photos and videos are stored on our servers together with the analysis or detection results. No automatic deletion period has been set yet; you can request deletion through the service's inquiry channel.",
         },
         {
           heading: "Connecting to agencies",
@@ -238,10 +244,15 @@ export const privacyMessages = defineMessages<PrivacyText>(
       tableCategory: "区分",
       tableItems: "取り扱う項目",
       collectedRows: [
-        { label: "会員情報", value: "氏名、メールアドレス、生年月日、性別、プロフィール写真" },
+        {
+          label: "会員情報",
+          value:
+            "氏名、メールアドレス、パスワード（暗号化して保存）、年齢（登録時に入力した生年月日から計算し、生年月日は保存しません）、性別、プロフィール写真（任意）",
+        },
         {
           label: "サービス利用情報",
-          value: "分析・検出の記録、保存に同意した相談履歴、通報書類の履歴",
+          value:
+            "分析・検出のためにアップロードされた写真・動画、分析・検出の記録、保存に同意した相談履歴、通報書類の履歴",
         },
         {
           label: "自動生成情報",
@@ -283,7 +294,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "画像・動画の分析",
           description:
-            "アップロードされたファイルは、分析結果の提供に必要な範囲で取り扱います。保存の有無と削除の時期は、サーバーのポリシー確定後に具体的にご案内します。",
+            "アップロードされた写真・動画は、分析・検出結果とともにサーバーに保存されます。自動削除の期間はまだ定めておらず、削除をご希望の場合はサービスのお問い合わせ窓口からお申し出いただけます。",
         },
         {
           heading: "専門機関へのおつなぎ",
@@ -323,8 +334,15 @@ export const privacyMessages = defineMessages<PrivacyText>(
       tableCategory: "类别",
       tableItems: "处理项目",
       collectedRows: [
-        { label: "会员信息", value: "姓名、电子邮箱、出生日期、性别、头像" },
-        { label: "服务使用信息", value: "分析与检测记录、同意保存的咨询记录、举报文件记录" },
+        {
+          label: "会员信息",
+          value:
+            "姓名、电子邮箱、密码（加密保存）、年龄（根据注册时填写的出生日期计算，不保存出生日期）、性别、头像（可选）",
+        },
+        {
+          label: "服务使用信息",
+          value: "为分析与检测而上传的照片和视频、分析与检测记录、同意保存的咨询记录、举报文件记录",
+        },
         { label: "自动生成信息", value: "访问记录、浏览器及设备信息、服务使用时间" },
       ],
       purposeItems: [
@@ -360,7 +378,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "图片与视频分析",
           description:
-            "上传的文件仅在提供分析结果所需的范围内处理。是否保存及删除时间将在服务器政策确定后具体说明。",
+            "上传的照片和视频会与分析、检测结果一起保存在服务器上。目前尚未设定自动删除期限，如需删除，可通过服务咨询渠道申请。",
         },
         {
           heading: "对接专业机构",
