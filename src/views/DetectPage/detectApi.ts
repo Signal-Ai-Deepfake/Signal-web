@@ -33,7 +33,8 @@ export interface DeepfakeDetectionResponse {
   status: ProcessingStatus;
   verdict?: DeepfakeVerdict;
   confidence?: number;
-  riskScore?: number;
+  /** 전용 탐지 모델 모드에서 판단 불가 등이면 null. */
+  riskScore?: number | null;
   evidences?: EvidenceResponse[];
   highlightedResultUrl?: string;
   /** true면 실제 AI 분석이 아니라 서버가 자동으로 대체한 참고용 추정치(폴백)입니다. */

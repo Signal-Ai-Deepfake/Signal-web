@@ -3,18 +3,19 @@
 import Warning from "@/shared/asset/svg/Warning";
 import SuspicionBanner from "@/shared/ui/SuspicionBanner";
 import { useT } from "@/shared/i18n/I18nProvider";
+import type { DeepfakeVerdict } from "./detectApi";
 import { detectMessages } from "./messages";
 
-function verdictStyle(score: number) {
-  if (score >= 70) return { bg: "bg-red-50", text: "text-red-500" };
-  if (score >= 40) return { bg: "bg-yellow-50", text: "text-yellow-500" };
-  return { bg: "bg-green-50", text: "text-green-500" };
-}
+const toneClass: Record<DeepfakeVerdict, { bg: string; text: string }> = {
+  FAKE: { bg: "bg-red-50", text: "text-red-500" },
+  SUSPICIOUS: { bg: "bg-yellow-50", text: "text-yellow-500" },
+  REAL: { bg: "bg-green-50", text: "text-green-500" },
+};
 
-function toneStyle(tone: "REAL" | "SUSPICIOUS" | "FAKE") {
-  if (tone === "FAKE") return { bg: "bg-red-50", text: "text-red-500" };
-  if (tone === "SUSPICIOUS") return { bg: "bg-yellow-50", text: "text-yellow-500" };
-  return { bg: "bg-green-50", text: "text-green-500" };
+function scoreToTone(score: number): DeepfakeVerdict {
+  if (score >= 70) return "FAKE";
+  if (score >= 40) return "SUSPICIOUS";
+  return "REAL";
 }
 
 function scoreToSuspicionStatus(score: number): "의심" | "주의" | "의심없음" {
@@ -26,12 +27,13 @@ function scoreToSuspicionStatus(score: number): "의심" | "주의" | "의심없
 interface VerdictCardProps {
   title: string;
   verdict: string;
-  score: number;
+  /** 값이 없으면(서버가 점수를 주지 않은 경우) "-"로 보여준다. */
+  score: number | null;
   scoreLabel: string;
   scoreSuffix: string;
   caption: string;
   /** 판정 코드가 있으면 색을 점수 크기 대신 판정으로 정한다. */
-  tone?: "REAL" | "SUSPICIOUS" | "FAKE";
+  tone?: DeepfakeVerdict;
   suspicion?: boolean;
   unsupported?: boolean;
 }
@@ -48,7 +50,7 @@ export default function VerdictCard({
   unsupported = false,
 }: VerdictCardProps) {
   const t = useT(detectMessages).result;
-  const style = tone ? toneStyle(tone) : verdictStyle(score);
+  const style = toneClass[tone ?? scoreToTone(score ?? 0)];
 
   if (unsupported) {
     return (
@@ -69,7 +71,7 @@ export default function VerdictCard({
     <div className="flex w-full flex-col gap-5 rounded-lg border border-gray-300 p-5 md:p-6 lg:w-[364px]">
       <p className="text-body-1 font-semibold text-black">{title}</p>
       {suspicion ? (
-        <SuspicionBanner status={scoreToSuspicionStatus(score)} />
+        <SuspicionBanner status={scoreToSuspicionStatus(score ?? 0)} />
       ) : (
         <div className={`flex h-[60px] w-full items-center gap-3 rounded-lg px-5 ${style.bg}`}>
           <span className={`shrink-0 ${style.text} [&>svg]:h-8 [&>svg]:w-8`}>
@@ -81,8 +83,10 @@ export default function VerdictCard({
       <div className="flex flex-col gap-3">
         <p className="text-body-1 text-gray-800">{scoreLabel}</p>
         <p className={`text-h2 md:text-h1 font-bold ${style.text}`}>
-          {score}
-          <span className="text-h3 font-semibold text-gray-500">{scoreSuffix}</span>
+          {score ?? "-"}
+          {score !== null && (
+            <span className="text-h3 font-semibold text-gray-500">{scoreSuffix}</span>
+          )}
         </p>
         <div className="h-px w-full bg-gray-200" />
       </div>

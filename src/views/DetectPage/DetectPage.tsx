@@ -52,7 +52,7 @@ function mapDetection(
   return {
     ...MOCK_RESULT,
     deepfakeVerdict: t.verdict[verdict],
-    deepfakeProbability: overallScore,
+    deepfakeRiskScore: data.riskScore ?? null,
     deepfakeTone: verdict,
     deepfakeCaption: t.verdictCaption[verdict],
     overallScore,

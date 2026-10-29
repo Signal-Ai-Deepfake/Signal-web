@@ -1,3 +1,5 @@
+import type { DeepfakeVerdict } from "./detectApi";
+
 export type DetectStatus = "idle" | "selected" | "analyzing" | "result";
 
 export interface DetectResult {
@@ -5,10 +7,10 @@ export interface DetectResult {
   faceTheftScore: number;
   faceTheftCaption: string;
   deepfakeVerdict: string;
-  /** 합성 가능성(0~100). 서버의 riskScore이며, 모델 확신도(confidence)가 아니다. */
-  deepfakeProbability: number;
-  /** 판정 코드. 카드 색을 점수 크기가 아니라 판정으로 정하는 데 쓴다. */
-  deepfakeTone?: "REAL" | "SUSPICIOUS" | "FAKE";
+  /** 합성 가능성(0~100). 서버가 riskScore를 주지 않으면 null. 모델 확신도로 대신 채우지 않는다. */
+  deepfakeRiskScore: number | null;
+  /** 판정 코드. 딥페이크 카드와 종합 위험도 게이지의 색을 점수 크기가 아니라 판정으로 정한다. */
+  deepfakeTone?: DeepfakeVerdict;
   deepfakeCaption: string;
   overallScore: number;
   overallCaption: string;

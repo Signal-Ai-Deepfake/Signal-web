@@ -5,7 +5,7 @@ export const MOCK_RESULT: DetectResult = {
   faceTheftScore: 80,
   faceTheftCaption: "공개 웹에서 유사 얼굴이 감지되었습니다.",
   deepfakeVerdict: "합성 흔적 발견",
-  deepfakeProbability: 80,
+  deepfakeRiskScore: 80,
   deepfakeTone: "FAKE",
   deepfakeCaption: "얼굴 영역에서 합성 흔적이 감지되었습니다.",
   overallScore: 74,
