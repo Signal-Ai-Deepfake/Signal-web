@@ -62,13 +62,13 @@ export const detectMessages = defineMessages(
     comingSoon: "준비 중",
     faceTheftCaption: "얼굴 도용 웹 검색 탐지는 아직 준비 중인 기능입니다.",
     band: {
-      LOW: "합성 가능성 낮음",
-      UNCERTAIN: "판단 어려움",
+      LOW: "합성 흔적을 찾지 못함",
+      UNCERTAIN: "합성 가능성 불확실",
       HIGH: "합성 가능성 높음",
       UNDETERMINED: "판단할 수 없음",
     } as Record<DeepfakeBand, string>,
     bandCaption: {
-      LOW: "합성 가능성이 낮아 보입니다. 다만 진짜임을 보증하지는 않습니다.",
+      LOW: "합성 흔적을 찾지 못했습니다. 다만 진짜임을 보증하지는 않습니다.",
       UNCERTAIN: "판단이 어렵습니다. 합성 가능성이 불확실하니 아래 안내를 참고해 주세요.",
       HIGH: "합성 가능성이 높습니다.",
       UNDETERMINED: "이 사진은 판단할 수 없습니다. 다른 사진으로 다시 시도해 주세요.",
@@ -186,13 +186,13 @@ export const detectMessages = defineMessages(
       comingSoon: "Coming soon",
       faceTheftCaption: "Web-search-based face theft detection is coming soon.",
       band: {
-        LOW: "Low likelihood of synthesis",
-        UNCERTAIN: "Hard to tell",
+        LOW: "No signs of synthesis found",
+        UNCERTAIN: "Uncertain likelihood of synthesis",
         HIGH: "High likelihood of synthesis",
         UNDETERMINED: "Can't be determined",
       },
       bandCaption: {
-        LOW: "This looks unlikely to be synthesized, but that doesn't guarantee it's authentic.",
+        LOW: "We didn't find signs of synthesis, but that doesn't guarantee it's authentic.",
         UNCERTAIN: "It's hard to tell whether this was synthesized. Please see the guidance below.",
         HIGH: "This is likely to be synthesized.",
         UNDETERMINED: "We couldn't assess this photo. Please try again with a different photo.",
@@ -303,13 +303,13 @@ export const detectMessages = defineMessages(
       comingSoon: "準備中",
       faceTheftCaption: "Web検索による顔の盗用検出は準備中の機能です。",
       band: {
-        LOW: "合成の可能性が低い",
-        UNCERTAIN: "判断が難しい",
+        LOW: "合成の痕跡が見つからない",
+        UNCERTAIN: "合成の可能性が不確か",
         HIGH: "合成の可能性が高い",
         UNDETERMINED: "判断できません",
       },
       bandCaption: {
-        LOW: "合成の可能性は低いようです。ただし、本物であることを保証するものではありません。",
+        LOW: "合成の痕跡は見つかりませんでした。ただし、本物であることを保証するものではありません。",
         UNCERTAIN:
           "判断が難しい結果です。合成の可能性がはっきりしないため、下の案内をご確認ください。",
         HIGH: "合成の可能性が高いです。",
@@ -413,13 +413,13 @@ export const detectMessages = defineMessages(
       comingSoon: "即将推出",
       faceTheftCaption: "基于网络搜索的面部盗用检测功能即将推出。",
       band: {
-        LOW: "合成可能性低",
-        UNCERTAIN: "难以判断",
+        LOW: "未发现合成痕迹",
+        UNCERTAIN: "合成可能性不确定",
         HIGH: "合成可能性高",
         UNDETERMINED: "无法判断",
       },
       bandCaption: {
-        LOW: "合成的可能性看起来较低，但这并不能保证照片是真实的。",
+        LOW: "未发现合成痕迹，但这并不能保证照片是真实的。",
         UNCERTAIN: "难以判断是否经过合成，请参考下方的说明。",
         HIGH: "合成的可能性较高。",
         UNDETERMINED: "无法判断这张照片，请换一张照片重试。",
