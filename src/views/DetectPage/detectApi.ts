@@ -3,6 +3,9 @@ import { guestHeaders } from "@/shared/api/guestHeaders";
 
 export type ProcessingStatus = "PROCESSING" | "COMPLETED" | "FAILED";
 export type DeepfakeVerdict = "REAL" | "FAKE" | "SUSPICIOUS";
+export const DEEPFAKE_BANDS = ["LOW", "UNCERTAIN", "HIGH", "UNDETERMINED"] as const;
+export type DeepfakeBand = (typeof DEEPFAKE_BANDS)[number];
+export type AssessmentBasis = "MODEL" | "PROVENANCE";
 export type DetectionFailureReason =
   | "NO_FACE_DETECTED"
   | "VIDEO_NOT_SUPPORTED"
@@ -23,6 +26,12 @@ export interface EvidenceResponse {
   frame?: number;
 }
 
+export interface ProvenanceSignalResponse {
+  code: string;
+  message?: string;
+  strong?: boolean;
+}
+
 export interface DeepfakeDetectionCreateResponse {
   detectionId: number;
   status: ProcessingStatus;
@@ -31,8 +40,8 @@ export interface DeepfakeDetectionCreateResponse {
 export interface DeepfakeDetectionResponse {
   detectionId: number;
   status: ProcessingStatus;
-  verdict?: DeepfakeVerdict;
-  confidence?: number;
+  verdict?: DeepfakeVerdict | null;
+  confidence?: number | null;
   /** 전용 탐지 모델 모드에서 판단 불가 등이면 null. */
   riskScore?: number | null;
   evidences?: EvidenceResponse[];
@@ -40,6 +49,16 @@ export interface DeepfakeDetectionResponse {
   /** true면 실제 AI 분석이 아니라 서버가 자동으로 대체한 참고용 추정치(폴백)입니다. */
   fallbackUsed?: boolean;
   failureReason?: DetectionFailureReason | null;
+  band?: string | null;
+  assessmentBasis?: AssessmentBasis | null;
+  undeterminedReason?: string | null;
+  modelName?: string | null;
+  modelVersion?: string | null;
+  provenanceSignals?: ProvenanceSignalResponse[];
+}
+
+export function isDeepfakeBand(value: string | null | undefined): value is DeepfakeBand {
+  return DEEPFAKE_BANDS.some((band) => band === value);
 }
 
 export async function createDeepfakeDetection(
