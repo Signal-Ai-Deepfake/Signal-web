@@ -18,7 +18,7 @@ export default function BandScale({ band }: BandScaleProps) {
   return (
     <div className="flex w-full flex-col items-center gap-5 py-4 md:py-6">
       <p className={`text-h3 text-center font-bold ${style.text}`}>{t.band[band]}</p>
-      <div className="grid w-full grid-cols-3 gap-1.5">
+      <div role="img" aria-label={t.band[band]} className="grid w-full grid-cols-3 gap-1.5">
         {SCALE_BANDS.map((scaleBand) => {
           const active = scaleBand === band;
           return (
