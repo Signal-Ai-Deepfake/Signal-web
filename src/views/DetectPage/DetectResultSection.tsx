@@ -3,6 +3,7 @@
 import Link from "next/link";
 import FileText from "@/shared/asset/svg/FileText";
 import Message from "@/shared/asset/svg/Message";
+import Warning from "@/shared/asset/svg/Warning";
 import { buttonStyle } from "@/shared/ui/Button";
 import type { DetectResult } from "./types";
 import EvidenceHighlightCard from "./EvidenceHighlightCard";
@@ -18,7 +19,8 @@ interface DetectResultSectionProps {
 }
 
 export default function DetectResultSection({ result, previewUrl }: DetectResultSectionProps) {
-  const { result: tr } = useT(detectMessages);
+  const t = useT(detectMessages);
+  const tr = t.result;
   return (
     <div className="flex w-full animate-[fade-in-up_0.4s_ease-out] flex-col gap-6 rounded-2xl border border-gray-300 p-5 md:gap-8 md:px-8 md:py-6">
       <p className="text-body-1 font-semibold text-black">{tr.title}</p>
@@ -38,6 +40,8 @@ export default function DetectResultSection({ result, previewUrl }: DetectResult
           verdict={result.deepfakeVerdict}
           score={result.deepfakeRiskScore}
           tone={result.deepfakeTone}
+          band={result.deepfakeBand}
+          scoreText={result.deepfakeBand ? tr.bandLevel[result.deepfakeBand] : undefined}
           scoreLabel={tr.probability}
           scoreSuffix="%"
           caption={result.deepfakeCaption}
@@ -48,6 +52,18 @@ export default function DetectResultSection({ result, previewUrl }: DetectResult
       <div className="flex flex-col gap-4 md:gap-6 lg:flex-row">
         <EvidenceHighlightCard highlights={result.evidenceHighlights} previewUrl={previewUrl} />
         <WebMatchCard matchCount={result.webMatchCount} unsupported />
+      </div>
+
+      <div className="flex flex-col gap-2 rounded-lg bg-gray-100 p-4 md:px-6">
+        <div className="flex items-start gap-2">
+          <span className="text-gray-650 mt-0.5 shrink-0 [&>svg]:h-5 [&>svg]:w-5">
+            <Warning />
+          </span>
+          <p className="text-small text-gray-700">{t.referenceNotice}</p>
+        </div>
+        {result.modelLabel && (
+          <p className="text-caption text-gray-650 pl-7 break-all">{result.modelLabel}</p>
+        )}
       </div>
 
       <div className="flex flex-col gap-2 sm:w-[536px] sm:flex-row sm:self-end">
