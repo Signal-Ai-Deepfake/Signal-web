@@ -1,4 +1,4 @@
-import type { DeepfakeVerdict } from "./detectApi";
+import type { DeepfakeBand, DeepfakeVerdict } from "./detectApi";
 
 export type DetectStatus = "idle" | "selected" | "analyzing" | "result";
 
@@ -11,11 +11,14 @@ export interface DetectResult {
   deepfakeRiskScore: number | null;
   /** 판정 코드. 딥페이크 카드와 종합 위험도 게이지의 색을 점수 크기가 아니라 판정으로 정한다. */
   deepfakeTone?: DeepfakeVerdict;
+  deepfakeBand: DeepfakeBand | null;
   deepfakeCaption: string;
   overallScore: number;
   overallCaption: string;
   modelConfidence: number;
   modelConfidenceNote: string;
+  fallbackUsed: boolean;
+  modelLabel: string | null;
   evidenceHighlights: { tab: string; description: string }[];
   webMatchCount: number;
 }
