@@ -69,7 +69,9 @@ function mapEvidenceHighlights(data: DeepfakeDetectionResponse, t: DetectText) {
 }
 
 function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectResult {
-  const band = isDeepfakeBand(data.band) ? data.band : null;
+  const knownBand = isDeepfakeBand(data.band) ? data.band : null;
+  const hasLegacyResult = data.verdict != null || data.riskScore != null;
+  const band: DeepfakeBand | null = knownBand ?? (hasLegacyResult ? null : "UNDETERMINED");
   const verdict = data.verdict ?? "SUSPICIOUS";
   const confidencePercent = Math.round((data.confidence ?? 0) * 100);
   const overallScore = data.riskScore ?? confidencePercent;
