@@ -103,7 +103,7 @@ export const detectMessages = defineMessages(
     } as Record<string, ProvenanceText>,
     provenanceFallbackTab: "출처 신호",
     referenceNotice:
-      "이 결과는 AI가 추정한 참고용 정보이며 사진의 진위를 보증하지 않습니다. 피해가 걱정된다면 익명 상담이나 신고 문서 작성을 이용해 보세요.",
+      "이 결과는 자동 분석으로 얻은 참고용 정보이며 사진의 진위를 보증하지 않습니다. 피해가 걱정된다면 익명 상담이나 신고 문서 작성을 이용해 보세요.",
     modelLabel: (name: string, version: string | null) =>
       `분석 모델: ${name}${version ? ` (${version})` : ""}`,
     result: {
@@ -228,7 +228,7 @@ export const detectMessages = defineMessages(
       },
       provenanceFallbackTab: "Source signal",
       referenceNotice:
-        "This result is an AI estimate for reference only and doesn't guarantee whether the photo is authentic. If you're worried about harm, try talking anonymously or writing a report.",
+        "This result comes from automated analysis, is for reference only, and doesn't guarantee whether the photo is authentic. If you're worried about harm, try talking anonymously or writing a report.",
       modelLabel: (name, version) => `Model: ${name}${version ? ` (${version})` : ""}`,
       result: {
         title: "Detection results",
@@ -345,7 +345,7 @@ export const detectMessages = defineMessages(
       },
       provenanceFallbackTab: "出所シグナル",
       referenceNotice:
-        "この結果はAIによる参考用の推定であり、写真の真偽を保証するものではありません。被害が心配な場合は、匿名相談や通報書類の作成をご利用ください。",
+        "この結果は自動分析による参考情報であり、写真の真偽を保証するものではありません。被害が心配な場合は、匿名相談や通報書類の作成をご利用ください。",
       modelLabel: (name, version) => `分析モデル: ${name}${version ? ` (${version})` : ""}`,
       result: {
         title: "検出結果",
@@ -451,7 +451,7 @@ export const detectMessages = defineMessages(
       },
       provenanceFallbackTab: "来源信号",
       referenceNotice:
-        "此结果是AI估算的参考信息，不能保证照片的真伪。如果担心受到伤害，可以使用匿名咨询或撰写举报文件。",
+        "此结果是自动分析得出的参考信息，不能保证照片的真伪。如果担心受到伤害，可以使用匿名咨询或撰写举报文件。",
       modelLabel: (name, version) => `分析模型：${name}${version ? `（${version}）` : ""}`,
       result: {
         title: "检测结果",
