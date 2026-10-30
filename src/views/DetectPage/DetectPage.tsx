@@ -13,6 +13,8 @@ import SiteHeader from "@/widgets/SiteHeader";
 import {
   createDeepfakeDetection,
   getDeepfakeDetection,
+  isDeepfakeBand,
+  type DeepfakeBand,
   type DeepfakeDetectionResponse,
 } from "./detectApi";
 import DetectResultSection from "./DetectResultSection";
@@ -32,34 +34,63 @@ function formatEvidenceType(type: string, labels: Record<string, string>): strin
     .join(" ");
 }
 
-function mapDetection(
-  data: DeepfakeDetectionResponse,
-  t: (typeof detectMessages)[keyof typeof detectMessages],
-): DetectResult {
+type DetectText = (typeof detectMessages)[keyof typeof detectMessages];
+
+function bandCaption(data: DeepfakeDetectionResponse, band: DeepfakeBand, t: DetectText): string {
+  if (band === "UNDETERMINED") {
+    const reason = data.undeterminedReason ? t.undeterminedReason[data.undeterminedReason] : null;
+    return reason ?? t.bandCaption.UNDETERMINED;
+  }
+  if (data.assessmentBasis === "PROVENANCE") {
+    return t.provenanceCaption[band] ?? t.bandCaption[band];
+  }
+  return t.bandCaption[band];
+}
+
+function mapEvidenceHighlights(data: DeepfakeDetectionResponse, t: DetectText) {
+  const provenanceHighlights = (data.provenanceSignals ?? []).map((signal) => {
+    const text = t.provenance[signal.code];
+    if (text) return text;
+    return {
+      tab: t.provenanceFallbackTab,
+      description: signal.message || t.evidenceNoDescription,
+    };
+  });
+  const modelHighlights = (data.evidences ?? []).map((evidence, index) => ({
+    tab: evidence.type
+      ? formatEvidenceType(evidence.type, t.evidenceType)
+      : t.evidenceFallbackTab(index + 1),
+    description: evidence.description || t.evidenceNoDescription,
+  }));
+  const highlights = [...provenanceHighlights, ...modelHighlights];
+  return highlights.length > 0
+    ? highlights
+    : [{ tab: t.noEvidenceTab, description: t.noEvidenceDescription }];
+}
+
+function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectResult {
+  const knownBand = isDeepfakeBand(data.band) ? data.band : null;
+  const hasLegacyResult = data.verdict != null || data.riskScore != null;
+  const band: DeepfakeBand | null = knownBand ?? (hasLegacyResult ? null : "UNDETERMINED");
   const verdict = data.verdict ?? "SUSPICIOUS";
   const confidencePercent = Math.round((data.confidence ?? 0) * 100);
   const overallScore = data.riskScore ?? confidencePercent;
-  const evidenceHighlights =
-    data.evidences && data.evidences.length > 0
-      ? data.evidences.map((evidence, index) => ({
-          tab: evidence.type
-            ? formatEvidenceType(evidence.type, t.evidenceType)
-            : t.evidenceFallbackTab(index + 1),
-          description: evidence.description || t.evidenceNoDescription,
-        }))
-      : [{ tab: t.noEvidenceTab, description: t.noEvidenceDescription }];
+  const caption = band ? bandCaption(data, band, t) : t.verdictCaption[verdict];
 
   return {
     ...MOCK_RESULT,
-    deepfakeVerdict: t.verdict[verdict],
+    deepfakeVerdict: band ? t.band[band] : t.verdict[verdict],
     deepfakeRiskScore: data.riskScore ?? null,
     deepfakeTone: verdict,
-    deepfakeCaption: t.verdictCaption[verdict],
+    deepfakeBand: band,
+    deepfakeCaption: caption,
     overallScore,
-    overallCaption: t.verdictCaption[verdict],
+    overallCaption: caption,
     modelConfidence: confidencePercent,
     modelConfidenceNote: data.fallbackUsed ? t.fallbackNote : t.modelNote,
-    evidenceHighlights,
+    fallbackUsed: data.fallbackUsed ?? false,
+    modelLabel: data.modelName ? t.modelLabel(data.modelName, data.modelVersion ?? null) : null,
+    evidenceHighlights: mapEvidenceHighlights(data, t),
     faceTheftVerdict: t.comingSoon,
     faceTheftScore: 0,
     faceTheftCaption: t.faceTheftCaption,
