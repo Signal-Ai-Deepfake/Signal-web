@@ -74,7 +74,7 @@ function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectRes
   const band: DeepfakeBand | null = knownBand ?? (hasLegacyResult ? null : "UNDETERMINED");
   const verdict = data.verdict ?? "SUSPICIOUS";
   const confidencePercent = Math.round((data.confidence ?? 0) * 100);
-  const overallScore = data.riskScore ?? confidencePercent;
+  const overallScore = data.riskScore ?? null;
   const caption = band ? bandCaption(data, band, t) : t.verdictCaption[verdict];
 
   return {
